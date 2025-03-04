@@ -10,6 +10,7 @@ Die Hauptziele des Systems sind:
 - Identifikation gemeinsamer Interessen und Werte für bessere Teambildung
 - Vernetzung von Menschen mit ähnlichen Visionen für nachhaltige Projekte
 - Direkte Kommunikation zwischen potentiellen Partnern
+- Geografische Darstellung von Nutzern, Projekten und Unternehmen auf einer interaktiven Karte
 
 ## Technische Implementierung
 
@@ -18,7 +19,8 @@ Die Hauptziele des Systems sind:
 - **Build-Tool**: Vite
 - **Datenmanagement**: JSON-basiert mit LocalStorage-Persistenz
 - **Styling**: Vanilla CSS mit Flexbox und Grid für responsives Layout
-- **Icons**: Bootstrap Icons
+- **Icons**: Font Awesome 5
+- **Kartendarstellung**: Leaflet.js für interaktive Karten
 - **Deployment**: Statische Webseite, lauffähig auf jedem modernen Webserver
 
 ### Architektur
@@ -35,10 +37,19 @@ Die Anwendung folgt einer komponentenbasierten Architektur:
 │   │   ├── ChatContainer.vue     # Hauptcontainer für Chat-Funktionalitäten
 │   │   ├── ChatList.vue          # Liste der Chatgespräche
 │   │   └── ChatWindow.vue        # Chat-Interface für einzelne Gespräche
+│   ├── map/                      # Karten-Komponenten
+│   │   ├── MapPage.vue           # Hauptcontainer für Kartenansicht
+│   │   └── MapView.vue           # Interaktive Kartenkomponente mit Markern
+│   ├── debug/                    # Debug-Komponenten
+│   │   ├── DataLoader.vue        # Tool zum direkten Laden von data.json
+│   │   ├── DataDebugger.vue      # Anzeige und Inspektion der Nutzerdaten
+│   │   └── TestMap.vue           # Vereinfachte Karte für Testfälle
 ├── services/                     # Geschäftslogik
 │   ├── MatchingService.js        # Matching-Algorithmus und Bewertungsfunktionen
 │   ├── StorageService.js         # Daten-Persistenz (LocalStorage)
 │   └── ChatService.js            # Chat-Funktionalitäten
+├── styles/                       # Ausgelagerte Styles
+│   └── map-markers-custom.css    # Angepasste Styles für Kartenmarker
 ├── App.vue                       # Hauptkomponente
 ├── data.json                     # Beispieldaten für Nutzerprofile
 ├── index.html                    # HTML-Einstiegspunkt
@@ -91,6 +102,16 @@ Der Algorithmus bewertet potentielle Matches anhand mehrerer Kriterien:
 - Löschen von Profilen
 - Export und Import aller Profile als JSON
 
+### 6. Interaktive Karte
+Die interaktive Karte bietet eine geografische Darstellung aller Nutzerelemente:
+
+- **Mehrere Marker-Typen**: Wohnorte, Firmen, Projekte, Meetups werden mit unterschiedlichen Icons angezeigt
+- **Filterung**: Nutzer können die Anzeige nach Marker-Typen filtern
+- **Suchfunktion**: Textsuche nach Markern anhand von Namen oder Beschreibungen
+- **Service-Gebiete**: Darstellung von Aktionsradien für Unternehmen
+- **Detailansicht**: Klick auf Marker zeigt detaillierte Informationen und ermöglicht Navigation zum vollständigen Profil
+- **Responsive Gestaltung**: Die Karte passt sich verschiedenen Bildschirmgrößen an
+
 ## Datenmodell
 
 Das zentrale Datenmodell eines Nutzerprofils umfasst:
@@ -103,21 +124,27 @@ Das zentrale Datenmodell eines Nutzerprofils umfasst:
   "iconCategories": {
     "home": {
       "address": "München, Deutschland",
-      "description": "Remote und lokale Arbeit möglich"
+      "description": "Remote und lokale Arbeit möglich",
+      "coordinates": [48.1351, 11.5820]
     },
     "firma": {
       "name": "Unternehmensname",
       "role": "Position",
       "year": "2023",
-      "description": "Beschreibung"
+      "description": "Beschreibung",
+      "coordinates": [48.1390, 11.5890]
     },
-    "wirkungsbereich": ["München", "Berlin", "Remote (Europa)"],
+    "wirkungsbereich": [
+      {"name": "München", "coordinates": [48.1351, 11.5820]},
+      {"name": "Berlin", "coordinates": [52.5200, 13.4050]}
+    ],
     "unternehmen": [
       {
         "name": "Unternehmensname",
         "role": "Position",
         "year": "2023",
-        "description": "Beschreibung"
+        "description": "Beschreibung",
+        "coordinates": [48.1390, 11.5890]
       }
     ],
     "projekt": [
@@ -126,14 +153,16 @@ Das zentrale Datenmodell eines Nutzerprofils umfasst:
         "description": "Projektbeschreibung",
         "year": "2022",
         "note": "Zusätzliche Informationen",
-        "role": "Projektrolle"
+        "role": "Projektrolle",
+        "coordinates": [48.1351, 11.5900]
       }
     ],
     "tisch": [
       {
         "name": "Meetup-Name",
         "description": "Beschreibung des Treffens",
-        "location": "Ort des Treffens"
+        "location": "Ort des Treffens",
+        "coordinates": [48.1400, 11.5800]
       }
     ]
   },
@@ -242,20 +271,39 @@ Das Chat-System ermöglicht die direkte Kommunikation zwischen Nutzern:
 
 In der aktuellen Prototyp-Version werden die Chat-Daten lokal im Browser gespeichert. Für eine produktive Implementierung wäre eine serverseitige Integration mit WebSockets (z.B. Socket.io) und einer Datenbank erforderlich.
 
+## Kartensystem
+
+Das integrierte Kartensystem basiert auf Leaflet.js und ermöglicht die Visualisierung von Nutzer- und Projektstandorten:
+
+1. **Marker-Typen**: Verschiedene Icon-Typen für unterschiedliche Kategorien
+   - Wohnorte (grün)
+   - Firmen und Unternehmen (blau/orange)
+   - Projekte (rot)
+   - Meetups/Tische (türkis)
+   - Wirkungsbereiche (lila)
+
+2. **Datenintegration**: Die Karte bezieht Daten aus den `iconCategories` der Nutzerprofile, wobei jede Kategorie Koordinaten-Arrays `[Breitengrad, Längengrad]` enthält.
+
+3. **Service-Gebiete**: Für Unternehmen und Firmen werden kreisförmige Aktionsradien dargestellt, die den geografischen Wirkungsbereich visualisieren.
+
+4. **Interaktivität**: Klicks auf Marker öffnen Infopanels mit Details und Verknüpfungen zu den entsprechenden Nutzerprofilen.
+
+### Troubleshooting für die Karte
+
+Falls auf der Karte keine Marker angezeigt werden:
+
+1. **Debug-Modus aktivieren**: Checkbox "Debug-Modus aktivieren" über der Karte anklicken
+2. **Daten prüfen**: Im Debug-Panel wird angezeigt, ob die Nutzerdaten Koordinaten enthalten
+3. **Test-Karte**: Eine vereinfachte Test-Karte wird angezeigt, um die grundsätzliche Leaflet-Funktionalität zu prüfen
+4. **Daten neu laden**: Button "Load data.json directly" klicken, um die originalen Daten mit Koordinaten zu laden
+5. **Daten anwenden**: Button "Apply to Users" klicken, um die geladenen Daten auf die Anwendung anzuwenden
+6. **Testpunkte hinzufügen**: Button "Add Test Points" fügt einen Testnutzer mit validen Koordinaten hinzu
+
+Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose.
+
 ## Datenschutz und Sicherheit
 
 Die Anwendung speichert alle Daten lokal im Browser des Nutzers (LocalStorage) und überträgt keine Daten an externe Server. Der Nutzer behält volle Kontrolle über seine Daten und kann diese jederzeit exportieren oder löschen.
-
-## Kartenintegration
-
-Das System ist darauf vorbereitet, mit einer interaktiven Karte integriert zu werden. Die strukturierten Icon-Kategorien (Home, Firma, Wirkungsbereich, etc.) entsprechen den Markierungen, die auf einer Karte angezeigt werden können:
-
-- **Home**: Wohnorte der Nutzer
-- **Firma**: Unternehmensstandorte
-- **Wirkungsbereich**: Aktionsradius eines Nutzers
-- **Unternehmen**: Weitere Unternehmensstandorte
-- **Projekt**: Projektstandorte
-- **Tisch**: Meetup- und Veranstaltungsorte
 
 ## Zukunftspläne und Erweiterungen
 
@@ -264,7 +312,10 @@ Geplante Erweiterungen für zukünftige Versionen:
 - **Echtzeit-Chat**: Integration eines WebSocket-Servers für echte Echtzeit-Kommunikation
 - **Verbesserte Textanalyse**: Integration fortschrittlicherer NLP-Algorithmen für genauere Textvergleiche
 - **Profilbilder und Medien**: Upload und Anzeige von Bildern und anderen Medien
-- **Kartenintegration**: Anzeige von Nutzerprofilen auf einer interaktiven Karte
+- **Erweiterte Kartenintegration**: 
+  - Clustering von Markern bei hoher Dichte
+  - Routing-Funktionalität zwischen Punkten
+  - Import/Export von Koordinaten in gängigen Formaten (GeoJSON, KML)
 - **Automatisierte Matching-Vorschläge**: Regelmäßige Benachrichtigungen über neue passende Profile
 - **Projektvorschläge**: KI-basierte Vorschläge für mögliche Kollaborationsprojekte
 

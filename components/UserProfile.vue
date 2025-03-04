@@ -13,7 +13,7 @@
         <!-- Home -->
         <div class="icon-category" v-if="user.iconCategories.home">
           <div class="icon-header">
-            <i class="bi bi-house-door"></i>
+            <i class="fas fa-home"></i>
             <h4>Wohnort</h4>
           </div>
           <div class="icon-content">
@@ -25,7 +25,7 @@
         <!-- Firma -->
         <div class="icon-category" v-if="user.iconCategories.firma">
           <div class="icon-header">
-            <i class="bi bi-building"></i>
+            <i class="fas fa-building"></i>
             <h4>Firma</h4>
           </div>
           <div class="icon-content">
@@ -38,7 +38,7 @@
         <!-- Wirkungsbereich -->
         <div class="icon-category" v-if="user.iconCategories.wirkungsbereich && user.iconCategories.wirkungsbereich.length">
           <div class="icon-header">
-            <i class="bi bi-compass"></i>
+            <i class="fas fa-compass"></i>
             <h4>Wirkungsbereich</h4>
           </div>
           <div class="icon-content">
@@ -53,7 +53,7 @@
         <!-- Unternehmen -->
         <div class="icon-category" v-if="user.iconCategories.unternehmen && user.iconCategories.unternehmen.length">
           <div class="icon-header">
-            <i class="bi bi-briefcase"></i>
+            <i class="fas fa-briefcase"></i>
             <h4>Unternehmen</h4>
           </div>
           <div class="icon-content">
@@ -70,7 +70,7 @@
         <!-- Projekt -->
         <div class="icon-category" v-if="user.iconCategories.projekt && user.iconCategories.projekt.length">
           <div class="icon-header">
-            <i class="bi bi-folder"></i>
+            <i class="fas fa-folder"></i>
             <h4>Projekte</h4>
           </div>
           <div class="icon-content">
@@ -91,7 +91,7 @@
         <!-- Tisch -->
         <div class="icon-category" v-if="user.iconCategories.tisch && user.iconCategories.tisch.length">
           <div class="icon-header">
-            <i class="bi bi-table"></i>
+            <i class="fas fa-table"></i>
             <h4>Meetups & Veranstaltungen</h4>
           </div>
           <div class="icon-content">
@@ -99,7 +99,7 @@
               <div class="table-item" v-for="(table, index) in user.iconCategories.tisch" :key="index">
                 <h5>{{ table.name }}</h5>
                 <p>{{ table.description }}</p>
-                <p v-if="table.location"><i class="bi bi-geo-alt"></i> {{ table.location }}</p>
+                <p v-if="table.location"><i class="fas fa-map-marker-alt"></i> {{ table.location }}</p>
               </div>
             </div>
           </div>
@@ -253,8 +253,7 @@ export default {
 </script>
 
 <style scoped>
-/* Add Bootstrap Icons at the top of the styles */
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
+/* Bootstrap Icons import removed - now in global.css */
 
 .profile-container {
   background-color: #fff;
@@ -264,7 +263,6 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   overflow-y: auto;
-  /*max-height: 80vh;*/
 }
 
 .profile-header {

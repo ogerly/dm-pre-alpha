@@ -10,14 +10,14 @@
           :class="{ active: activeTab === 'matching' }"
           class="tab-btn"
         >
-          <i class="bi bi-people"></i> Matching
+          <i class="fas fa-users"></i> Matching
         </button>
         <button 
           @click="activeTab = 'map'" 
           :class="{ active: activeTab === 'map' }"
           class="tab-btn"
         >
-          <i class="bi bi-map"></i> Karte
+          <i class="fas fa-map-marked-alt"></i> Karte
         </button>
       </div>
     </header>
@@ -59,13 +59,14 @@
       />
     </div>
     
-    <!-- Map View -->
+    <!-- Map View with actual data -->
     <div v-if="activeTab === 'map'" class="main-content">
       <MapPage 
         :users="users" 
-        :companies="[]" 
-        :projects="[]" 
-        :tables="[]"
+        :companies="extractCompanies()"
+        :projects="extractProjects()"
+        :tables="extractTables()"
+        @update-users="updateUsers"
       />
     </div>
     
@@ -157,7 +158,8 @@ import {
   saveProfile as saveProfileToStorage,
   deleteProfile as deleteProfileFromStorage,
   exportProfiles,
-  importProfiles
+  importProfiles,
+  updateAllProfiles  // Add this function to your StorageService if it doesn't exist
 } from './services/StorageService.js';
 
 export default {
@@ -265,13 +267,147 @@ export default {
     closeChat() {
       this.showChat = false;
       this.chatWithUserId = null;
-    }
+    },
+    // Helper methods to extract objects from user data for map display
+    extractCompanies() {
+      const companies = [];
+      
+      // Extract companies from iconCategories.firma
+      this.users.forEach(user => {
+        if (user.iconCategories?.firma) {
+          // Check if coordinates exist directly in firma
+          const coordinates = user.iconCategories.firma.coordinates;
+          if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+            companies.push({
+              id: `firma-${user.id}`,
+              name: user.iconCategories.firma.name || 'Firma',
+              description: user.iconCategories.firma.description || '',
+              location: {
+                address: user.iconCategories.firma.address || '',
+                coordinates: coordinates
+              },
+              owner: user
+            });
+          }
+        }
+        
+        // Also add from user companies array if present
+        if (user.companies) {
+          user.companies.forEach((company, idx) => {
+            // Check if coordinates exist directly in company
+            const coordinates = company.coordinates;
+            if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+              companies.push({
+                id: `company-${user.id}-${idx}`,
+                name: company.name || 'Unternehmen',
+                description: company.description || '',
+                location: {
+                  address: company.address || '',
+                  coordinates: coordinates
+                },
+                owner: user
+              });
+            }
+          });
+        }
+      });
+      
+      return companies;
+    },
+    
+    extractProjects() {
+      const projects = [];
+      
+      this.users.forEach(user => {
+        // Extract from iconCategories.projekt
+        if (user.iconCategories?.projekt && Array.isArray(user.iconCategories.projekt)) {
+          user.iconCategories.projekt.forEach((project, idx) => {
+            const coordinates = project.coordinates;
+            if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+              projects.push({
+                id: `icon-project-${user.id}-${idx}`,
+                name: project.name || 'Projekt',
+                description: project.description || '',
+                status: 'Aktiv',
+                location: {
+                  address: project.address || '',
+                  coordinates: coordinates
+                },
+                owner: user
+              });
+            }
+          });
+        }
+        
+        // Extract from ownProjects and contributedProjects
+        ['ownProjects', 'contributedProjects'].forEach(projectType => {
+          if (user[projectType] && Array.isArray(user[projectType])) {
+            user[projectType].forEach((project, idx) => {
+              const coordinates = project.coordinates;
+              if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+                projects.push({
+                  id: `${projectType}-${user.id}-${idx}`,
+                  name: project.name || 'Projekt',
+                  description: project.description || '',
+                  status: 'Aktiv',
+                  location: {
+                    address: project.address || '',
+                    coordinates: coordinates
+                  },
+                  owner: user
+                });
+              }
+            });
+          }
+        });
+      });
+      
+      return projects;
+    },
+    
+    extractTables() {
+      const tables = [];
+      
+      this.users.forEach(user => {
+        if (user.iconCategories?.tisch && Array.isArray(user.iconCategories.tisch)) {
+          user.iconCategories.tisch.forEach((table, idx) => {
+            const coordinates = table.coordinates;
+            if (coordinates && Array.isArray(coordinates) && coordinates.length === 2) {
+              tables.push({
+                id: `table-${user.id}-${idx}`,
+                name: table.name || 'Meetup',
+                description: table.description || '',
+                location: {
+                  address: table.location || '',
+                  coordinates: coordinates
+                },
+                host: {
+                  name: user.name,
+                  details: ''
+                },
+                owner: user
+              });
+            }
+          });
+        }
+      });
+      
+      return tables;
+    },
+    // Add this method to handle user updates from map page
+    updateUsers(newUsers) {
+      console.log('Updating all users from App:', newUsers.length);
+      // Update all profiles in storage
+      updateAllProfiles(newUsers);
+      // Reload profiles
+      this.loadProfiles();
+    },
   }
 };
 </script>
 
 <style>
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
+/* Bootstrap Icons import removed - now in global.css */
 
 .container {
   text-align: center;

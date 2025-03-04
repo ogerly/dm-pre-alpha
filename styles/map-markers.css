@@ -1,0 +1,47 @@
+/* Custom Marker Styles for Leaflet Map */
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.home-icon {
+  background-color: #dcfce7;
+}
+
+.home-icon i {
+  color: #166534;
+}
+
+.firma-icon {
+  background-color: #e0f2fe;
+}
+
+.firma-icon i {
+  color: #0369a1;
+}
+
+.projekt-icon {
+  background-color: #f3e8ff;
+}
+
+.projekt-icon i {
+  color: #7e22ce;
+}
+
+.tisch-icon {
+  background-color: #ede9fe;
+}
+
+.tisch-icon i {
+  color: #6d28d9;
+}
+
+.custom-marker i {
+  font-size: 1.2rem;
+}

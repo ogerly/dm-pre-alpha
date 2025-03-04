@@ -5,14 +5,53 @@
       Entdecke Profile, Unternehmen, Projekte und Meetups auf der Karte
     </p>
     
+    <!-- Debug checkbox -->
+    <div class="debug-toggle">
+      <label>
+        <input type="checkbox" v-model="showDebug">
+        Debug-Modus aktivieren
+      </label>
+    </div>
+    
+    <!-- DataLoader -->
+    <div v-if="showDebug" class="data-loader-container">
+      <DataLoader 
+        :users="users" 
+        @update-users="updateUsers" 
+        @add-test-users="addTestUsers"
+      />
+    </div>
+    
+    <!-- Test map if debug is enabled -->
+    <div v-if="showDebug" class="test-map-container">
+      <TestMap />
+    </div>
+    
+    <!-- Regular map -->
     <div class="map-wrapper">
       <MapView 
-        :users="users"
+        :users="localUsers || users"
         :companies="companies"
         :projects="projects"
         :tables="tables"
         @view-profile="selectUser"
       />
+    </div>
+    
+    <!-- Debug data display -->
+    <div v-if="showDebug" class="debug-data">
+      <h3>Debug Data</h3>
+      <div class="data-counts">
+        <p>Users: {{ users.length }}</p>
+        <p>Local Users: {{ localUsers ? localUsers.length : 'None' }}</p>
+        <p>Companies: {{ companies.length }}</p>
+        <p>Projects: {{ projects.length }}</p>
+        <p>Tables: {{ tables.length }}</p>
+      </div>
+      <div class="user-sample" v-if="(localUsers || users).length > 0">
+        <h4>First User Sample</h4>
+        <pre>{{ JSON.stringify((localUsers || users)[0], null, 2) }}</pre>
+      </div>
     </div>
     
     <div v-if="userProfile" class="profile-overlay">
@@ -27,11 +66,15 @@
 <script>
 import MapView from './MapView.vue';
 import UserProfile from '../UserProfile.vue';
+import TestMap from '../debug/TestMap.vue';
+import DataLoader from '../debug/DataLoader.vue';
 
 export default {
   components: {
     MapView,
-    UserProfile
+    UserProfile,
+    TestMap,
+    DataLoader
   },
   props: {
     users: {
@@ -53,13 +96,31 @@ export default {
   },
   data() {
     return {
-      userProfile: null
+      userProfile: null,
+      showDebug: true, // Enable debug by default
+      localUsers: null // Local override for user data
     };
   },
   methods: {
     selectUser(user) {
       this.userProfile = user;
+    },
+    updateUsers(newUsers) {
+      console.log('Updating users with new data:', newUsers.length);
+      this.localUsers = newUsers;
+      this.$emit('update-users', newUsers); // Also emit to parent in case they want to update
+    },
+    addTestUsers(testUsers) {
+      console.log('Adding test users:', testUsers);
+      if (!this.localUsers) {
+        this.localUsers = [...this.users];
+      }
+      this.localUsers = [...this.localUsers, ...testUsers];
     }
+  },
+  mounted() {
+    console.log('MapPage mounted');
+    console.log('User data sample:', this.users.slice(0, 1));
   }
 }
 </script>
@@ -77,6 +138,11 @@ export default {
 
 .map-wrapper {
   width: 100%;
+}
+
+/* Data loader container */
+.data-loader-container {
+  margin-bottom: 20px;
 }
 
 .profile-overlay {
@@ -119,5 +185,44 @@ export default {
   font-size: 1.2rem;
   cursor: pointer;
   z-index: 10;
+}
+
+.debug-toggle {
+  margin-bottom: 15px;
+}
+
+.test-map-container {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+}
+
+.debug-data {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+}
+
+.data-counts {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.user-sample {
+  padding: 15px;
+  background-color: #f0f9ff;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.user-sample pre {
+  font-size: 12px;
+  max-height: 300px;
+  overflow: auto;
 }
 </style>

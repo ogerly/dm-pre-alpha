@@ -90,3 +90,14 @@ export function importProfiles(file) {
     reader.readAsText(file);
   });
 }
+
+// Add this function to update all profiles at once
+export function updateAllProfiles(profiles) {
+  try {
+    localStorage.setItem('userProfiles', JSON.stringify(profiles));
+    return true;
+  } catch (error) {
+    console.error('Error updating all profiles:', error);
+    return false;
+  }
+}
