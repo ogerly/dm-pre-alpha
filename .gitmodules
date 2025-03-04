@@ -1,0 +1,3 @@
+[submodule "interactive-map"]
+	path = interactive-map
+	url = https://github.com/ogerly/interactive-map

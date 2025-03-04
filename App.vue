@@ -31,12 +31,13 @@
       </button>
     </div>
     
-    <!-- Chat interface -->
+    <!-- Chat interface - improved positioning and visibility -->
     <div v-if="isLoggedIn && showChat" class="chat-interface">
       <ChatContainer 
         :currentUserId="currentUserId"
         :users="users"
         :initialOtherUserId="chatWithUserId"
+        @close="closeChat"
       />
     </div>
     
@@ -221,8 +222,17 @@ export default {
       }
     },
     startChatWith(user) {
-      this.chatWithUserId = user.id;
-      this.showChat = true;
+      // Reset and then set to trigger watcher in ChatContainer
+      this.chatWithUserId = null;
+      this.$nextTick(() => {
+        this.chatWithUserId = user.id;
+        this.showChat = true;
+      });
+    },
+    // Add a method to close the chat
+    closeChat() {
+      this.showChat = false;
+      this.chatWithUserId = null;
     }
   }
 };
@@ -284,14 +294,15 @@ export default {
   }
 }
 
+/* Fix chat interface positioning and size */
 .chat-interface {
   position: fixed;
-  bottom: 0;
+  bottom: 20px;
   right: 20px;
-  width: 320px;
-  height: 400px;
+  width: 680px; /* Make wider to show both chat list and active chat */
+  height: 500px;
   background-color: #fff;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   overflow: hidden;

@@ -88,3 +88,27 @@ export function getConversationId(userId1, userId2) {
   const sortedIds = [userId1, userId2].sort((a, b) => a - b);
   return `${sortedIds[0]}_${sortedIds[1]}`;
 }
+
+/**
+ * Creates a test welcome message for new conversations
+ * @param {number} userId - The ID of the user creating the conversation
+ * @param {string} conversationId - The ID of the conversation
+ */
+export function createWelcomeMessageIfNeeded(userId, conversationId) {
+  initializeChats();
+  const chats = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  
+  // Only create welcome message if this conversation doesn't exist yet
+  if (!chats[conversationId] || chats[conversationId].length === 0) {
+    const welcomeMessage = {
+      id: Date.now(),
+      text: "Herzlich Willkommen zum Chat! Hier kannst du direkt mit deinem Match kommunizieren.",
+      senderId: 0, // System message
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    chats[conversationId] = [welcomeMessage];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
+  }
+}

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { sendMessage, getMessages, markAsRead } from '../../services/ChatService.js';
+import { sendMessage, getMessages, markAsRead, createWelcomeMessageIfNeeded } from '../../services/ChatService.js';
 
 export default {
   props: {
@@ -70,6 +70,8 @@ export default {
       immediate: true,
       handler(newVal) {
         if (newVal) {
+          // Create welcome message for first-time chats
+          createWelcomeMessageIfNeeded(this.currentUserId, newVal);
           this.loadMessages();
           this.markMessagesAsRead();
         } else {
@@ -186,10 +188,12 @@ export default {
 .message {
   margin-bottom: 10px;
   max-width: 80%;
+  clear: both;
 }
 
 .message.outgoing {
   align-self: flex-end;
+  float: right;
 }
 
 .message-content {

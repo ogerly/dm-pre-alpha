@@ -1,24 +1,31 @@
 <template>
   <div class="chat-container">
-    <div class="chat-sidebar">
-      <ChatList 
-        :currentUserId="currentUserId" 
-        :users="users"
-        :activeConversationId="activeConversationId"
-        @select-conversation="selectConversation" 
-      />
+    <div class="chat-header">
+      <h3>Chats</h3>
+      <button class="close-btn" @click="$emit('close')">&times;</button>
     </div>
-    <div class="chat-main">
-      <div v-if="!selectedUser" class="no-chat-selected">
-        <p>Wähle ein Gespräch aus oder starte ein neues mit einem deiner Matches.</p>
+    
+    <div class="chat-content">
+      <div class="chat-sidebar">
+        <ChatList 
+          :currentUserId="currentUserId" 
+          :users="users"
+          :activeConversationId="activeConversationId"
+          @select-conversation="selectConversation" 
+        />
       </div>
-      <ChatWindow 
-        v-else
-        :currentUserId="currentUserId"
-        :otherUser="selectedUser"
-        :conversationId="activeConversationId"
-        @close="closeChat"
-      />
+      <div class="chat-main">
+        <div v-if="!selectedUser" class="no-chat-selected">
+          <p>Wähle ein Gespräch aus oder starte ein neues mit einem deiner Matches.</p>
+        </div>
+        <ChatWindow 
+          v-else
+          :currentUserId="currentUserId"
+          :otherUser="selectedUser"
+          :conversationId="activeConversationId"
+          @close="closeChat"
+        />
+      </div>
     </div>
     
     <!-- Floating chat button for mobile -->
@@ -109,6 +116,17 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.checkMobile);
   },
+  watch: {
+    // Watch for initialOtherUserId changes to open chats automatically
+    initialOtherUserId: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          this.openChatWithUser(newVal);
+        }
+      }
+    }
+  },
   methods: {
     selectConversation(conversation) {
       const otherUser = this.users.find(u => u.id === conversation.otherUserId);
@@ -136,6 +154,18 @@ export default {
     },
     checkMobile() {
       this.isMobile = window.innerWidth < 768;
+    },
+    // Enhanced method to find and open chat with a specific user
+    openChatWithUser(userId) {
+      const otherUser = this.users.find(u => u.id === userId);
+      if (otherUser) {
+        this.selectedUser = otherUser;
+        this.activeConversationId = getConversationId(this.currentUserId, userId);
+        if (this.isMobile) {
+          this.showMobileChats = false;
+          this.activeMobileChat = true;
+        }
+      }
     }
   }
 };
@@ -144,7 +174,37 @@ export default {
 <style scoped>
 .chat-container {
   display: flex;
+  flex-direction: column;
   height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 10px 15px;
+  background-color: #4f46e5;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 {
+  margin: 0;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.chat-content {
+  display: flex;
+  height: calc(100% - 42px); /* Subtract header height */
 }
 
 .chat-sidebar {
