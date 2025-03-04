@@ -11,7 +11,21 @@ const STORAGE_KEY = 'dreammall_profiles';
  */
 export function initializeStorage() {
   if (!localStorage.getItem(STORAGE_KEY)) {
+    console.log('Initializing storage with data.json data');
     localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
+  } else {
+    // Check if existing data has coordinates
+    const existingData = getAllProfiles();
+    const hasCoordinates = existingData.some(user => 
+      user.iconCategories?.home?.coordinates || 
+      user.iconCategories?.firma?.coordinates ||
+      (user.iconCategories?.projekt && user.iconCategories.projekt.some(p => p.coordinates))
+    );
+    
+    if (!hasCoordinates) {
+      console.warn('Existing data has no coordinates. Resetting to initial data.');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
+    }
   }
 }
 
@@ -22,6 +36,14 @@ export function initializeStorage() {
 export function getAllProfiles() {
   const data = localStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : [];
+}
+
+/**
+ * Force refresh of data from data.json
+ */
+export function resetToInitialData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
+  return initialData;
 }
 
 /**
@@ -91,10 +113,15 @@ export function importProfiles(file) {
   });
 }
 
-// Add this function to update all profiles at once
+/**
+ * Update all profiles at once
+ * @param {Array} profiles - Array of profiles to save
+ * @returns {boolean} Success status
+ */
 export function updateAllProfiles(profiles) {
   try {
-    localStorage.setItem('userProfiles', JSON.stringify(profiles));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+    console.log(`Successfully updated ${profiles.length} profiles`);
     return true;
   } catch (error) {
     console.error('Error updating all profiles:', error);

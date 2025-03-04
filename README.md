@@ -106,11 +106,45 @@ Der Algorithmus bewertet potentielle Matches anhand mehrerer Kriterien:
 Die interaktive Karte bietet eine geografische Darstellung aller Nutzerelemente:
 
 - **Mehrere Marker-Typen**: Wohnorte, Firmen, Projekte, Meetups werden mit unterschiedlichen Icons angezeigt
+  - Wohnorte (grün) - Privatadresse und Homeoffice-Standorte
+  - Firmen (blau) und Unternehmen (orange) - Arbeitsplätze und Geschäftsstandorte
+  - Projekte (rot) - Orte von laufenden und vergangenen Projekten
+  - Meetups/Tische (türkis) - Veranstaltungsorte und regelmäßige Treffen
+  - Wirkungsbereiche (lila) - Geografische Tätigkeitsbereiche
 - **Filterung**: Nutzer können die Anzeige nach Marker-Typen filtern
 - **Suchfunktion**: Textsuche nach Markern anhand von Namen oder Beschreibungen
 - **Service-Gebiete**: Darstellung von Aktionsradien für Unternehmen
 - **Detailansicht**: Klick auf Marker zeigt detaillierte Informationen und ermöglicht Navigation zum vollständigen Profil
 - **Responsive Gestaltung**: Die Karte passt sich verschiedenen Bildschirmgrößen an
+- **Automatischer Datenimport**: Die Karte erkennt fehlende Koordinaten und lädt automatisch die Datei data.json
+
+#### Debug-Modus für die Karte
+
+Die Karte verfügt über einen umfassenden Debug-Modus, der bei der Entwicklung und Fehlerbehebung hilft:
+
+1. **Aktivierung**: Der Debug-Modus kann über die Checkbox "Debug-Modus aktivieren" oberhalb der Karte eingeschaltet werden
+
+2. **Komponenten des Debug-Modus**:
+   - **Data Loader**: Tool zum direkten Laden der data.json oder manueller Eingabe von JSON-Daten
+   - **Asset Test**: Tester für die Verfügbarkeit verschiedener Ressourcen (z.B. data.json, Bildern)
+   - **Test Map**: Vereinfachte Karte mit Testdaten zur Überprüfung der grundlegenden Leaflet-Funktionalität
+
+3. **Data Loader-Funktionen**:
+   - Anzeige des Datenstatus (Daten im Store, Koordinaten im Store, JSON geladen)
+   - Auswahl verschiedener Pfade für die data.json-Datei
+   - Manueller JSON-Eingabebereich für direkte Dateneingabe
+   - Möglichkeit, Testpunkte hinzuzufügen (Standard-Koordinaten in Deutschland)
+   - Vergleich zwischen aktuellen Daten und geladenen Daten
+
+4. **Asset Test-Funktionen**:
+   - Tests für die Verfügbarkeit von data.json auf verschiedenen Pfaden
+   - Überprüfung der Netzwerkverbindung und des Asset-Ladens
+   - Detaillierte Konsole zur Anzeige von Testergebnissen
+
+5. **Debug-Datendisplay**:
+   - Zeigt zusammenfassende Informationen über die verfügbaren Daten an
+   - Anzahl der Benutzer, Unternehmen, Projekte und Meetups
+   - Anzeige eines Beispiel-Benutzerprofils mit allen Details und Koordinaten
 
 ## Datenmodell
 
@@ -288,16 +322,35 @@ Das integrierte Kartensystem basiert auf Leaflet.js und ermöglicht die Visualis
 
 4. **Interaktivität**: Klicks auf Marker öffnen Infopanels mit Details und Verknüpfungen zu den entsprechenden Nutzerprofilen.
 
+5. **Kartenfilterung**: Filter nach Markertyp und Suchfunktion für Namen und Beschreibungen.
+
+6. **Auto-Zentrierung**: Die Karte zentriert sich automatisch auf die vorhandenen Marker.
+
+7. **Debug-Werkzeuge**: Umfangreiche Debug-Tools für Entwicklung und Fehlerbehebung.
+
+### Technische Details der Kartenimplementierung
+
+- **Leaflet.js Integration**: Dynamisches Laden der Leaflet-Bibliothek zur Laufzeit
+- **Koordinatenvalidierung**: Automatische Überprüfung und Filterung ungültiger Koordinaten
+- **Marker-Icons**: Benutzerdefinierte Icons mit CSS für verschiedene Kategorien
+- **Datenextraktion**: Automatische Extraktion von Koordinaten aus verschiedenen Profilbereichen
+- **On-Demand-Rendering**: Marker werden nur für sichtbare Bereiche gerendert
+- **Fehlertoleranz**: Robuste Fehlerbehandlung für ungültige oder fehlende Daten
+
 ### Troubleshooting für die Karte
 
 Falls auf der Karte keine Marker angezeigt werden:
 
 1. **Debug-Modus aktivieren**: Checkbox "Debug-Modus aktivieren" über der Karte anklicken
 2. **Daten prüfen**: Im Debug-Panel wird angezeigt, ob die Nutzerdaten Koordinaten enthalten
-3. **Test-Karte**: Eine vereinfachte Test-Karte wird angezeigt, um die grundsätzliche Leaflet-Funktionalität zu prüfen
-4. **Daten neu laden**: Button "Load data.json directly" klicken, um die originalen Daten mit Koordinaten zu laden
-5. **Daten anwenden**: Button "Apply to Users" klicken, um die geladenen Daten auf die Anwendung anzuwenden
-6. **Testpunkte hinzufügen**: Button "Add Test Points" fügt einen Testnutzer mit validen Koordinaten hinzu
+3. **Datenstatus überprüfen**: Die drei Status-Indikatoren zeigen an, ob Daten vorhanden sind und Koordinaten enthalten
+4. **Test-Karte**: Eine vereinfachte Test-Karte wird angezeigt, um die grundsätzliche Leaflet-Funktionalität zu prüfen
+5. **Daten neu laden**: Button "Load data.json directly" klicken, um die originalen Daten mit Koordinaten zu laden
+6. **Verschiedene Pfade ausprobieren**: Der Data-Loader bietet verschiedene Pfad-Optionen für die data.json
+7. **Daten anwenden**: Button "Apply to Users" klicken, um die geladenen Daten auf die Anwendung anzuwenden
+8. **Testpunkte hinzufügen**: Button "Add Test Points" fügt einen Testnutzer mit validen Koordinaten hinzu
+9. **Konsole prüfen**: Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose
+10. **Asset-Verfügbarkeit testen**: Der Asset Test-Tab prüft die Erreichbarkeit der benötigten Ressourcen
 
 Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose.
 

@@ -253,7 +253,6 @@ export default {
 </script>
 
 <style scoped>
-/* Bootstrap Icons import removed - now in global.css */
 
 .profile-container {
   background-color: #fff;

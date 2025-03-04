@@ -25,7 +25,7 @@
             @keyup.enter="updateMap"
           >
           <button @click="updateMap" class="search-btn">
-            <i class="bi bi-search"></i>
+            <i class="fas fa-search"></i>
           </button>
         </div>
 
@@ -56,8 +56,10 @@
       </div>
     </div>
     
-    <!-- Map Container -->
-    <div id="map" ref="mapContainer"></div>
+    <!-- Map Container with Loading Indicator -->
+    <div id="map" ref="mapContainer">
+      <MapLoading v-if="loading" :message="loadingMessage" />
+    </div>
     
     <!-- Info Panel -->
     <div class="map-info-panel" :class="{ open: selectedPoint }">
@@ -93,7 +95,12 @@
 </template>
 
 <script>
+import MapLoading from './MapLoading.vue';
+
 export default {
+  components: {
+    MapLoading
+  },
   props: {
     users: {
       type: Array,
@@ -138,7 +145,9 @@ export default {
         "Unternehmen": "fas fa-briefcase", 
         "Projekt": "fas fa-folder",
         "Tisch": "fas fa-table"
-      }
+      },
+      loading: true,
+      loadingMessage: 'Initializing map...'
     };
   },
   computed: {
@@ -159,17 +168,21 @@ export default {
           hasTisch: this.users.filter(u => u.iconCategories?.tisch).length
         });
         
+        // Process users only if there are any
+        if (!this.users || this.users.length === 0) {
+          console.log('No users data available');
+          console.groupEnd();
+          return points;
+        }
+        
         // Process Home points
         if (this.filterType === 'all' || this.filterType === 'Home') {
-          console.log('Processing Home points');
           this.users.forEach(user => {
             try {
               if (user.iconCategories?.home?.coordinates) {
                 const coords = user.iconCategories.home.coordinates;
                 
-                // Validate coordinates
-                if (Array.isArray(coords) && coords.length === 2 && 
-                    typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+                if (this.validateCoordinates(coords)) {
                   points.push({
                     type: 'Home',
                     coordinates: coords,
@@ -190,8 +203,217 @@ export default {
           });
         }
         
-        // Process other points similarly...
-        // ... (existing code for processing other categories)
+        // Process Firma points
+        if (this.filterType === 'all' || this.filterType === 'Firma') {
+          this.users.forEach(user => {
+            try {
+              if (user.iconCategories?.firma?.coordinates) {
+                const coords = user.iconCategories.firma.coordinates;
+                
+                if (this.validateCoordinates(coords)) {
+                  points.push({
+                    type: 'Firma',
+                    coordinates: coords,
+                    icon: this.typeIcons.Firma,
+                    serviceRadius: 5, // 5km radius for companies
+                    info: {
+                      title: user.iconCategories.firma.name || `Firma: ${user.name}`,
+                      description: user.iconCategories.firma.description || ''
+                    },
+                    associatedUser: user
+                  });
+                } else {
+                  validationErrors.push(`Invalid firma coordinates for user ${user.name}: ${JSON.stringify(coords)}`);
+                }
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing firma for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Process Wirkungsbereich points
+        if (this.filterType === 'all' || this.filterType === 'Wirkungsbereich') {
+          this.users.forEach(user => {
+            try {
+              if (user.iconCategories?.wirkungsbereich && Array.isArray(user.iconCategories.wirkungsbereich)) {
+                user.iconCategories.wirkungsbereich.forEach((area, idx) => {
+                  if (area && this.validateCoordinates(area.coordinates)) {
+                    points.push({
+                      type: 'Wirkungsbereich',
+                      coordinates: area.coordinates,
+                      icon: this.typeIcons.Wirkungsbereich,
+                      info: {
+                        title: `${area.name || 'Wirkungsbereich'}: ${user.name}`,
+                        description: area.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing wirkungsbereich for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Process Unternehmen points
+        if (this.filterType === 'all' || this.filterType === 'Firma') {
+          this.users.forEach(user => {
+            try {
+              if (user.iconCategories?.unternehmen && Array.isArray(user.iconCategories.unternehmen)) {
+                user.iconCategories.unternehmen.forEach((company, idx) => {
+                  if (company && this.validateCoordinates(company.coordinates)) {
+                    points.push({
+                      type: 'Unternehmen',
+                      coordinates: company.coordinates,
+                      icon: this.typeIcons.Unternehmen,
+                      serviceRadius: 3, // 3km radius for unternehmen
+                      info: {
+                        title: company.name || `Unternehmen: ${user.name}`,
+                        description: company.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing unternehmen for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Process companies array (legacy format)
+        if (this.filterType === 'all' || this.filterType === 'Firma') {
+          this.users.forEach(user => {
+            try {
+              if (user.companies && Array.isArray(user.companies)) {
+                user.companies.forEach((company, idx) => {
+                  if (company && this.validateCoordinates(company.coordinates)) {
+                    points.push({
+                      type: 'Unternehmen',
+                      coordinates: company.coordinates,
+                      icon: this.typeIcons.Unternehmen,
+                      serviceRadius: 3,
+                      info: {
+                        title: company.name || `Unternehmen: ${user.name}`,
+                        description: company.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing companies for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Process Projekt points
+        if (this.filterType === 'all' || this.filterType === 'Projekt') {
+          this.users.forEach(user => {
+            try {
+              // Process from iconCategories.projekt
+              if (user.iconCategories?.projekt && Array.isArray(user.iconCategories.projekt)) {
+                user.iconCategories.projekt.forEach((project, idx) => {
+                  if (project && this.validateCoordinates(project.coordinates)) {
+                    points.push({
+                      type: 'Projekt',
+                      coordinates: project.coordinates,
+                      icon: this.typeIcons.Projekt,
+                      info: {
+                        title: project.name || `Projekt: ${user.name}`,
+                        description: project.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+              
+              // Process own projects with coordinates
+              if (user.ownProjects && Array.isArray(user.ownProjects)) {
+                user.ownProjects.forEach((project, idx) => {
+                  if (project && this.validateCoordinates(project.coordinates)) {
+                    points.push({
+                      type: 'Projekt',
+                      coordinates: project.coordinates,
+                      icon: this.typeIcons.Projekt,
+                      info: {
+                        title: project.name || `Eigenes Projekt: ${user.name}`,
+                        description: project.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+              
+              // Process contributed projects with coordinates
+              if (user.contributedProjects && Array.isArray(user.contributedProjects)) {
+                user.contributedProjects.forEach((project, idx) => {
+                  if (project && this.validateCoordinates(project.coordinates)) {
+                    points.push({
+                      type: 'Projekt',
+                      coordinates: project.coordinates,
+                      icon: this.typeIcons.Projekt,
+                      info: {
+                        title: project.name || `Mitgewirktes Projekt: ${user.name}`,
+                        description: project.description || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing projects for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Process Tisch points (meetups)
+        if (this.filterType === 'all' || this.filterType === 'Tisch') {
+          this.users.forEach(user => {
+            try {
+              if (user.iconCategories?.tisch && Array.isArray(user.iconCategories.tisch)) {
+                user.iconCategories.tisch.forEach((table, idx) => {
+                  if (table && this.validateCoordinates(table.coordinates)) {
+                    points.push({
+                      type: 'Tisch',
+                      coordinates: table.coordinates,
+                      icon: this.typeIcons.Tisch,
+                      info: {
+                        title: table.name || `Meetup: ${user.name}`,
+                        description: table.description || '',
+                        location: table.location || ''
+                      },
+                      associatedUser: user
+                    });
+                  }
+                });
+              }
+            } catch (err) {
+              processingErrors.push(`Error processing meetups for user ${user.name}: ${err.message}`);
+            }
+          });
+        }
+        
+        // Apply search text filter if present
+        if (this.searchText) {
+          const searchLower = this.searchText.toLowerCase();
+          const filteredPoints = points.filter(point => 
+            point.info.title.toLowerCase().includes(searchLower) || 
+            point.info.description.toLowerCase().includes(searchLower) ||
+            (point.associatedUser && point.associatedUser.name.toLowerCase().includes(searchLower))
+          );
+          console.log(`Filtered to ${filteredPoints.length} points matching search: "${this.searchText}"`);
+          console.groupEnd();
+          return filteredPoints;
+        }
         
       } catch (err) {
         console.error('❌ Error generating map points:', err);
@@ -200,12 +422,12 @@ export default {
       // Summary of processing
       console.log(`✅ Generated ${points.length} valid map points`);
       if (validationErrors.length > 0) {
-        console.warn(`❌ Validation errors: ${validationErrors.length}`);
-        console.warn(validationErrors.slice(0, 5)); // Show first 5 errors
+        console.warn(`❌ ${validationErrors.length} validation errors`);
+        console.warn(validationErrors.slice(0, 3));
       }
       if (processingErrors.length > 0) {
-        console.error(`❌ Processing errors: ${processingErrors.length}`);
-        console.error(processingErrors.slice(0, 5)); // Show first 5 errors
+        console.error(`❌ ${processingErrors.length} processing errors`);
+        console.error(processingErrors.slice(0, 3));
       }
       
       console.groupEnd();
@@ -241,6 +463,16 @@ export default {
     this.initMap();
   },
   methods: {
+    // Helper method to validate coordinates
+    validateCoordinates(coords) {
+      return Array.isArray(coords) && 
+             coords.length === 2 && 
+             typeof coords[0] === 'number' && 
+             typeof coords[1] === 'number' &&
+             !isNaN(coords[0]) && 
+             !isNaN(coords[1]);
+    },
+    
     initMap() {
       console.group('🗺️ Initializing Map');
       console.log('Starting map initialization');
@@ -346,19 +578,19 @@ export default {
         tileLayer.addTo(this.map);
         console.log('✅ Tile layer added to map');
         
-        // Add a test marker
-        const testMarker = L.marker(centerCoords);
-        testMarker.addTo(this.map);
-        console.log('✅ Test marker added at coordinates:', centerCoords);
+        this.loadingMessage = 'Loading map data...';
         
-        // Update the map with points
+        // Update the map immediately 
+        this.updateMap();
+        
+        // Hide loading state after map is ready
         setTimeout(() => {
-          console.log('Updating map with data points');
-          this.updateMap();
-        }, 500);
+          this.loading = false;
+        }, 1000);
         
       } catch (err) {
         console.error('❌ Error creating map:', err);
+        this.loadingMessage = 'Error loading map. Please try again.';
       }
       
       console.groupEnd();
@@ -472,14 +704,13 @@ export default {
         if (this.mapPoints.length > 0) {
           this.centerMap();
         }
+        
       } catch (err) {
         console.error('❌ Error updating map:', err);
       }
       
       console.groupEnd();
     },
-    
-    // ... other methods stay the same
     
     createServiceArea(point, index) {
       if (!point.serviceRadius) return;
@@ -574,4 +805,17 @@ export default {
 
 <style scoped>
 @import url("/styles/map-marker-scop.css");
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 1200px; /* Explicit height needed for map to render */
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
 </style>

@@ -711,8 +711,6 @@ export default {
 </script>
 
 <style scoped>
-/* Move the Bootstrap Icons import to the top */
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
 
 .profile-form-container {
   max-width: 800px;

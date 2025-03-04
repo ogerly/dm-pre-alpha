@@ -13,18 +13,50 @@
       </label>
     </div>
     
-    <!-- DataLoader -->
-    <div v-if="showDebug" class="data-loader-container">
-      <DataLoader 
-        :users="users" 
-        @update-users="updateUsers" 
-        @add-test-users="addTestUsers"
-      />
-    </div>
-    
-    <!-- Test map if debug is enabled -->
-    <div v-if="showDebug" class="test-map-container">
-      <TestMap />
+    <!-- Debug section with expanded tools -->
+    <div v-if="showDebug" class="debug-section">
+      <div class="debug-tabs">
+        <button 
+          @click="activeDebugTab = 'data-loader'"
+          :class="{ active: activeDebugTab === 'data-loader' }"
+          class="debug-tab"
+        >
+          Data Loader
+        </button>
+        <button 
+          @click="activeDebugTab = 'asset-test'"
+          :class="{ active: activeDebugTab === 'asset-test' }"
+          class="debug-tab"
+        >
+          Asset Test
+        </button>
+        <button 
+          @click="activeDebugTab = 'test-map'"
+          :class="{ active: activeDebugTab === 'test-map' }"
+          class="debug-tab"
+        >
+          Test Map
+        </button>
+      </div>
+      
+      <!-- DataLoader -->
+      <div v-if="activeDebugTab === 'data-loader'" class="debug-tab-content">
+        <DataLoader 
+          :users="users" 
+          @update-users="updateUsers" 
+          @add-test-users="addTestUsers"
+        />
+      </div>
+      
+      <!-- Asset Test -->
+      <div v-if="activeDebugTab === 'asset-test'" class="debug-tab-content">
+        <AssetTest />
+      </div>
+      
+      <!-- Test Map -->
+      <div v-if="activeDebugTab === 'test-map'" class="debug-tab-content">
+        <TestMap />
+      </div>
     </div>
     
     <!-- Regular map -->
@@ -68,13 +100,16 @@ import MapView from './MapView.vue';
 import UserProfile from '../UserProfile.vue';
 import TestMap from '../debug/TestMap.vue';
 import DataLoader from '../debug/DataLoader.vue';
+import AssetTest from '../debug/AssetTest.vue'; 
+import { resetToInitialData } from '../../services/StorageService.js'; // Import the new function
 
 export default {
   components: {
     MapView,
     UserProfile,
     TestMap,
-    DataLoader
+    DataLoader,
+    AssetTest // Register the new component
   },
   props: {
     users: {
@@ -98,8 +133,28 @@ export default {
     return {
       userProfile: null,
       showDebug: true, // Enable debug by default
-      localUsers: null // Local override for user data
+      localUsers: null, // Local override for user data
+      activeDebugTab: 'data-loader', // Add this new property for debugging tabs
+      dataLoaded: false // Track if data was loaded
     };
+  },
+  watch: {
+    // Watch users prop to detect if it contains coordinates
+    users: {
+      immediate: true,
+      handler(newUsers) {
+        if (this.dataLoaded) return; // Skip if we've already loaded data
+        
+        const hasCoordinates = this.checkForCoordinates(newUsers);
+        if (!hasCoordinates && newUsers && newUsers.length > 0) {
+          console.log('Users data does not contain coordinates. Auto-loading initial data.');
+          this.autoLoadInitialData();
+        } else if (hasCoordinates) {
+          console.log('Users data contains coordinates. Using existing data.');
+          this.dataLoaded = true;
+        }
+      }
+    }
   },
   methods: {
     selectUser(user) {
@@ -116,6 +171,39 @@ export default {
         this.localUsers = [...this.users];
       }
       this.localUsers = [...this.localUsers, ...testUsers];
+    },
+    // Check if users data has coordinates
+    checkForCoordinates(users) {
+      if (!users || users.length === 0) return false;
+      
+      // Check if at least one user has coordinates in any field
+      return users.some(user => {
+        // Check home coordinates
+        if (user.iconCategories?.home?.coordinates) return true;
+        
+        // Check firma coordinates
+        if (user.iconCategories?.firma?.coordinates) return true;
+        
+        // Check projekt coordinates
+        if (user.iconCategories?.projekt && Array.isArray(user.iconCategories.projekt)) {
+          if (user.iconCategories.projekt.some(p => p.coordinates)) return true;
+        }
+        
+        // Check other coordinates
+        if (user.ownProjects && user.ownProjects.some(p => p.coordinates)) return true;
+        if (user.contributedProjects && user.contributedProjects.some(p => p.coordinates)) return true;
+        
+        return false;
+      });
+    },
+    
+    // Auto-load initial data from data.json
+    autoLoadInitialData() {
+      console.log('Auto-loading initial data from data.json');
+      const initialData = resetToInitialData();
+      this.localUsers = initialData;
+      this.$emit('update-users', initialData);
+      this.dataLoaded = true;
     }
   },
   mounted() {
@@ -224,5 +312,40 @@ export default {
   font-size: 12px;
   max-height: 300px;
   overflow: auto;
+}
+
+/* Add these new styles for the debug tabs */
+.debug-section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+}
+
+.debug-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.debug-tab {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.debug-tab.active {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.debug-tab-content {
+  padding-top: 10px;
 }
 </style>

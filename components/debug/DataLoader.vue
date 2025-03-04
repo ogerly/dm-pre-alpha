@@ -22,6 +22,36 @@
       </div>
     </div>
     
+    <!-- Path selection for data loading -->
+    <div class="path-selection">
+      <h4>Data Path</h4>
+      <div class="radio-group">
+        <div>
+          <input type="radio" id="path1" value="/data.json" v-model="dataPath">
+          <label for="path1">/data.json (root)</label>
+        </div>
+        <div>
+          <input type="radio" id="path2" value="./data.json" v-model="dataPath">
+          <label for="path2">./data.json (relative)</label>
+        </div>
+        <div>
+          <input type="radio" id="path3" value="../data.json" v-model="dataPath">
+          <label for="path3">../data.json (one level up)</label>
+        </div>
+        <div>
+          <input type="radio" id="path4" v-model="dataPath" value="custom">
+          <label for="path4">Custom:</label>
+          <input 
+            type="text" 
+            v-model="customPath" 
+            placeholder="Enter custom path" 
+            :disabled="dataPath !== 'custom'"
+            class="custom-path-input"
+          >
+        </div>
+      </div>
+    </div>
+    
     <div class="action-panel">
       <button @click="loadDataJson" class="action-btn primary">
         <i class="fas fa-download"></i> Load data.json directly
@@ -31,6 +61,21 @@
       </button>
       <button @click="addTestPoints" class="action-btn">
         <i class="fas fa-map-pin"></i> Add Test Points
+      </button>
+    </div>
+    
+    <!-- Manual data input option -->
+    <div class="manual-data-entry">
+      <h4>Manual Data Input</h4>
+      <p>If data.json cannot be loaded, paste the JSON content here:</p>
+      <textarea 
+        v-model="manualJsonInput" 
+        placeholder="Paste JSON data here..." 
+        rows="5"
+        class="json-textarea"
+      ></textarea>
+      <button @click="loadManualJson" class="action-btn">
+        <i class="fas fa-file-import"></i> Parse Manual JSON
       </button>
     </div>
     
@@ -48,7 +93,7 @@
       </div>
     </div>
     
-    <div class="load-status" v-if="loadStatus">
+    <div class="load-status" :class="{ error: loadError, success: !loadError && loadStatus }">
       <p>{{ loadStatus }}</p>
     </div>
   </div>
@@ -67,7 +112,11 @@ export default {
       loadedData: null,
       hasDataLoaded: false,
       loadStatus: '',
-      showComparison: false
+      loadError: false,
+      showComparison: false,
+      dataPath: '/data.json',
+      customPath: '',
+      manualJsonInput: ''
     };
   },
   computed: {
@@ -101,45 +150,99 @@ export default {
     },
     firstJsonUser() {
       return this.loadedData && this.loadedData.length > 0 ? this.loadedData[0] : null;
+    },
+    effectiveDataPath() {
+      return this.dataPath === 'custom' ? this.customPath : this.dataPath;
     }
   },
   methods: {
     async loadDataJson() {
-      this.loadStatus = 'Loading data.json...';
+      this.loadStatus = `Loading data from ${this.effectiveDataPath}...`;
+      this.loadError = false;
+      
       try {
-        const response = await fetch('/data.json');
+        console.log(`Attempting to fetch data from: ${this.effectiveDataPath}`);
+        const response = await fetch(this.effectiveDataPath);
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        this.loadedData = await response.json();
-        this.hasDataLoaded = true;
-        this.showComparison = true;
-        this.loadStatus = `Successfully loaded ${this.loadedData.length} users from data.json`;
-        
-        // Log for debugging
-        console.log('Loaded data.json:', this.loadedData);
-        if (this.loadedData.length > 0) {
-          console.log('First user coordinates check:', {
-            home: this.loadedData[0].iconCategories?.home?.coordinates,
-            firma: this.loadedData[0].iconCategories?.firma?.coordinates,
-            projekt: this.loadedData[0].iconCategories?.projekt?.map(p => p.coordinates)
-          });
+        const data = await response.json();
+        this.processLoadedData(data);
+      } catch (error) {
+        this.loadError = true;
+        this.loadStatus = `Error loading data: ${error.message}. Try a different path or manual input.`;
+        console.error('Error loading data.json:', error);
+      }
+    },
+    
+    loadManualJson() {
+      this.loadError = false;
+      this.loadStatus = 'Processing manual JSON input...';
+      
+      try {
+        if (!this.manualJsonInput.trim()) {
+          throw new Error('No JSON input provided');
         }
         
+        const data = JSON.parse(this.manualJsonInput);
+        this.processLoadedData(data);
       } catch (error) {
-        this.loadStatus = `Error loading data.json: ${error.message}`;
-        console.error('Error loading data.json:', error);
+        this.loadError = true;
+        this.loadStatus = `Error parsing manual JSON: ${error.message}`;
+        console.error('Error parsing manual JSON:', error);
+      }
+    },
+    
+    processLoadedData(data) {
+      // Validate data structure
+      if (!Array.isArray(data)) {
+        this.loadError = true;
+        this.loadStatus = 'Error: Data is not an array';
+        return;
+      }
+      
+      if (data.length === 0) {
+        this.loadError = true;
+        this.loadStatus = 'Warning: Data array is empty';
+        return;
+      }
+      
+      // Check for required fields in the first item
+      const firstItem = data[0];
+      if (!firstItem.id || !firstItem.name) {
+        this.loadError = true;
+        this.loadStatus = 'Error: Data items missing required fields (id, name)';
+        return;
+      }
+      
+      // Success - store the data
+      this.loadedData = data;
+      this.hasDataLoaded = true;
+      this.showComparison = true;
+      this.loadStatus = `Successfully loaded ${data.length} users`;
+      
+      // Log for debugging
+      console.log('Loaded data:', data);
+      if (data.length > 0) {
+        console.log('First user coordinates check:', {
+          home: data[0].iconCategories?.home?.coordinates,
+          firma: data[0].iconCategories?.firma?.coordinates,
+          projekt: data[0].iconCategories?.projekt?.map(p => p.coordinates)
+        });
       }
     },
     
     applyDataToUsers() {
       if (!this.loadedData || this.loadedData.length === 0) {
+        this.loadError = true;
         this.loadStatus = 'No data to apply!';
         return;
       }
       
       this.loadStatus = 'Applying data to users...';
+      this.loadError = false;
       
       // Emit event to parent component to update users
       this.$emit('update-users', this.loadedData);
@@ -311,5 +414,53 @@ export default {
   border-radius: 6px;
   font-size: 14px;
   color: #0369a1;
+}
+
+.path-selection {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f0f9ff;
+  border-radius: 6px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.custom-path-input {
+  margin-left: 8px;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.manual-data-entry {
+  margin: 16px 0;
+  padding: 12px;
+  background-color: #f0f9ff;
+  border-radius: 6px;
+}
+
+.json-textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.load-status.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.load-status.success {
+  background-color: #dcfce7;
+  color: #166534;
 }
 </style>
