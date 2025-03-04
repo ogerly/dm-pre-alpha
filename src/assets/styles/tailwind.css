@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component classes can be defined here */
+@layer components {
+  .btn {
+    @apply py-2 px-4 rounded cursor-pointer font-medium transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-indigo-600;
+  }
+  
+  .btn-secondary {
+    @apply bg-light-bg border border-border-color text-dark-text hover:bg-gray-100;
+  }
+  
+  .card {
+    @apply bg-white p-4 rounded-lg shadow-custom;
+  }
+  
+  .form-input {
+    @apply w-full p-2 border border-border-color rounded-md;
+  }
+}

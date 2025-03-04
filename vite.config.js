@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './')
+      '@': path.resolve(__dirname, './src')
     }
   },
   server: {
@@ -33,7 +33,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       css: {
-        additionalData: '@import "./styles/global.css";'
+        additionalData: '@import "./src/assets/styles/global.css";'
       }
     }
   },

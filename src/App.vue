@@ -145,13 +145,13 @@
 </template>
 
 <script>
-import UserList from './components/UserList.vue';
-import UserProfile from './components/UserProfile.vue';
-import MatchingResults from './components/MatchingResults.vue';
-import UserProfileForm from './components/UserProfileForm.vue';
-import ChatContainer from './components/chat/ChatContainer.vue';
-import MapPage from './components/map/MapPage.vue';
-import { findTopMatches } from './services/MatchingService.js';
+import UserList from '@/components/UserList.vue';
+import UserProfile from '@/components/UserProfile.vue';
+import MatchingResults from '@/components/MatchingResults.vue';
+import UserProfileForm from '@/components/UserProfileForm.vue';
+import ChatContainer from '@/components/chat/ChatContainer.vue';
+import MapPage from '@/components/map/MapPage.vue';
+import { findTopMatches } from '@/services/MatchingService.js';
 import { 
   initializeStorage, 
   getAllProfiles, 
@@ -160,7 +160,7 @@ import {
   exportProfiles,
   importProfiles,
   updateAllProfiles  // Add this function to your StorageService if it doesn't exist
-} from './services/StorageService.js';
+} from '@/services/StorageService.js';
 
 export default {
   components: { 

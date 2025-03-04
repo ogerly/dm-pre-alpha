@@ -804,7 +804,7 @@ export default {
 </script>
 
 <style scoped>
-@import url("/styles/map-marker-scop.css");
+@import url("@/assets/styles/map-marker-scop.css");
 
 .map-container {
   position: relative;

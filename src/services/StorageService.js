@@ -2,7 +2,7 @@
  * Service for managing profile data storage and persistence
  */
 
-import initialData from '../data.json';
+import initialData from '@/assets/data.json';
 
 const STORAGE_KEY = 'dreammall_profiles';
 
