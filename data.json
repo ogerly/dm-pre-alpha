@@ -1,0 +1,170 @@
+[
+    {
+        "id": 1,
+        "name": "Max Mustermann",
+        "bio": "Kreativer Kopf mit Leidenschaft für Technologie und nachhaltige Lösungen. Immer auf der Suche nach spannenden Projekten und Gleichgesinnten.",
+        "iconCategories": {
+            "home": {
+                "address": "München, Deutschland",
+                "description": "Remote und lokale Arbeit möglich"
+            },
+            "firma": {
+                "name": "EcoTech Solutions",
+                "role": "Gründer",
+                "year": "2023",
+                "description": "Beratung für nachhaltige Technologien"
+            },
+            "wirkungsbereich": [
+                "München", "Berlin", "Remote (Europa)"
+            ],
+            "unternehmen": [
+                {
+                    "name": "EcoTech Solutions",
+                    "role": "Gründer",
+                    "year": "2023",
+                    "description": "Beratung für nachhaltige Technologien"
+                },
+                {
+                    "name": "TechCorp",
+                    "role": "Junior Developer",
+                    "period": "2020-2022",
+                    "description": "Entwicklung von Web-Anwendungen"
+                }
+            ],
+            "projekt": [
+                {
+                    "name": "EcoApp",
+                    "description": "Mobile App zur Müllreduktion",
+                    "year": "2022",
+                    "note": "Allein entwickelt"
+                },
+                {
+                    "name": "SolarDIY",
+                    "description": "Anleitung für selbstgebaute Solarpanels",
+                    "year": "2023",
+                    "note": "Open Source"
+                },
+                {
+                    "name": "GreenCity",
+                    "role": "Backend-Entwickler",
+                    "description": "Städtisches Nachhaltigkeitsprojekt",
+                    "year": "2021"
+                }
+            ],
+            "tisch": [
+                {
+                    "name": "Nachhaltigkeits-Meetup",
+                    "description": "Monatliches Treffen zum Austausch über nachhaltige Technologien",
+                    "location": "Online und in München"
+                }
+            ]
+        },
+        "skills": ["Python", "JavaScript", "Projektmanagement", "Design Thinking", "Vue.js"],
+        "interests": ["Technologie", "Nachhaltigkeit", "DIY-Projekte", "Netzwerken"],
+        "goals": "Ich möchte nachhaltige Softwarelösungen entwickeln.",
+        "education": [
+            {
+                "period": "2015-2019",
+                "title": "B.Sc. Informatik",
+                "institution": "TU München"
+            }
+        ],
+        "experience": [
+            {
+                "period": "2020-2022",
+                "role": "Junior Developer",
+                "company": "TechCorp"
+            },
+            {
+                "period": "2023",
+                "role": "Selbstständig",
+                "company": "Freelancer"
+            }
+        ],
+        "ownProjects": [
+            {
+                "name": "EcoApp",
+                "description": "Mobile App zur Müllreduktion",
+                "year": "2022",
+                "note": "Allein entwickelt"
+            },
+            {
+                "name": "SolarDIY",
+                "description": "Anleitung für selbstgebaute Solarpanels",
+                "year": "2023",
+                "note": "Open Source"
+            }
+        ],
+        "contributedProjects": [
+            {
+                "name": "GreenCity",
+                "role": "Backend-Entwickler",
+                "description": "Städtisches Nachhaltigkeitsprojekt",
+                "year": "2021"
+            }
+        ],
+        "companies": [
+            {
+                "name": "EcoTech Solutions",
+                "role": "Gründer",
+                "year": "2023",
+                "description": "Beratung für nachhaltige Technologien"
+            }
+        ],
+        "services": ["Softwareentwicklung", "Beratung für nachhaltige Projekte"],
+        "dreammallGoals": "Ich möchte Leute finden, die meine Vision von nachhaltiger Technologie teilen, und gemeinsam Projekte umsetzen.",
+        "collaborationPreferences": "Offen für Teamarbeit, besonders mit Designern und Hardware-Experten. Bevorzuge remote Zusammenarbeit mit klaren Zielen.",
+        "leadershipPhilosophy": "Weniger Hierarchie, mehr Fokus auf Eigenverantwortung und Kreativität.",
+        "educationOpinion": "Es ist zu theorielastig. Praxis und Problemlösung sollten stärker im Vordergrund stehen.",
+        "valueOrientation": "Prototypen. Ein funktionierendes Ergebnis sagt mehr aus als ein Stück Papier."
+    },
+    {
+        "id": 2,
+        "name": "Lisa Beispiel",
+        "bio": "Designerin mit Leidenschaft für UX/UI.",
+        "iconCategories": {
+            "home": {
+                "address": "Berlin, Deutschland",
+                "description": "Bevorzugt Remote-Arbeit"
+            },
+            "projekt": [
+                {
+                    "name": "Barrierefreies Design",
+                    "description": "UI Bibliothek für barrierefreie Web-Anwendungen",
+                    "year": "2023",
+                    "note": "Open Source Projekt"
+                }
+            ],
+            "wirkungsbereich": [
+                "Berlin", "Remote (Deutschland)"
+            ]
+        },
+        "skills": ["Figma", "Adobe XD", "CSS"],
+        "interests": ["Kreatives Design", "Barrierefreiheit"],
+        "goals": "Ich suche Entwickler für gemeinsame Projekte."
+    },
+    {
+        "id": 3,
+        "name": "Thomas Schmidt",
+        "bio": "Backend-Entwickler und Datenbank-Experte.",
+        "skills": ["Node.js", "MongoDB", "Python"],
+        "interests": ["Technologie", "Big Data", "Machine Learning"],
+        "goals": "Ich suche nach spannenden Projekten im Bereich KI und Datenanalyse."
+    },
+    {
+        "id": 4,
+        "name": "Julia Meier",
+        "bio": "Projektmanagerin mit agilen Methoden.",
+        "skills": ["Scrum", "Kanban", "Teamleitung"],
+        "interests": ["Nachhaltigkeit", "Agile Entwicklung"],
+        "goals": "Ich möchte nachhaltige Projekte mit agilen Teams umsetzen."
+    },
+    {
+        "id": 5,
+        "name": "Markus Weber",
+        "bio": "Hardware-Entwickler mit Fokus auf IoT.",
+        "skills": ["Arduino", "Raspberry Pi", "Elektronik"],
+        "interests": ["Technologie", "DIY", "Smart Home"],
+        "goals": "Ich suche nach Softwareentwicklern für IoT-Projekte."
+    }
+]
