@@ -407,7 +407,6 @@ export default {
 </script>
 
 <style>
-/* Bootstrap Icons import removed - now in global.css */
 
 .container {
   text-align: center;
