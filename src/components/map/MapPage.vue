@@ -97,11 +97,11 @@
 
 <script>
 import MapView from './MapView.vue';
-import UserProfile from '../UserProfile.vue';
-import TestMap from '../debug/TestMap.vue';
-import DataLoader from '../debug/DataLoader.vue';
-import AssetTest from '../debug/AssetTest.vue'; 
-import { resetToInitialData } from '../../services/StorageService.js'; // Import the new function
+import UserProfile from '@/components/user/UserProfile.vue';
+import TestMap from '@/components/debug/TestMap.vue';
+import DataLoader from '@/components/debug/DataLoader.vue';
+import AssetTest from '@/components/debug/AssetTest.vue'; 
+import { resetToInitialData } from '@/services/StorageService.js'; // Import the new function
 
 export default {
   components: {
