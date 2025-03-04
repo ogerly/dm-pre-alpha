@@ -3,9 +3,27 @@
     <header>
       <h1>DreamMall Matching Prototyp</h1>
       <p>Finde Gleichgesinnte basierend auf Interessen und Fähigkeiten.</p>
+      
+      <div class="nav-tabs">
+        <button 
+          @click="activeTab = 'matching'" 
+          :class="{ active: activeTab === 'matching' }"
+          class="tab-btn"
+        >
+          <i class="bi bi-people"></i> Matching
+        </button>
+        <button 
+          @click="activeTab = 'map'" 
+          :class="{ active: activeTab === 'map' }"
+          class="tab-btn"
+        >
+          <i class="bi bi-map"></i> Karte
+        </button>
+      </div>
     </header>
     
-    <div class="app-actions" v-if="!selectedUser && !editingUser && !creatingUser">
+    <!-- App actions -->
+    <div class="app-actions" v-if="activeTab === 'matching' && !selectedUser && !editingUser && !creatingUser">
       <button @click="creatingUser = true" class="primary-btn">
         <span class="icon">+</span> Neues Profil erstellen
       </button>
@@ -31,7 +49,7 @@
       </button>
     </div>
     
-    <!-- Chat interface - improved positioning and visibility -->
+    <!-- Chat interface -->
     <div v-if="isLoggedIn && showChat" class="chat-interface">
       <ChatContainer 
         :currentUserId="currentUserId"
@@ -41,70 +59,83 @@
       />
     </div>
     
-    <div v-if="selectedUser" class="main-content">
-      <UserProfile 
-        :user="selectedUser" 
-        @close="closeProfile"
+    <!-- Map View -->
+    <div v-if="activeTab === 'map'" class="main-content">
+      <MapPage 
+        :users="users" 
+        :companies="[]" 
+        :projects="[]" 
+        :tables="[]"
       />
-      <div class="profile-actions">
-        <button @click="startEditing(selectedUser)" class="edit-btn">
-          <span class="icon">✏️</span> Profil bearbeiten
-        </button>
+    </div>
+    
+    <!-- Matching View -->
+    <div v-else>
+      <div v-if="selectedUser" class="main-content">
+        <UserProfile 
+          :user="selectedUser" 
+          @close="closeProfile"
+        />
+        <div class="profile-actions">
+          <button @click="startEditing(selectedUser)" class="edit-btn">
+            <span class="icon">✏️</span> Profil bearbeiten
+          </button>
+        </div>
       </div>
-    </div>
-    
-    <div v-else-if="editingUser || creatingUser" class="main-content">
-      <UserProfileForm
-        :user="editingUser"
-        :editMode="!!editingUser"
-        @save="saveProfile"
-        @cancel="cancelEditing"
-      />
-    </div>
-    
-    <div v-else class="main-content">
-      <div class="search-container">
-        <input 
-          type="text" 
-          v-model="searchTerm" 
-          placeholder="Nach Namen, Fähigkeiten oder Interessen suchen..." 
-          class="search-input"
+      
+      <div v-else-if="editingUser || creatingUser" class="main-content">
+        <UserProfileForm
+          :user="editingUser"
+          :editMode="!!editingUser"
+          @save="saveProfile"
+          @cancel="cancelEditing"
         />
       </div>
       
-      <div class="columns">
-        <div class="user-list-column">
-          <UserList 
-            :users="filteredUsers" 
-            :selectedUserId="userForMatching?.id"
-            @select-user="selectUser"
-            @select-for-matching="selectForMatching"
-            @edit-user="startEditing"
-            @delete-user="deleteUser"
+      <div v-else class="main-content">
+        <div class="search-container">
+          <input 
+            type="text" 
+            v-model="searchTerm" 
+            placeholder="Nach Namen, Fähigkeiten oder Interessen suchen..." 
+            class="search-input"
           />
         </div>
         
-        <div class="matching-column">
-          <div v-if="userForMatching" class="selected-for-matching">
-            <h3>Matching für: {{ userForMatching.name }}</h3>
-            <button @click="userForMatching = null" class="clear-btn">Auswahl aufheben</button>
+        <div class="columns">
+          <div class="user-list-column">
+            <UserList 
+              :users="filteredUsers" 
+              :selectedUserId="userForMatching?.id"
+              @select-user="selectUser"
+              @select-for-matching="selectForMatching"
+              @edit-user="startEditing"
+              @delete-user="deleteUser"
+            />
           </div>
           
-          <MatchingResults 
-            :matches="matchResults" 
-            @view-profile="selectUser"
-          />
-          
-          <!-- Add chat button to match results -->
-          <div v-if="matchResults.length > 0" class="match-actions">
-            <button 
-              v-for="match in matchResults" 
-              :key="match.id"
-              @click="startChatWith(match)"
-              class="start-chat-btn"
-            >
-              <span class="icon">💬</span> Mit {{ match.name }} chatten
-            </button>
+          <div class="matching-column">
+            <div v-if="userForMatching" class="selected-for-matching">
+              <h3>Matching für: {{ userForMatching.name }}</h3>
+              <button @click="userForMatching = null" class="clear-btn">Auswahl aufheben</button>
+            </div>
+            
+            <MatchingResults 
+              :matches="matchResults" 
+              @view-profile="selectUser"
+            />
+            
+            <!-- Add chat button to match results -->
+            <div v-if="matchResults.length > 0" class="match-actions">
+              <button 
+                v-for="match in matchResults" 
+                :key="match.id"
+                @click="startChatWith(match)"
+                class="start-chat-btn"
+              >
+                <span class="icon">💬</span> Mit {{ match.name }} chatten
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -118,6 +149,7 @@ import UserProfile from './components/UserProfile.vue';
 import MatchingResults from './components/MatchingResults.vue';
 import UserProfileForm from './components/UserProfileForm.vue';
 import ChatContainer from './components/chat/ChatContainer.vue';
+import MapPage from './components/map/MapPage.vue';
 import { findTopMatches } from './services/MatchingService.js';
 import { 
   initializeStorage, 
@@ -134,7 +166,8 @@ export default {
     UserProfile,
     MatchingResults,
     UserProfileForm,
-    ChatContainer
+    ChatContainer,
+    MapPage
   },
   data() {
     return {
@@ -145,10 +178,11 @@ export default {
       creatingUser: false,
       searchTerm: '',
       matchResults: [],
-      isLoggedIn: true, // For demo purposes - in real app would check authentication
-      currentUserId: 1, // For demo purposes - in real app would be the logged in user's ID
+      isLoggedIn: true, // For demo purposes
+      currentUserId: 1, // For demo purposes
       showChat: false,
-      chatWithUserId: null
+      chatWithUserId: null,
+      activeTab: 'matching' // Default tab
     };
   },
   created() {
@@ -222,14 +256,12 @@ export default {
       }
     },
     startChatWith(user) {
-      // Reset and then set to trigger watcher in ChatContainer
       this.chatWithUserId = null;
       this.$nextTick(() => {
         this.chatWithUserId = user.id;
         this.showChat = true;
       });
     },
-    // Add a method to close the chat
     closeChat() {
       this.showChat = false;
       this.chatWithUserId = null;
@@ -239,6 +271,8 @@ export default {
 </script>
 
 <style>
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css");
+
 .container {
   text-align: center;
   font-family: Arial, sans-serif;
@@ -248,7 +282,39 @@ export default {
 }
 
 .main-content {
-  margin-top: 30px;
+  margin-top: 20px;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.tab-btn.active {
+  background-color: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
 }
 
 .search-container {
@@ -294,12 +360,12 @@ export default {
   }
 }
 
-/* Fix chat interface positioning and size */
+/* Chat interface positioning and size */
 .chat-interface {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 680px; /* Make wider to show both chat list and active chat */
+  width: 680px; /* Wide enough to show both chat list and active chat */
   height: 500px;
   background-color: #fff;
   border-radius: 8px;
@@ -346,5 +412,53 @@ export default {
 
 .icon {
   font-size: 1.2em;
+}
+
+.app-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primary-btn, .secondary-btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.primary-btn {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+}
+
+.secondary-btn {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.edit-btn {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 20px auto;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: center;
 }
 </style>
