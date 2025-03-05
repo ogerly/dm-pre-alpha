@@ -1,31 +1,8 @@
 <template>
-  <div class="not-found">
-    <div class="max-w-lg mx-auto my-12 p-8 bg-white rounded-lg shadow-md text-center">
-      <div class="error-code text-9xl font-bold text-primary mb-6">404</div>
-      
-      <h1 class="text-3xl font-bold mb-4">Seite nicht gefunden</h1>
-      
-      <p class="text-gray-600 mb-8">
-        Die von Ihnen angeforderte Seite konnte nicht gefunden werden. 
-        Möglicherweise wurde sie verschoben, umbenannt oder existiert nicht mehr.
-      </p>
-      
-      <div class="flex justify-center space-x-4">
-        <button 
-          @click="goBack" 
-          class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors"
-        >
-          <i class="fas fa-arrow-left mr-2"></i> Zurück
-        </button>
-        
-        <button 
-          @click="goHome" 
-          class="px-6 py-2 bg-primary text-white hover:bg-indigo-700 rounded transition-colors"
-        >
-          <i class="fas fa-home mr-2"></i> Startseite
-        </button>
-      </div>
-    </div>
+  <div class="container mx-auto p-4 text-center">
+    <h1 class="text-4xl font-bold mb-4">404</h1>
+    <p class="text-xl mb-4">Page not found</p>
+    <router-link to="/" class="text-blue-500 hover:underline">Return to Home</router-link>
   </div>
 </template>
 

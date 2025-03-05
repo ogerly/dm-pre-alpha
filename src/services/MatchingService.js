@@ -152,20 +152,69 @@ function calculateProjectSimilarity(projects1, projects2) {
 }
 
 /**
- * Get top matches for a user
- * @param {Object} targetUser - User to find matches for
- * @param {Array} allUsers - All available users
- * @param {number} limit - Maximum number of matches to return
- * @return {Array} - Array of users with match scores
+ * Calculate how much two arrays overlap (as a percentage)
+ * @param {Array} userItems - First array of items
+ * @param {Array} candidateItems - Second array of items
+ * @return {number} - Overlap score as a percentage
  */
-export function findTopMatches(targetUser, allUsers, limit = 5) {
-  const matches = allUsers
-    .filter(user => user.id !== targetUser.id)
-    .map(user => ({
-      ...user,
-      matchResult: calculateMatchScore(targetUser, user)
-    }))
-    .sort((a, b) => b.matchResult.score - a.matchResult.score);
+function calculateOverlapScore(userItems, candidateItems) {
+  if (!userItems.length || !candidateItems.length) {
+    return 0
+  }
   
-  return matches.slice(0, limit);
+  // Count matches
+  let matchCount = 0
+  userItems.forEach(item => {
+    if (candidateItems.some(c => c.toLowerCase() === item.toLowerCase())) {
+      matchCount++
+    }
+  })
+  
+  // Calculate score as percentage of user's items that matched
+  return (matchCount / userItems.length) * 100
+}
+
+/**
+ * Find the best matching profiles for a given user
+ * @param {Object} user - The user to find matches for
+ * @param {Array} allUsers - All available user profiles
+ * @param {number} topN - Number of top matches to return
+ * @returns {Array} Sorted array of matching profiles with scores
+ */
+export function findTopMatches(user, allUsers, topN = 10) {
+  if (!user || !allUsers || !Array.isArray(allUsers)) {
+    return []
+  }
+  
+  // Don't match with self
+  const otherUsers = allUsers.filter(u => u.id !== user.id)
+  
+  const scoredMatches = otherUsers.map(candidate => {
+    // Get detailed match information using calculateMatchScore
+    const matchResult = calculateMatchScore(user, candidate)
+    
+    // Also calculate simple overlap scores for skills and interests
+    const userSkills = user.skills || []
+    const userInterests = user.interests || []
+    const candidateSkills = candidate.skills || []
+    const candidateInterests = candidate.interests || []
+    
+    const skillScore = calculateOverlapScore(userSkills, candidateSkills)
+    const interestScore = calculateOverlapScore(userInterests, candidateInterests)
+    
+    return {
+      user: candidate,
+      score: matchResult.percentage, // Use the percentage from the detailed calculation
+      details: {
+        ...matchResult.matchDetails,
+        skillOverlap: skillScore.toFixed(1) + '%',
+        interestOverlap: interestScore.toFixed(1) + '%'
+      }
+    }
+  })
+  
+  // Sort by score (highest first) and take top N
+  return scoredMatches
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topN)
 }

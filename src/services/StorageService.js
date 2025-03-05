@@ -19,8 +19,8 @@ const authUsers = [
 const DATA_JSON_PATHS = [
   '/data.json',
   './data.json',
-  '/public/data.json',
-  '../public/data.json',
+  '/assets/data.json',
+  '../assets/data.json',
   'data.json'
 ];
 

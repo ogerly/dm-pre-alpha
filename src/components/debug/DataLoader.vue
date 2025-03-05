@@ -114,7 +114,7 @@ export default {
       loadStatus: '',
       loadError: false,
       showComparison: false,
-      dataPath: '/data.json',
+      dataPath: '/assets/data.json',
       customPath: '',
       manualJsonInput: ''
     };

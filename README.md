@@ -1,464 +1,507 @@
 # DreamMall Matching & Chat System
 
-## Projektübersicht
+## Project Overview
 
-Das DreamMall Matching-System ist eine webbasierte Anwendung, die Menschen basierend auf gemeinsamen Interessen, komplementären Fähigkeiten und ähnlichen Zielen vernetzt. Die Plattform ermöglicht es Nutzern, detaillierte Profile zu erstellen, potentielle Kollaborationspartner zu finden und direkt mit ihnen in Kontakt zu treten.
+DreamMall Matching System is a web-based application that connects people based on shared interests, complementary skills, and similar goals. The platform enables users to create detailed profiles, find potential collaboration partners, and communicate directly with them.
 
-### Ziel
-Die Hauptziele des Systems sind:
-- Förderung von Zusammenarbeit zwischen Personen mit ergänzenden Fähigkeiten
-- Identifikation gemeinsamer Interessen und Werte für bessere Teambildung
-- Vernetzung von Menschen mit ähnlichen Visionen für nachhaltige Projekte
-- Direkte Kommunikation zwischen potentiellen Partnern
-- Geografische Darstellung von Nutzern, Projekten und Unternehmen auf einer interaktiven Karte
+### Goals
+The main objectives of the system are:
+- Foster collaboration between people with complementary skills
+- Identify common interests and values for better team formation
+- Connect people with similar visions for sustainable projects
+- Enable direct communication between potential partners
+- Display users, projects, and companies on an interactive map
 
-## Technische Implementierung
+## Technical Implementation
 
 ### Stack
-- **Frontend Framework**: Vue.js 3
-- **Build-Tool**: Vite
-- **CSS Framework**: Tailwind CSS mit benutzerdefinierten Erweiterungen
-- **Datenmanagement**: JSON-basiert mit LocalStorage-Persistenz (Testphase)
+- **Frontend Framework**: Vue 3
+- **Build Tool**: Vite
+- **State Management**: Pinia for centralized, reactive state management
+- **CSS Framework**: Tailwind CSS with custom extensions
+- **Data Management**: JSON-based with LocalStorage persistence (in testing phase)
 - **Icons**: Font Awesome 5
-- **Kartendarstellung**: Leaflet.js für interaktive Karten
-- **Deployment**: Statische Webseite, lauffähig auf jedem modernen Webserver
+- **Map Display**: Leaflet.js for interactive maps
+- **Router**: Vue Router with authentication-based guards
+- **Deployment**: Static website, runnable on any modern web server like Netlify or Vercel
+- **Error Tracking**: Custom error tracking system with logging
 
-### Architektur
-Die Anwendung folgt einer komponentenbasierten Architektur:
-
+### Project Structure
 ```
-/
-├── src/
-│   ├── assets/
-│   │   ├── styles/                     # CSS und Tailwind Styles
-│   │   │   ├── tailwind.css            # Tailwind Einstiegspunkt mit benutzerdefinierten Klassen
-│   │   │   ├── global.css              # Globale Stilregeln
-│   │   │   ├── map-markers.css         # Kartenmarker-Stile
-│   │   │   └── map-markers-custom.css  # Benutzerdefinierte Kartenmarker-Stile
-│   ├── components/                     # Vue-Komponenten
-│   │   ├── layout/                     # Layout-Komponenten 
-│   │   │   ├── AppHeader.vue           # Anwendungsheader mit Navigation
-│   │   │   └── AppActions.vue          # Aktionsschaltflächen (erstellen, importieren, exportieren)
-│   │   ├── user/                       # Benutzer-bezogene Komponenten
-│   │   │   ├── UserList.vue            # Liste verfügbarer Nutzer
-│   │   │   ├── UserProfile.vue         # Detailansicht eines Nutzerprofils
-│   │   │   └── UserProfileForm.vue     # Formular für Profileingabe/-bearbeitung
-│   │   ├── matching/                   # Matching-Komponenten
-│   │   │   ├── MatchingContainer.vue   # Container für Matching-Funktionalität
-│   │   │   └── MatchingResults.vue     # Anzeige der Matching-Ergebnisse
-│   │   ├── chat/                       # Chat-Komponenten
-│   │   │   ├── ChatOverlay.vue         # Überlagerndes Chat-Fenster
-│   │   │   ├── ChatContainer.vue       # Hauptcontainer für Chat-Funktionalitäten
-│   │   │   ├── ChatList.vue            # Liste der Chatgespräche
-│   │   │   └── ChatWindow.vue          # Chat-Interface für einzelne Gespräche
-│   │   ├── map/                        # Karten-Komponenten
-│   │   │   ├── MapPage.vue             # Hauptcontainer für Kartenansicht
-│   │   │   └── MapView.vue             # Interaktive Kartenkomponente mit Markern
-│   │   └── debug/                      # Debug-Komponenten
-│   │       ├── DataLoader.vue          # Tool zum direkten Laden von data.json
-│   │       ├── DataDebugger.vue        # Anzeige und Inspektion der Nutzerdaten
-│   │       └── TestMap.vue             # Vereinfachte Karte für Testfälle
-│   ├── services/                       # Geschäftslogik
-│   │   ├── MatchingService.js          # Matching-Algorithmus und Bewertungsfunktionen
-│   │   ├── StorageService.js           # Daten-Persistenz (LocalStorage)
-│   │   └── ChatService.js              # Chat-Funktionalitäten
-│   ├── App.vue                         # Hauptkomponente
-│   └── main.js                         # JavaScript-Einstiegspunkt
-├── public/                             # Statische Dateien
-│   └── data.json                       # Beispieldaten für Nutzerprofile
-├── index.html                          # HTML-Einstiegspunkt
-├── package.json                        # Projektabhängigkeiten
-├── tailwind.config.js                  # Tailwind CSS Konfiguration
-├── postcss.config.js                   # PostCSS Konfiguration
-└── vite.config.js                      # Vite-Konfiguration
+├── index.html - Main entry point of the application, loads main.js and defines the root element
+├── package.json - Project dependencies, scripts, and metadata of the application
+├── postcss.config.js - Configuration for PostCSS plugins like Autoprefixer for CSS
+├── public
+├── README.md
+├── src
+│   ├── App.vue
+│   ├── assets
+│   │   ├── data.json - Contains all demo user data, profiles, projects, and coordinates
+│   │   ├── style.css - Base stylesheet with general CSS rules
+│   │   └── styles
+│   │       ├── global.css - Global style rules that apply to the entire application
+│   │       ├── map-marker-scop.css - Special CSS for marker circles and hotspots on the map
+│   │       ├── map-markers.css - Basic style rules for map markers
+│   │       ├── map-markers-custom.css - Custom styles for different marker types
+│   │       └── tailwind.css - Tailwind configuration and custom classes
+│   ├── components
+│   │   ├── admin
+│   │   │   └── AdminPanel.vue - Administration area with advanced access control
+│   │   ├── auth
+│   │   │   └── LoginPage.vue - Login page for user authentication
+│   │   ├── chat
+│   │   │   ├── ChatContainer.vue - Main container for chat functionality
+│   │   │   ├── ChatList.vue - Displays all active chat conversations
+│   │   │   ├── ChatOverlay.vue - Popup window for chat interactions
+│   │   │   └── ChatWindow.vue - Interface for individual chat conversations
+│   │   ├── common
+│   │   │   └── TabGroup.vue - Reusable tab navigation component
+│   │   ├── company
+│   │   │   ├── CompanyForm.vue - Form for creating/editing company profiles
+│   │   │   └── CompanyView.vue - Detail view of a company
+│   │   ├── debug
+│   │   │   ├── AssetTest.vue - Tests the availability of assets and resources
+│   │   │   ├── DataDebugger.vue - Displays the current data status for debugging
+│   │   │   ├── DataLoader.vue - Component for loading and testing data files
+│   │   │   └── TestMap.vue - Simplified map view for testing
+│   │   ├── layout
+│   │   │   ├── AppActions.vue - Contains global actions like import/export
+│   │   │   └── AppHeader.vue - Header component with navigation and title
+│   │   ├── map
+│   │   │   ├── MapLoading.vue - Loading animation during map loading process
+│   │   │   ├── MapPage.vue - Container for the map view and related controls
+│   │   │   └── MapView.vue - Main map component with Leaflet integration
+│   │   ├── matching
+│   │   │   ├── MatchingContainer.vue - Container for the matching algorithm
+│   │   │   └── MatchingResults.vue - Displays matching results with compatibility scores
+│   │   ├── project
+│   │   │   ├── ProjectForm.vue - Form for creating/editing projects
+│   │   │   └── ProjectView.vue - Detail view of a project
+│   │   ├── table
+│   │   │   ├── TableForm.vue - Form for meetup/table entries
+│   │   │   └── TableView.vue - View for meetups and table events
+│   │   └── user
+│   │       ├── UserList.vue - Scrollable list of all user profiles
+│   │       ├── UserOverview.vue - Overview page with user information
+│   │       ├── UserProfileForm.vue - Form for creating/editing a user profile
+│   │       ├── UserProfile.vue - Detail view of a single user profile
+│   │       └── UserSettings.vue - User settings and preferences
+│   ├── main.js - Entry point of the Vue application, configures app and plugins
+│   ├── public - Additional static assets within the src directory
+│   ├── router
+│   │   └── index.js - Vue Router configuration with route definitions
+│   ├── services
+│   │   ├── ChatService.js - Handles chat functionality and message exchange
+│   │   ├── MatchingService.js - Implements the matching algorithm
+│   │   └── StorageService.js - Manages local data storage
+│   ├── stores
+│   │   ├── auth.js - Pinia store for authentication and user sessions
+│   │   ├── index.js - Central store configuration and initialization
+│   │   ├── ui.js - Stores UI states like active tabs and layouts
+│   │   └── user.js - Manages user data, profiles, and matching results
+│   └── views
+│       ├── admin
+│       │   └── AdminView.vue - Main view for administrators with advanced features
+│       ├── auth
+│       │   └── LoginView.vue - View for login and registration
+│       ├── errors
+│       │   └── NotFoundView.vue - 404 page for not found routes
+│       ├── map
+│       │   └── MapView.vue - Main view for the interactive map
+│       ├── matching
+│       │   └── MatchingView.vue - View for matching results and filters
+│       └── user
+│           ├── UserProfileView.vue - Full profile view of a user
+│           └── UserSettingsView.vue - User settings and profile configuration
+├── tailwind.config.js - Configuration for Tailwind CSS with custom extensions
+└── vite.config.js - Build and dev server configuration for Vite
 ```
 
 ## Features
 
-### 1. Umfassende Nutzerprofile
-Die Profile enthalten:
-- Persönliche Informationen (Name, Bio)
-- Fähigkeiten und Interessen
-- Bildungs- und Berufserfahrung
-- Eigene und beigetragene Projekte
-- Standort- und Aktivitätsinformationen mit den Kategorien:
-  - Home (Wohnort)
-  - Firma
-  - Wirkungsbereich
-  - Unternehmen
-  - Projekte
-  - Tische/Meetups
-- Unternehmensinformationen
-- Persönliche Ziele und Werte
-- Arbeits- und Kollaborationspräferenzen
+### 1. Comprehensive User Profiles
+Profiles include:
+- Personal information (name, bio)
+- Skills and interests
+- Education and work experience
+- Own and contributed projects
+- Location and activity information with categories:
+  - Home (residence)
+  - Company
+  - Area of influence
+  - Business
+  - Projects
+  - Tables/Meetups
+- Company information
+- Personal goals and values
+- Work and collaboration preferences
 
-### 2. Intelligenter Matching-Algorithmus
-Der Algorithmus bewertet potentielle Matches anhand mehrerer Kriterien:
-- **Gemeinsame Interessen**: 10 Punkte pro Übereinstimmung
-- **Ergänzende Fähigkeiten**: 5 Punkte pro komplementärer Fähigkeit
-- **Übereinstimmende Ziele**: Bis zu 15 Punkte (textbasierte Ähnlichkeitsanalyse)
-- **DreamMall-spezifische Ziele**: Bis zu 20 Punkte für ähnliche Visionen
-- **Ähnliche Projektbereiche**: Punktevergabe für inhaltlich verwandte Projekte
-- **Gemeinsame Wertvorstellungen**: Zusätzliche Punktevergabe bei ähnlichen Werten
+### 2. Intelligent Matching Algorithm
+The algorithm evaluates potential matches based on several criteria:
+- **Common Interests**: 10 points per match
+- **Complementary Skills**: 5 points per complementary skill
+- **Matching Goals**: Up to 15 points (text-based similarity analysis)
+- **DreamMall-specific Goals**: Up to 20 points for similar visions
+- **Similar Project Areas**: Points for related projects
+- **Common Values**: Additional points for similar values
 
-### 3. Kommunikations-System
-- Integrierter Chat zwischen gematchten Nutzern
-- Übersicht aller Gespräche
-- Ungelesene Nachrichten-Anzeige
-- Desktop- und Mobile-optimiertes Interface
+### 3. Communication System
+- Integrated chat between matched users
+- Overview of all conversations
+- Unread message indicator
+- Desktop and mobile optimized interface
 
-### 4. Suche und Filterung
-- Textbasierte Suche nach Namen, Fähigkeiten und Interessen
-- Matching-Ergebnisse nach Kompatibilität sortiert
+### 4. Search and Filtering
+- Text-based search by name, skills, and interests
+- Matching results sorted by compatibility
 
-### 5. Profilverwaltung
-- Erstellung neuer Profile mit umfangreichem Formular
-- Bearbeiten bestehender Profile
-- Löschen von Profilen
-- Export und Import aller Profile als JSON
+### 5. Profile Management
+- Create new profiles with extensive form
+- Edit existing profiles
+- Delete profiles
+- Export and import all profiles as JSON
 
-### 6. Interaktive Karte
-Die interaktive Karte bietet eine geografische Darstellung aller Nutzerelemente:
+### 6. Interactive Map
+The interactive map provides a geographical representation of all user elements:
 
-- **Mehrere Marker-Typen**: Wohnorte, Firmen, Projekte, Meetups werden mit unterschiedlichen Icons angezeigt
-  - Wohnorte (grün) - Privatadresse und Homeoffice-Standorte
-  - Firmen (blau) und Unternehmen (orange) - Arbeitsplätze und Geschäftsstandorte
-  - Projekte (rot) - Orte von laufenden und vergangenen Projekten
-  - Meetups/Tische (türkis) - Veranstaltungsorte und regelmäßige Treffen
-  - Wirkungsbereiche (lila) - Geografische Tätigkeitsbereiche
-- **Filterung**: Nutzer können die Anzeige nach Marker-Typen filtern
-- **Suchfunktion**: Textsuche nach Markern anhand von Namen oder Beschreibungen
-- **Service-Gebiete**: Darstellung von Aktionsradien für Unternehmen
-- **Detailansicht**: Klick auf Marker zeigt detaillierte Informationen und ermöglicht Navigation zum vollständigen Profil
-- **Responsive Gestaltung**: Die Karte passt sich verschiedenen Bildschirmgrößen an
-- **Automatischer Datenimport**: Die Karte erkennt fehlende Koordinaten und lädt automatisch die Datei data.json
+- **Multiple Marker Types**: Residences, companies, projects, meetups are displayed with different icons
+  - Residences (green) - Private address and home office locations
+  - Companies (blue) and businesses (orange) - Workplaces and business locations
+  - Projects (red) - Locations of ongoing and past projects
+  - Meetups/Tables (turquoise) - Event locations and regular meetings
+  - Areas of influence (purple) - Geographical areas of activity
+- **Filtering**: Users can filter the display by marker types
+- **Search Function**: Text search for markers by name or description
+- **Service Areas**: Display of action radii for companies
+- **Detail View**: Clicking on markers shows detailed information and allows navigation to the full profile
+- **Responsive Design**: The map adapts to different screen sizes
+- **Automatic Data Import**: The map detects missing coordinates and automatically loads the data.json file
 
-#### Debug-Modus für die Karte
+#### Debug Mode for the Map
 
-Die Karte verfügt über einen umfassenden Debug-Modus, der bei der Entwicklung und Fehlerbehebung hilft:
+The map has a comprehensive debug mode that helps with development and troubleshooting:
 
-1. **Aktivierung**: Der Debug-Modus kann über die Checkbox "Debug-Modus aktivieren" oberhalb der Karte eingeschaltet werden
+1. **Activation**: The debug mode can be enabled via the "Enable Debug Mode" checkbox above the map
 
-2. **Komponenten des Debug-Modus**:
-   - **Data Loader**: Tool zum direkten Laden der data.json oder manueller Eingabe von JSON-Daten
-   - **Asset Test**: Tester für die Verfügbarkeit verschiedener Ressourcen (z.B. data.json, Bildern)
-   - **Test Map**: Vereinfachte Karte mit Testdaten zur Überprüfung der grundlegenden Leaflet-Funktionalität
+2. **Components of Debug Mode**:
+   - **Data Loader**: Tool for directly loading the data.json or manually entering JSON data
+   - **Asset Test**: Tester for the availability of various resources (e.g., data.json, images)
+   - **Test Map**: Simplified map with test data to verify basic Leaflet functionality
 
-3. **Data Loader-Funktionen**:
-   - Anzeige des Datenstatus (Daten im Store, Koordinaten im Store, JSON geladen)
-   - Auswahl verschiedener Pfade für die data.json-Datei
-   - Manueller JSON-Eingabebereich für direkte Dateneingabe
-   - Möglichkeit, Testpunkte hinzuzufügen (Standard-Koordinaten in Deutschland)
-   - Vergleich zwischen aktuellen Daten und geladenen Daten
+3. **Data Loader Functions**:
+   - Display of data status (data in store, coordinates in store, JSON loaded)
+   - Selection of different paths for the data.json file
+   - Manual JSON input area for direct data entry
+   - Ability to add test points (default coordinates in Germany)
+   - Comparison between current data and loaded data
 
-4. **Asset Test-Funktionen**:
-   - Tests für die Verfügbarkeit von data.json auf verschiedenen Pfaden
-   - Überprüfung der Netzwerkverbindung und des Asset-Ladens
-   - Detaillierte Konsole zur Anzeige von Testergebnissen
+4. **Asset Test Functions**:
+   - Tests for the availability of data.json on different paths
+   - Checking network connection and asset loading
+   - Detailed console to display test results
 
-5. **Debug-Datendisplay**:
-   - Zeigt zusammenfassende Informationen über die verfügbaren Daten an
-   - Anzahl der Benutzer, Unternehmen, Projekte und Meetups
-   - Anzeige eines Beispiel-Benutzerprofils mit allen Details und Koordinaten
+5. **Debug Data Display**:
+   - Shows summary information about the available data
+   - Number of users, companies, projects, and meetups
+   - Display of a sample user profile with all details and coordinates
 
-## Datenmodell
+## Data Model
 
-Das zentrale Datenmodell eines Nutzerprofils umfasst:
+The central data model of a user profile includes:
 
 ```json
 {
   "id": 1,
   "name": "Max Mustermann",
-  "bio": "Beschreibung der Person",
+  "bio": "Description of the person",
   "iconCategories": {
     "home": {
-      "address": "München, Deutschland",
-      "description": "Remote und lokale Arbeit möglich",
+      "address": "Munich, Germany",
+      "description": "Remote and local work possible",
       "coordinates": [48.1351, 11.5820]
     },
-    "firma": {
-      "name": "Unternehmensname",
+    "company": {
+      "name": "Company Name",
       "role": "Position",
       "year": "2023",
-      "description": "Beschreibung",
+      "description": "Description",
       "coordinates": [48.1390, 11.5890]
     },
-    "wirkungsbereich": [
-      {"name": "München", "coordinates": [48.1351, 11.5820]},
+    "areaOfInfluence": [
+      {"name": "Munich", "coordinates": [48.1351, 11.5820]},
       {"name": "Berlin", "coordinates": [52.5200, 13.4050]}
     ],
-    "unternehmen": [
+    "business": [
       {
-        "name": "Unternehmensname",
+        "name": "Company Name",
         "role": "Position",
         "year": "2023",
-        "description": "Beschreibung",
+        "description": "Description",
         "coordinates": [48.1390, 11.5890]
       }
     ],
-    "projekt": [
+    "project": [
       {
-        "name": "Projektname",
-        "description": "Projektbeschreibung",
+        "name": "Project Name",
+        "description": "Project Description",
         "year": "2022",
-        "note": "Zusätzliche Informationen",
-        "role": "Projektrolle",
+        "note": "Additional Information",
+        "role": "Project Role",
         "coordinates": [48.1351, 11.5900]
       }
     ],
-    "tisch": [
+    "table": [
       {
-        "name": "Meetup-Name",
-        "description": "Beschreibung des Treffens",
-        "location": "Ort des Treffens",
+        "name": "Meetup Name",
+        "description": "Description of the meeting",
+        "location": "Meeting location",
         "coordinates": [48.1400, 11.5800]
       }
     ]
   },
-  "skills": ["Fähigkeit 1", "Fähigkeit 2"],
-  "interests": ["Interesse 1", "Interesse 2"],
-  "goals": "Allgemeine Ziele",
+  "skills": ["Skill 1", "Skill 2"],
+  "interests": ["Interest 1", "Interest 2"],
+  "goals": "General goals",
   "education": [
     {
       "period": "2015-2019",
-      "title": "Abschluss",
-      "institution": "Bildungseinrichtung"
+      "title": "Degree",
+      "institution": "Educational Institution"
     }
   ],
   "experience": [
     {
       "period": "2020-2022",
       "role": "Position",
-      "company": "Unternehmen"
+      "company": "Company"
     }
   ],
   "ownProjects": [
     {
-      "name": "Projektname",
-      "description": "Projektbeschreibung",
+      "name": "Project Name",
+      "description": "Project Description",
       "year": "2022",
-      "note": "Zusätzliche Informationen"
+      "note": "Additional Information"
     }
   ],
   "contributedProjects": [
     {
-      "name": "Projektname",
-      "role": "Rolle im Projekt",
-      "description": "Projektbeschreibung",
+      "name": "Project Name",
+      "role": "Role in the project",
+      "description": "Project Description",
       "year": "2021"
     }
   ],
   "companies": [
     {
-      "name": "Unternehmensname",
+      "name": "Company Name",
       "role": "Position",
       "year": "2023",
-      "description": "Beschreibung"
+      "description": "Description"
     }
   ],
   "services": ["Service 1", "Service 2"],
-  "dreammallGoals": "DreamMall-spezifische Ziele",
-  "collaborationPreferences": "Präferenzen zur Zusammenarbeit",
-  "leadershipPhilosophy": "Führungsphilosophie",
-  "educationOpinion": "Meinung zum Bildungssystem",
-  "valueOrientation": "Wertvorstellungen"
+  "dreammallGoals": "DreamMall-specific goals",
+  "collaborationPreferences": "Collaboration preferences",
+  "leadershipPhilosophy": "Leadership philosophy",
+  "educationOpinion": "Opinion on the education system",
+  "valueOrientation": "Value orientation"
 }
 ```
 
-## Setup und Entwicklung
+## Setup and Development
 
-### Voraussetzungen
-- Node.js (v14 oder höher)
-- npm oder yarn
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
 
 ### Installation
-1. Repository klonen
+1. Clone the repository
 ```bash
 git clone <repository-url>
 cd dreammall-matching-tamplate-profil
 ```
 
-2. Abhängigkeiten installieren
+2. Install dependencies
 ```bash
 npm install
 ```
 
-3. Entwicklungsserver starten
+3. Start the development server
 ```bash
 npm run dev
 ```
 
-4. Build für Produktion erstellen
+4. Build for production
 ```bash
 npm run build
 ```
 
-### Tailwind CSS Anpassungen
+### Tailwind CSS Customizations
 
-Das Projekt verwendet Tailwind CSS für das Styling mit benutzerdefinierten Erweiterungen:
+The project uses Tailwind CSS for styling with custom extensions:
 
-1. **Farbschema**: Angepasste Farben wie 'primary' (für Buttons und Highlights), 'secondary', usw.
-2. **Benutzerdefinierte Komponenten**: Vordefinierte Klassen wie `.btn`, `.btn-primary`, `.card`
-3. **Schatten**: Angepasste Schatten-Definitionen für konsistentes Design
+1. **Color Scheme**: Custom colors like 'primary' (for buttons and highlights), 'secondary', etc.
+2. **Custom Components**: Predefined classes like `.btn`, `.btn-primary`, `.card`
+3. **Shadows**: Custom shadow definitions for consistent design
 
-Diese Anpassungen sind in der `tailwind.config.js`-Datei definiert und durch die `@layer components`-Direktive in der `src/assets/styles/tailwind.css` implementiert.
+These customizations are defined in the `tailwind.config.js` file and implemented through the `@layer components` directive in the `src/assets/styles/tailwind.css`.
 
-## Funktionsweise des Matching-Algorithmus
+## Functionality of the Matching Algorithm
 
-Der Algorithmus arbeitet in mehreren Schritten:
+The algorithm works in several steps:
 
-1. **Vergleich von Interessen**: Identifikation gemeinsamer Interessengebiete als Basis für erfolgreiche Zusammenarbeit
+1. **Comparison of Interests**: Identification of common interest areas as a basis for successful collaboration
 
-2. **Analyse komplementärer Fähigkeiten**: Erkennung sich ergänzender Fähigkeiten, die zu produktiven Teams führen können
+2. **Analysis of Complementary Skills**: Recognition of complementary skills that can lead to productive teams
 
-3. **Zielkompatibilität**: Textbasierte Analyse der formulierten Ziele, um inhaltliche Übereinstimmungen zu erkennen
+3. **Goal Compatibility**: Text-based analysis of formulated goals to identify content matches
 
-4. **Projekterfahrung**: Vergleich bisheriger Projekte, um ähnliche Tätigkeitsfelder zu erkennen
+4. **Project Experience**: Comparison of previous projects to identify similar fields of activity
 
-5. **Wertvorstellungen**: Abgleich persönlicher Präferenzen und Arbeitsweisen
+5. **Values**: Matching personal preferences and work styles
 
-Der Algorithmus berechnet einen Gesamtpunktwert und normalisiert diesen zu einem Prozentwert, der die Kompatibilität zwischen zwei Nutzern darstellt.
+The algorithm calculates a total score and normalizes it to a percentage that represents the compatibility between two users.
 
-## Chat-System
+## Chat System
 
-Das Chat-System ermöglicht die direkte Kommunikation zwischen Nutzern:
+The chat system enables direct communication between users:
 
-1. **Konversationsverwaltung**: Jeder Nutzer sieht eine Liste seiner aktiven Gespräche
-2. **Echtzeit-Kommunikation**: Textnachrichten werden in Echtzeit übertragen (im Prototyp simuliert)
-3. **Lesebestätigung**: Ungelesene Nachrichten werden markiert
-4. **Responsive Design**: Optimiert für Desktop- und Mobilgeräte
+1. **Conversation Management**: Each user sees a list of their active conversations
+2. **Real-time Communication**: Text messages are transmitted in real-time (simulated in the prototype)
+3. **Read Confirmation**: Unread messages are marked
+4. **Responsive Design**: Optimized for desktop and mobile devices
 
-In der aktuellen Prototyp-Version werden die Chat-Daten lokal im Browser gespeichert. Für eine produktive Implementierung wäre eine serverseitige Integration mit WebSockets (z.B. Socket.io) und einer Datenbank erforderlich.
+In the current prototype version, chat data is stored locally in the browser. For a production implementation, server-side integration with WebSockets (e.g., Socket.io) and a database would be required.
 
-## Kartensystem
+## Map System
 
-Das integrierte Kartensystem basiert auf Leaflet.js und ermöglicht die Visualisierung von Nutzer- und Projektstandorten:
+The integrated map system is based on Leaflet.js and allows the visualization of user and project locations:
 
-1. **Marker-Typen**: Verschiedene Icon-Typen für unterschiedliche Kategorien
-   - Wohnorte (grün)
-   - Firmen und Unternehmen (blau/orange)
-   - Projekte (rot)
-   - Meetups/Tische (türkis)
-   - Wirkungsbereiche (lila)
+1. **Marker Types**: Different icon types for different categories
+   - Residences (green)
+   - Companies and businesses (blue/orange)
+   - Projects (red)
+   - Meetups/Tables (turquoise)
+   - Areas of influence (purple)
 
-2. **Datenintegration**: Die Karte bezieht Daten aus den `iconCategories` der Nutzerprofile, wobei jede Kategorie Koordinaten-Arrays `[Breitengrad, Längengrad]` enthält.
+2. **Data Integration**: The map draws data from the `iconCategories` of user profiles, with each category containing coordinate arrays `[latitude, longitude]`.
 
-3. **Service-Gebiete**: Für Unternehmen und Firmen werden kreisförmige Aktionsradien dargestellt, die den geografischen Wirkungsbereich visualisieren.
+3. **Service Areas**: Circular action radii are displayed for companies and businesses to visualize the geographical area of influence.
 
-4. **Interaktivität**: Klicks auf Marker öffnen Infopanels mit Details und Verknüpfungen zu den entsprechenden Nutzerprofilen.
+4. **Interactivity**: Clicking on markers opens info panels with details and links to the corresponding user profiles.
 
-5. **Kartenfilterung**: Filter nach Markertyp und Suchfunktion für Namen und Beschreibungen.
+5. **Map Filtering**: Filter by marker type and search function for names and descriptions.
 
-6. **Auto-Zentrierung**: Die Karte zentriert sich automatisch auf die vorhandenen Marker.
+6. **Auto-Centering**: The map automatically centers on the available markers.
 
-7. **Debug-Werkzeuge**: Umfangreiche Debug-Tools für Entwicklung und Fehlerbehebung.
+7. **Debug Tools**: Extensive debug tools for development and troubleshooting.
 
-### Technische Details der Kartenimplementierung
+### Technical Details of the Map Implementation
 
-- **Leaflet.js Integration**: Dynamisches Laden der Leaflet-Bibliothek zur Laufzeit
-- **Koordinatenvalidierung**: Automatische Überprüfung und Filterung ungültiger Koordinaten
-- **Marker-Icons**: Benutzerdefinierte Icons mit CSS für verschiedene Kategorien
-- **Datenextraktion**: Automatische Extraktion von Koordinaten aus verschiedenen Profilbereichen
-- **On-Demand-Rendering**: Marker werden nur für sichtbare Bereiche gerendert
-- **Fehlertoleranz**: Robuste Fehlerbehandlung für ungültige oder fehlende Daten
+- **Leaflet.js Integration**: Dynamic loading of the Leaflet library at runtime
+- **Coordinate Validation**: Automatic validation and filtering of invalid coordinates
+- **Marker Icons**: Custom icons with CSS for different categories
+- **Data Extraction**: Automatic extraction of coordinates from various profile areas
+- **On-Demand Rendering**: Markers are rendered only for visible areas
+- **Error Tolerance**: Robust error handling for invalid or missing data
 
-### Troubleshooting für die Karte
+### Troubleshooting for the Map
 
-Falls auf der Karte keine Marker angezeigt werden:
+If no markers are displayed on the map:
 
-1. **Debug-Modus aktivieren**: Checkbox "Debug-Modus aktivieren" über der Karte anklicken
-2. **Daten prüfen**: Im Debug-Panel wird angezeigt, ob die Nutzerdaten Koordinaten enthalten
-3. **Datenstatus überprüfen**: Die drei Status-Indikatoren zeigen an, ob Daten vorhanden sind und Koordinaten enthalten
-4. **Test-Karte**: Eine vereinfachte Test-Karte wird angezeigt, um die grundsätzliche Leaflet-Funktionalität zu prüfen
-5. **Daten neu laden**: Button "Load data.json directly" klicken, um die originalen Daten mit Koordinaten zu laden
-6. **Verschiedene Pfade ausprobieren**: Der Data-Loader bietet verschiedene Pfad-Optionen für die data.json
-7. **Daten anwenden**: Button "Apply to Users" klicken, um die geladenen Daten auf die Anwendung anzuwenden
-8. **Testpunkte hinzufügen**: Button "Add Test Points" fügt einen Testnutzer mit validen Koordinaten hinzu
-9. **Konsole prüfen**: Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose
-10. **Asset-Verfügbarkeit testen**: Der Asset Test-Tab prüft die Erreichbarkeit der benötigten Ressourcen
+1. **Enable Debug Mode**: Click the "Enable Debug Mode" checkbox above the map
+2. **Check Data**: The debug panel shows whether the user data contains coordinates
+3. **Check Data Status**: The three status indicators show whether data is present and contains coordinates
+4. **Test Map**: A simplified test map is displayed to verify basic Leaflet functionality
+5. **Reload Data**: Click the "Load data.json directly" button to load the original data with coordinates
+6. **Try Different Paths**: The data loader offers different path options for the data.json
+7. **Apply Data**: Click the "Apply to Users" button to apply the loaded data to the application
+8. **Add Test Points**: Click the "Add Test Points" button to add a test user with valid coordinates
+9. **Check Console**: The browser console contains detailed logging information for error diagnosis
+10. **Test Asset Availability**: The Asset Test tab checks the availability of the required resources
 
-Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose.
+The browser console contains detailed logging information for error diagnosis.
 
-## Komponentenstruktur im Detail
+## Component Structure in Detail
 
-Die Anwendung ist in mehrere logische Komponenten aufgeteilt:
+The application is divided into several logical components:
 
-### Auth-Komponenten
-- **LoginForm**: Formular für die Benutzeranmeldung mit E-Mail und Passwort
-- **RegisterForm**: Registrierungsformular für neue Benutzer
-- **ProfileSetup**: Initiale Profileinrichtung nach der Registrierung
-- **PasswordReset**: Komponente zur Zurücksetzung des Passworts
+### Auth Components
+- **LoginForm**: Form for user login with email and password
+- **RegisterForm**: Registration form for new users
+- **ProfileSetup**: Initial profile setup after registration
+- **PasswordReset**: Component for resetting the password
 
-### Chat-Komponenten
-- **ChatOverlay**: Überlagerndes Fenster, das den Chat-Container enthält
-- **ChatContainer**: Hauptkomponente für Chat-Funktionen, enthält ChatList und ChatWindow
-- **ChatList**: Liste der aktiven Chatgespräche
-- **ChatWindow**: Chat-Interface für einzelne Gespräche
+### Chat Components
+- **ChatOverlay**: Overlay window containing the chat container
+- **ChatContainer**: Main component for chat functions, contains ChatList and ChatWindow
+- **ChatList**: List of active chat conversations
+- **ChatWindow**: Chat interface for individual conversations
 
-### Firmen-Komponente
-- **CompanyList**: Übersicht aller registrierten Unternehmen
-- **CompanyProfile**: Detailansicht eines Unternehmensprofils
-- **CompanyForm**: Formular zum Erstellen oder Bearbeiten von Unternehmensprofilen
+### Company Component
+- **CompanyList**: Overview of all registered companies
+- **CompanyProfile**: Detail view of a company profile
+- **CompanyForm**: Form for creating or editing company profiles
 
-### Debug-Komponente
-- **DataLoader**: Tool zum direkten Laden und Inspizieren der data.json
-- **DataDebugger**: Anzeige des aktuellen Datenstatus und Debugging-Informationen
-- **TestMap**: Vereinfachte Kartenansicht für Tests
-- **AssetTester**: Test der Verfügbarkeit verschiedener Ressourcen
-- **ConsoleOutput**: Anzeige von Debug-Logs und Fehlermeldungen
+### Debug Component
+- **DataLoader**: Tool for directly loading and inspecting the data.json
+- **DataDebugger**: Displays the current data status and debugging information
+- **TestMap**: Simplified map view for testing
+- **AssetTester**: Test for the availability of various resources
+- **ConsoleOutput**: Display of debug logs and error messages
 
-### Layout-Komponenten
-- **AppHeader**: Enthält den Titel, die Beschreibung und die Navigationstabs der Anwendung
-- **AppActions**: Stellt Aktionen wie "Neues Profil erstellen", "Profile exportieren" und "Profile importieren" bereit
+### Layout Components
+- **AppHeader**: Contains the title, description, and navigation tabs of the application
+- **AppActions**: Provides actions like "Create New Profile", "Export Profiles", and "Import Profiles"
 
-### Map-Komponente
-- **MapPage**: Container für die Kartenansicht und zugehörige Debug-Tools
-- **MapView**: Eigentliche Kartenkomponente mit Markern, Popups und Interaktionen
+### Map Component
+- **MapPage**: Container for the map view and related debug tools
+- **MapView**: Actual map component with markers, popups, and interactions
 
-### Matching-Komponenten
-- **MatchingContainer**: Container für die Matching-Funktionalität, enthält UserList und MatchingResults
-- **MatchingResults**: Zeigt die Ergebnisse des Matching-Algorithmus mit Kompatibilitätswerten an
+### Matching Components
+- **MatchingContainer**: Container for the matching functionality, contains UserList and MatchingResults
+- **MatchingResults**: Displays the results of the matching algorithm with compatibility scores
 
-### Projekt-Komponente
-- **ProjectList**: Übersicht aller Projekte mit Filtermöglichkeiten
-- **ProjectDetail**: Detailansicht eines einzelnen Projekts
-- **ProjectForm**: Formular zum Erstellen und Bearbeiten von Projekten
+### Project Component
+- **ProjectList**: Overview of all projects with filtering options
+- **ProjectDetail**: Detail view of a single project
+- **ProjectForm**: Form for creating and editing projects
 
-### Table Komponente
-- **MeetupTable**: Übersicht aller Meetups und Treffen
-- **MeetupDetail**: Detailansicht eines Meetups mit Teilnehmern
-- **MeetupForm**: Formular zur Erstellung und Bearbeitung von Meetups
-- **MeetupCalendar**: Kalenderansicht kommender Meetups
-- **MeetupLocation**: Standortdarstellung für Meetups
+### Table Component
+- **MeetupTable**: Overview of all meetups and meetings
+- **MeetupDetail**: Detail view of a meetup with participants
+- **MeetupForm**: Form for creating and editing meetups
+- **MeetupCalendar**: Calendar view of upcoming meetups
+- **MeetupLocation**: Location display for meetups
 
-### Benutzer-Komponenten
-- **UserList**: Zeigt eine scrollbare Liste aller Benutzerprofile mit Such- und Filtermöglichkeiten
-- **UserProfile**: Detaillierte Ansicht eines einzelnen Benutzerprofils
-- **UserProfileForm**: Formular zum Erstellen oder Bearbeiten eines Benutzerprofils
+### User Components
+- **UserList**: Displays a scrollable list of all user profiles with search and filter options
+- **UserProfile**: Detailed view of a single user profile
+- **UserProfileForm**: Form for creating or editing a user profile
 
+## Privacy and Security
 
-## Datenschutz und Sicherheit
+The application stores all data locally in the user's browser (LocalStorage) and does not transmit any data to external servers. The user retains full control over their data and can export or delete it at any time.
 
-Die Anwendung speichert alle Daten lokal im Browser des Nutzers (LocalStorage) und überträgt keine Daten an externe Server. Der Nutzer behält volle Kontrolle über seine Daten und kann diese jederzeit exportieren oder löschen.
+## Future Plans and Extensions
 
-## Zukunftspläne und Erweiterungen
+Planned extensions for future versions:
 
-Geplante Erweiterungen für zukünftige Versionen:
+- **Real-time Chat**: Integration of a WebSocket server for true real-time communication
+- **Improved Text Analysis**: Integration of more advanced NLP algorithms for more accurate text comparisons
+- **Profile Pictures and Media**: Upload and display of images and other media
+- **Enhanced Map Integration**: 
+  - Clustering of markers at high density
+  - Routing functionality between points
+  - Import/export of coordinates in common formats (GeoJSON, KML)
+- **Automated Matching Suggestions**: Regular notifications about new matching profiles
+- **Project Suggestions**: AI-based suggestions for potential collaboration projects
+- **Further UI Improvements**:
+  - Dark mode with Tailwind CSS
+  - Improved mobile view
+  - Accessibility optimizations
 
-- **Echtzeit-Chat**: Integration eines WebSocket-Servers für echte Echtzeit-Kommunikation
-- **Verbesserte Textanalyse**: Integration fortschrittlicherer NLP-Algorithmen für genauere Textvergleiche
-- **Profilbilder und Medien**: Upload und Anzeige von Bildern und anderen Medien
-- **Erweiterte Kartenintegration**: 
-  - Clustering von Markern bei hoher Dichte
-  - Routing-Funktionalität zwischen Punkten
-  - Import/Export von Koordinaten in gängigen Formaten (GeoJSON, KML)
-- **Automatisierte Matching-Vorschläge**: Regelmäßige Benachrichtigungen über neue passende Profile
-- **Projektvorschläge**: KI-basierte Vorschläge für mögliche Kollaborationsprojekte
-- **Weitere UI-Verbesserungen**:
-  - Dunkel-Modus mit Tailwind CSS
-  - Verbesserte mobile Ansicht
-  - Barrierefreiheit (Accessibility) Optimierungen
+## License
 
-## Lizenz
-
-Diese Software steht unter der MIT-Lizenz - siehe die LICENSE-Datei für Details.
+This software is licensed under the MIT License - see the LICENSE file for details.

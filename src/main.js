@@ -1,39 +1,39 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import pinia from './stores'
-import { useUIStore } from './stores/ui'
-import { useAuthStore } from './stores/auth'
-import { useUserStore } from './stores/user'
+import errorLogger from './services/errorLogger'
 import './assets/styles/tailwind.css'
 
-// Create Vue app
+const pinia = createPinia()
 const app = createApp(App)
 
-// Use Pinia
-app.use(pinia)
-
-// Use Router
-app.use(router)
-
-// Initialize stores
-const uiStore = useUIStore()
-const authStore = useAuthStore()
-const userStore = useUserStore()
-
-// Load initial data
-async function initializeApp() {
-  // Initialize UI settings (like dark mode)
-  uiStore.initializeDarkMode()
-
-  // Load user data
-  await userStore.loadUsers()
-  
-  // Check authentication status
-  await authStore.checkAuth()
-  
-  // Mount app after initial data is loaded
-  app.mount('#app')
+// Global error handler
+app.config.errorHandler = (error, vm, info) => {
+  errorLogger.error(`Global error: ${info}`, error, {
+    component: vm?.$options?.name || 'Unknown'
+  })
 }
 
-initializeApp()
+// Add error tracking to router
+router.beforeEach((to, from, next) => {
+  try {
+    errorLogger.trackViewLoad(to.name || 'unknown')
+    errorLogger.debug(`Navigation: ${from.path} → ${to.path}`)
+    next()
+  } catch (error) {
+    errorLogger.error("Router error", error)
+    next(error)
+  }
+})
+
+// Register errorLogger as a plugin to make it accessible in components
+app.provide('errorLogger', errorLogger)
+
+app
+  .use(pinia)
+  .use(router)
+  .mount('#app')
+
+// Log app startup
+errorLogger.info("Application started")

@@ -1,122 +1,107 @@
 import { defineStore } from 'pinia'
-import { useUserStore } from './user'
+import { ref, computed } from 'vue'
+import loginData from '@/assets/store-test-login-data.json'
+import errorLogger from '@/services/errorLogger'
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    isAuthenticated: false,
-    currentUser: null,
-    isAdmin: false,
-  }),
-
-  getters: {
-    isLoggedIn: (state) => state.isAuthenticated,
-    userId: (state) => (state.currentUser ? state.currentUser.id : null),
-  },
-
-  actions: {
-    async login(email, password) {
-      const userStore = useUserStore()
-      
-      // Make sure users are loaded
-      if (userStore.users.length === 0) {
-        await userStore.loadUsers()
-      }
-      
-      // Find matching user by email and password
-      const user = userStore.users.find(profile => profile.email === email && profile.password === password)
-      
-      if (!user) {
-        throw new Error('Invalid email or password')
-      }
-      
-      // Special case for test@example.com - always make admin
-      const isTestUser = user.email === "test@example.com"
-      const adminRole = isTestUser ? "admin" : user.role
-      
-      // Set current user and authentication state
-      this.currentUser = {
-        ...user,
-        role: adminRole
-      }
-      this.isAuthenticated = true
-      this.isAdmin = isTestUser || user.role === 'admin'
-      
-      // Save login state in localStorage with enforced admin role for test user
-      localStorage.setItem('currentUser', JSON.stringify({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        isLoggedIn: true,
-        role: adminRole
-      }))
-      
-      // Log the state for debugging
-      console.log('Login successful for:', user.name)
-      console.log('Admin status:', this.isAdmin)
-      console.log('User role:', adminRole)
-      
-      return user
-    },
+export const useAuthStore = defineStore('auth', () => {
+  const currentUser = ref(null)
+  const isAuthenticated = computed(() => !!currentUser.value)
+  const isAuthLoading = ref(false)
+  
+  // Check if user is logged in from localStorage
+  const checkAuth = async () => {
+    errorLogger.debug('Checking authentication status')
     
-    logout() {
-      this.currentUser = null
-      this.isAuthenticated = false
-      this.isAdmin = false
-      
-      // Remove from localStorage
-      localStorage.removeItem('currentUser')
-    },
-    
-    async checkAuth() {
-      // Check localStorage for existing authentication
-      const savedUser = localStorage.getItem('currentUser')
-      
-      if (savedUser) {
-        const userData = JSON.parse(savedUser)
-        
-        if (userData.isLoggedIn) {
-          // Special case for test@example.com - always make admin
-          const isTestUser = userData.email === "test@example.com"
-          const adminRole = isTestUser ? "admin" : userData.role
-          
-          this.currentUser = {
-            ...userData,
-            role: adminRole
-          }
-          this.isAuthenticated = true
-          this.isAdmin = isTestUser || adminRole === 'admin'
-          
-          // Also get the full user data
-          const userStore = useUserStore()
-          
-          // Make sure users are loaded
-          if (userStore.users.length === 0) {
-            await userStore.loadUsers()
-          }
-          
-          const fullUserData = userStore.getUserById(userData.id)
-          if (fullUserData) {
-            this.currentUser = {...this.currentUser, ...fullUserData}
-          }
-          
-          return true
-        }
+    try {
+      const storedUser = localStorage.getItem('currentUser')
+      if (storedUser) {
+        currentUser.value = JSON.parse(storedUser)
+        errorLogger.info(`User authenticated: ${currentUser.value.email}`)
+        return true
       }
       
+      errorLogger.debug('No stored authentication found')
       return false
-    },
-    
-    updateCurrentUser(userData) {
-      this.currentUser = {...this.currentUser, ...userData}
-      
-      // Update localStorage as well
-      localStorage.setItem('currentUser', JSON.stringify({
-        id: this.currentUser.id,
-        name: this.currentUser.name,
-        email: this.currentUser.email,
-        isLoggedIn: true,
-        role: this.currentUser.role || null
-      }))
+    } catch (error) {
+      errorLogger.error('Error checking authentication', error)
+      return false
     }
+  }
+  
+  // Login with credentials
+  const login = async ({ email, password }) => {
+    errorLogger.debug(`Login attempt for: ${email}`)
+    isAuthLoading.value = true
+    
+    try {
+      // Verify loginData is available
+      if (!loginData || !Array.isArray(loginData)) {
+        errorLogger.error('Login data not available or invalid format', { 
+          dataType: typeof loginData,
+          isArray: Array.isArray(loginData)
+        })
+        return false
+      }
+      
+      errorLogger.debug(`Available accounts: ${loginData.length}`)
+      
+      // Debug: Log all available accounts (remove in production)
+      loginData.forEach(account => {
+        errorLogger.debug(`Account: ${account.email}, Password: ${account.password}`)
+      })
+      
+      // Compare credentials with all entries in the login data
+      const matchedUser = loginData.find(user => 
+        user && user.email && user.password &&
+        user.email.toLowerCase() === email.toLowerCase() && 
+        user.password === password
+      )
+      
+      if (matchedUser) {
+        errorLogger.debug(`Found matching user: ${matchedUser.email}`)
+        
+        // Create current user object without password
+        const { password, ...userWithoutPassword } = matchedUser
+        currentUser.value = userWithoutPassword
+        
+        // Store in localStorage
+        localStorage.setItem('currentUser', JSON.stringify(currentUser.value))
+        
+        errorLogger.info(`Login successful for: ${email}`)
+        return true
+      } else {
+        // Log additional debug information to help trace the issue
+        const emailExists = loginData.some(u => u && u.email && u.email.toLowerCase() === email.toLowerCase())
+        
+        if (emailExists) {
+          errorLogger.warn(`Login failed for ${email}: Invalid password`)
+        } else {
+          errorLogger.warn(`Login failed for ${email}: User not found`)
+        }
+        return false
+      }
+    } catch (error) {
+      errorLogger.error(`Login error for ${email}`, error)
+      throw new Error('Authentication failed. Please try again.')
+    } finally {
+      isAuthLoading.value = false
+    }
+  }
+  
+  // Logout user
+  const logout = () => {
+    errorLogger.debug('Logging out user')
+    currentUser.value = null
+    localStorage.removeItem('currentUser')
+    errorLogger.info('User logged out successfully')
+  }
+  
+  return {
+    currentUser,
+    isAuthenticated,
+    isAuthLoading,
+    checkAuth,
+    login,
+    logout
   }
 })

@@ -1,47 +1,10 @@
 <template>
-  <!-- Show login page if not authenticated - DON'T use LoginPage component directly -->
-  <div v-if="!authStore.isLoggedIn" class="login-container">
-    <router-view />
-  </div>
-  
-  <!-- Show main app if authenticated -->
-  <div v-else class="max-w-7xl mx-auto p-5 text-center">
-    <!-- Header mit Navigation -->
-    <AppHeader 
-      :activeTab="uiStore.activeTab" 
-      @update-tab="handleTabChange"
-      :isLoggedIn="authStore.isLoggedIn"
-      :showChat="uiStore.showChat"
-      :currentUser="authStore.currentUser"
-      :isAdmin="authStore.isAdmin"
-      @toggle-chat="uiStore.toggleChat()"
-      @logout="handleLogout"
-    />
-    
-    <!-- App-Aktionen für das Matching -->
-    <AppActions 
-      v-if="uiStore.activeTab === 'matching'"
-      @create-profile="userStore.startCreating()"
-      @export-profiles="userStore.exportAllUsers()"
-      @import-profiles="importProfilesFromFile"
-    />
-    
-    <!-- Chat-Interface -->
-    <ChatOverlay 
-      v-if="authStore.isLoggedIn && uiStore.showChat" 
-      :currentUserId="authStore.userId"
-      :users="userStore.allUsers"
-      :initialOtherUserId="uiStore.chatWithUserId"
-      @close="uiStore.closeChat()"
-    />
-    
-    <!-- Router View for main content -->
-    <router-view />
-  </div>
+  <router-view />
+  <ErrorConsole />
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
@@ -51,6 +14,8 @@ import { useUIStore } from '@/stores/ui'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppActions from '@/components/layout/AppActions.vue'
 import ChatOverlay from '@/components/chat/ChatOverlay.vue'
+import ErrorConsole from '@/components/debug/ErrorConsole.vue'
+import errorLogger from '@/services/errorLogger'
 
 export default defineComponent({
   name: 'App',
@@ -58,7 +23,8 @@ export default defineComponent({
   components: { 
     AppHeader,
     AppActions,
-    ChatOverlay
+    ChatOverlay,
+    ErrorConsole
   },
   
   setup() {
@@ -67,29 +33,64 @@ export default defineComponent({
     const userStore = useUserStore()
     const uiStore = useUIStore()
     
-    // Load users when app starts
-    userStore.loadUsers()
+    onMounted(async () => {
+      try {
+        errorLogger.info("App mounted - initializing data")
+        
+        // First load user data
+        errorLogger.debug("Loading users...")
+        await userStore.loadUsers()
+        errorLogger.info("Users loaded successfully")
+        
+        // Then check authentication
+        errorLogger.debug("Checking authentication...")
+        await authStore.checkAuth()
+        errorLogger.info("Authentication check completed")
+        
+        errorLogger.info("Initial data loading complete")
+      } catch (error) {
+        errorLogger.error("Error during app initialization", error)
+      }
+    })
     
     // Handle logout
     const handleLogout = () => {
-      authStore.logout()
-      router.push('/login')
+      try {
+        errorLogger.debug("Logging out user...")
+        authStore.logout()
+        router.push('/login')
+        errorLogger.info("User logged out successfully")
+      } catch (error) {
+        errorLogger.error("Failed to logout", error)
+      }
     }
     
     // Handle tab changes
     const handleTabChange = (tab) => {
-      uiStore.setActiveTab(tab)
-      router.push(`/${tab}`)
+      try {
+        errorLogger.debug(`Changing tab to ${tab}`)
+        uiStore.setActiveTab(tab)
+        router.push(`/${tab}`)
+      } catch (error) {
+        errorLogger.error(`Failed to change tab to ${tab}`, error)
+      }
     }
     
     // Import profiles from file
     const importProfilesFromFile = (event) => {
       const file = event.target.files[0]
       if (file) {
+        errorLogger.debug(`Importing profiles from file: ${file.name}`)
         const reader = new FileReader()
         reader.onload = (e) => {
-          const profiles = JSON.parse(e.target.result)
-          userStore.importUsers(profiles)
+          try {
+            const profiles = JSON.parse(e.target?.result || '{}')
+            userStore.importUsers(profiles)
+            errorLogger.info(`Successfully imported ${Object.keys(profiles).length} profiles`)
+          } catch (error) {
+            errorLogger.error("Failed to parse JSON file", error)
+            alert("Invalid JSON file format")
+          }
         }
         reader.readAsText(file)
       }

@@ -71,6 +71,15 @@
         </div>
       </div>
     </div>
+    
+    <div class="container mx-auto p-4 mt-8">
+      <h1 class="text-2xl font-bold mb-4">Matching System</h1>
+      <p class="mb-4">Find potential matches based on shared interests and complementary skills.</p>
+      
+      <div class="bg-gray-100 p-4 rounded-lg">
+        <p>Matching functionality will be implemented here.</p>
+      </div>
+    </div>
   </div>
 </template>
 

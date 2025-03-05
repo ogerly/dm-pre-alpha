@@ -4,6 +4,7 @@ import { findTopMatches } from '@/services/MatchingService'
 export const useUserStore = defineStore('user', {
   state: () => ({
     users: [],
+    authUsers: [],
     selectedUser: null,
     userForMatching: null,
     matchResults: [],
@@ -13,23 +14,28 @@ export const useUserStore = defineStore('user', {
     editingUser: null,
     creatingUser: false,
     
-    // Storage keys and constants (migrated from StorageService)
+    // Storage keys and constants
     STORAGE_KEY: 'dreammall_profiles',
     DATA_JSON_PATHS: [
-      '/data.json',
-      './data.json',
-      '/public/data.json',
-      '../public/data.json',
+      '/src/assets/store-test-user-data.json',
+      '/assets/store-test-user-data.json',
+      './src/assets/store-test-user-data.json',
+      '../src/assets/store-test-user-data.json',
+      './assets/store-test-user-data.json',
+      '../assets/store-test-user-data.json',
+      'store-test-user-data.json',
       'data.json'
     ],
-    // Auth users with valid credentials (matches data.json)
-    AUTH_USERS: [
-      {
-        id: 2,
-        email: "test@example.com",
-        password: "test123",
-      }
-    ]
+    AUTH_JSON_PATHS: [
+      '/src/assets/store-test-login-data.json',
+      '/assets/store-test-login-data.json',
+      './src/assets/store-test-login-data.json',
+      '../src/assets/store-test-login-data.json',
+      './assets/store-test-login-data.json',
+      '../assets/store-test-login-data.json',
+      'store-test-login-data.json'
+    ],
+    isCreating: false
   }),
 
   getters: {
@@ -54,14 +60,45 @@ export const useUserStore = defineStore('user', {
   },
 
   actions: {
-    // Load users - equivalent to initializeStorage and resetToInitialData
+    // Load authentication users data from JSON
+    async loadAuthUsers() {
+      try {
+        for (const path of this.AUTH_JSON_PATHS) {
+          try {
+            console.log(`Attempting to load auth data from: ${path}`)
+            const response = await fetch(path)
+            
+            if (response.ok) {
+              this.authUsers = await response.json()
+              console.log(`Successfully loaded ${this.authUsers.length} auth users from ${path}`)
+              return this.authUsers
+            }
+          } catch (error) {
+            console.warn(`Error loading auth data from ${path}:`, error.message)
+          }
+        }
+        
+        console.error('Failed to load auth data from any path')
+        this.authUsers = []
+        return []
+      } catch (error) {
+        console.error('Error in loadAuthUsers:', error)
+        this.authUsers = []
+        return []
+      }
+    },
+    
+    // Load users - main entry point for loading user data
     async loadUsers(forceReset = false) {
       try {
         this.isLoading = true
         this.lastError = null
         
+        // First ensure we have auth users loaded
+        await this.loadAuthUsers()
+        
         if (forceReset) {
-          console.log('Force reset requested, loading from data.json')
+          console.log('Force reset requested, loading from JSON files')
           await this.loadAndMergeDataJson()
           return this.users
         }
@@ -69,7 +106,7 @@ export const useUserStore = defineStore('user', {
         const existingProfiles = this.getAllProfilesFromStorage()
         
         if (!existingProfiles || existingProfiles.length === 0) {
-          console.log('No existing profiles found, importing from data.json')
+          console.log('No existing profiles found, importing from JSON files')
           await this.loadAndMergeDataJson()
         } else {
           this.users = existingProfiles
@@ -79,8 +116,10 @@ export const useUserStore = defineStore('user', {
       } catch (error) {
         console.error('Error loading users:', error)
         this.lastError = error.message || 'Failed to load users'
-        this.users = []
-        return []
+        
+        // Create minimal fallback data
+        this.users = this.createFallbackProfiles()
+        return this.users
       } finally {
         this.isLoading = false
       }
@@ -99,61 +138,84 @@ export const useUserStore = defineStore('user', {
       }
     },
     
-    // Load and merge data from data.json
+    // Load and merge data from JSON files
     async loadAndMergeDataJson() {
       let userData = null
-      let lastError = null
       
-      // Try each path in sequence until one works
+      // Try each path for user data in sequence until one works
       for (const path of this.DATA_JSON_PATHS) {
         try {
-          console.log(`Attempting to load data.json from: ${path}`)
+          console.log(`Attempting to load user data from: ${path}`)
           const response = await fetch(path)
           
           if (response.ok) {
             userData = await response.json()
             console.log(`Successfully loaded ${userData.length} profiles from ${path}`)
-            break // Exit the loop if successful
+            break
           } else {
             console.warn(`Failed to load from ${path}: ${response.status}`)
           }
         } catch (error) {
-          lastError = error
           console.warn(`Error loading from ${path}:`, error.message)
         }
       }
       
-      // If we couldn't load from any path, use hardcoded data
+      // If we couldn't load user data from any path
       if (!userData) {
-        console.error('Failed to load data.json from any path, using hardcoded data')
-        userData = this.getHardcodedUserData()
+        console.error('Failed to load user data from any path')
+        if (this.authUsers.length > 0) {
+          // Create minimal profiles from auth users
+          userData = this.authUsers.map(auth => ({
+            id: auth.id,
+            name: auth.email.split('@')[0], // Generate a name from email
+            email: auth.email,
+            role: auth.role || 'user',
+            bio: "Minimal user profile",
+            skills: [],
+            interests: []
+          }))
+        } else {
+          // No data at all - create a single test user
+          userData = [{
+            id: 999,
+            name: "Emergency User",
+            email: "emergency@example.com",
+            role: "admin",
+            bio: "Emergency fallback user",
+            skills: ["Emergency", "Recovery"],
+            interests: ["System Restoration"]
+          }]
+        }
       }
       
       // Merge with auth data
       try {
         const mergedProfiles = userData.map(user => {
           // Find matching auth user
-          const authUser = this.AUTH_USERS.find(auth => auth.id === user.id)
+          const authUser = this.authUsers.find(auth => auth.id === user.id)
           if (authUser) {
-            // For Test User (id=2), ALWAYS ensure admin role is set
+            // For id=2, always ensure admin role
             if (user.id === 2) {
               return {
                 ...user,
+                email: authUser.email || user.email,
                 password: authUser.password,
                 role: "admin" // Explicitly enforce admin role
               }
             }
-            // For other users, just merge password
+            // For other users, merge auth data
             return {
               ...user,
-              password: authUser.password
+              email: authUser.email || user.email,
+              password: authUser.password,
+              role: authUser.role || user.role || 'user'
             }
           }
           return user
         })
         
-        // Add auth users that aren't in the data.json
-        this.AUTH_USERS.forEach(authUser => {
+        // Add auth users that aren't in the profile data
+        this.authUsers.forEach(authUser => {
           if (!mergedProfiles.some(p => p.id === authUser.id)) {
             console.log(`Adding missing auth user with id ${authUser.id} to profiles`)
             mergedProfiles.push({
@@ -161,7 +223,7 @@ export const useUserStore = defineStore('user', {
               name: authUser.email.split('@')[0], // Generate a name from email
               email: authUser.email,
               password: authUser.password,
-              role: authUser.id === 2 ? 'admin' : 'user',  // Make test@example.com an admin
+              role: authUser.role || 'user',
               bio: "Automatically created user",
               skills: [],
               interests: [],
@@ -191,86 +253,48 @@ export const useUserStore = defineStore('user', {
     createFallbackProfiles() {
       console.warn('Creating fallback profiles')
       
-      const fallbackProfiles = this.AUTH_USERS.map(auth => ({
-        id: auth.id,
-        name: auth.email.split('@')[0], // Generate a name from email
-        email: auth.email,
-        password: auth.password,
-        role: auth.id === 2 ? 'admin' : 'user',  // Make test@example.com an admin
-        bio: "Fallback user profile",
-        skills: [],
-        interests: [],
-        iconCategories: {}
-      }))
+      // Start with auth users if available
+      let fallbackProfiles = []
+      
+      if (this.authUsers.length > 0) {
+        fallbackProfiles = this.authUsers.map(auth => ({
+          id: auth.id,
+          name: auth.email.split('@')[0], // Generate a name from email
+          email: auth.email,
+          password: auth.password,
+          role: auth.id === 2 ? 'admin' : (auth.role || 'user'),
+          bio: "Fallback user profile",
+          skills: [],
+          interests: [],
+          iconCategories: {}
+        }))
+      } else {
+        // If no auth users, create a single test user
+        fallbackProfiles = [{
+          id: 2,
+          name: "Test User",
+          email: "test@example.com",
+          password: "test123",
+          role: "admin",
+          bio: "Fallback admin user",
+          skills: [],
+          interests: [],
+          iconCategories: {}
+        }]
+      }
       
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(fallbackProfiles))
       console.log(`Fallback: saved ${fallbackProfiles.length} minimal profiles`)
       return fallbackProfiles
     },
     
-    // Hardcoded user data as a last resort
-    getHardcodedUserData() {
-      console.warn('Using hardcoded user data')
-      
-      return [
-        {
-          "id": 2,
-          "name": "Test User",
-          "email": "test@example.com",
-          "password": "test123",
-          "role": "admin",  // Explicitly set role for test user
-          "bio": "Ein erfahrener Software-Entwickler mit Schwerpunkt auf nachhaltigen Technologien.",
-          "skills": ["Projektmanagement", "Agile Methoden", "Vue.js"],
-          "interests": ["Digitalisierung", "Innovation", "Nachhaltigkeit"],
-          "goals": "Teams bei der digitalen Transformation unterstützen.",
-          "iconCategories": {
-            "home": {
-              "address": "München, Deutschland",
-              "description": "Remote und lokale Arbeit möglich",
-              "coordinates": [48.1351, 11.5820]
-            }
-          }
-        },
-        {
-          "id": 3,
-          "name": "Anna Schmidt",
-          "email": "anna@example.com",
-          "role": "user",  // Regular user
-          "bio": "UX/UI Designerin mit Fokus auf benutzerfreundliche Interfaces.",
-          "skills": ["UI Design", "UX Research", "Figma"],
-          "interests": ["Design Thinking", "Nutzerzentriertes Design"],
-          "goals": "Benutzerfreundliche Interfaces gestalten.",
-          "iconCategories": {
-            "home": {
-              "address": "Hamburg, Deutschland",
-              "description": "Remote",
-              "coordinates": [53.5511, 9.9937]
-            }
-          }
-        },
-        {
-          "id": 4,
-          "name": "Jan Müller",
-          "email": "jan@example.com",
-          "role": "user",  // Regular user
-          "bio": "Backend-Entwickler mit Erfahrung in Cloud-Infrastruktur.",
-          "skills": ["Node.js", "Python", "AWS"],
-          "interests": ["Cloud Computing", "DevOps"],
-          "goals": "Skalierbare Systemarchitekturen entwickeln.",
-          "iconCategories": {
-            "home": {
-              "address": "Frankfurt, Deutschland",
-              "coordinates": [50.1109, 8.6821]
-            }
-          }
-        }
-      ]
-    },
-    
     // Reset the system to initial data
     async resetToInitialData() {
       // Clear localStorage first to ensure a clean slate
       localStorage.removeItem(this.STORAGE_KEY)
+      // Reload auth users to ensure we have the latest
+      await this.loadAuthUsers()
+      // Then load and merge the data
       return this.loadAndMergeDataJson()
     },
     
@@ -304,6 +328,7 @@ export const useUserStore = defineStore('user', {
     
     startCreating() {
       this.creatingUser = true
+      this.isCreating = true
     },
     
     cancelEditing() {
@@ -348,6 +373,7 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    // Delete user
     async deleteUser(userId) {
       try {
         this.isLoading = true
@@ -409,11 +435,28 @@ export const useUserStore = defineStore('user', {
         this.isLoading = true
         this.lastError = null
         
+        // Load auth users first to ensure we have them
+        await this.loadAuthUsers()
+        
+        // Merge imported data with auth data to ensure passwords and roles are preserved
+        const mergedProfiles = jsonData.map(user => {
+          const authUser = this.authUsers.find(auth => auth.id === user.id)
+          if (authUser) {
+            return {
+              ...user,
+              email: authUser.email || user.email,
+              password: authUser.password,
+              role: user.id === 2 ? 'admin' : (authUser.role || user.role || 'user')
+            }
+          }
+          return user
+        })
+        
         // Save to localStorage
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(jsonData))
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(mergedProfiles))
         
         // Update our state
-        this.users = jsonData
+        this.users = mergedProfiles
         
         return true
       } catch (error) {
@@ -492,7 +535,6 @@ export const useUserStore = defineStore('user', {
     },
     
     extractProjects() {
-      // ... existing code for extracting projects ...
       const projects = []
       
       this.users.forEach(user => {
@@ -543,7 +585,6 @@ export const useUserStore = defineStore('user', {
     },
     
     extractTables() {
-      // ... existing code for extracting tables ...
       const tables = []
       
       this.users.forEach(user => {
@@ -614,6 +655,11 @@ export const useUserStore = defineStore('user', {
       console.log("Current users and their roles:")
       this.users.forEach(user => {
         console.log(`User: ${user.name}, ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
+      })
+      
+      console.log("\nAuth users:")
+      this.authUsers.forEach(user => {
+        console.log(`Auth User: ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
       })
       
       // Check localStorage

@@ -1,75 +1,71 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import errorLogger from '@/services/errorLogger'
+import { useAuthStore } from '@/stores/auth'
 
-// Auth
-import LoginView from '@/views/auth/LoginView.vue'
-
-// Main views
-import MatchingView from '@/views/matching/MatchingView.vue'
-import MapView from '@/views/map/MapView.vue'
-
-// User views
-import UserProfileView from '@/views/user/UserProfileView.vue'
-import UserSettingsView from '@/views/user/UserSettingsView.vue'
-
-// Admin views
-import AdminView from '@/views/admin/AdminView.vue'
-
-// Error views
-import NotFoundView from '@/views/errors/NotFoundView.vue'
+// Import views
+import LoginPage from '@/components/auth/LoginPage.vue'
+import DashboardPage from '@/views/DashboardPage.vue'
+import AdminboardPage from '@/views/AdminboardPage.vue'
+import NotFoundPage from '@/views/NotFoundPage.vue'
+import MatchingView from '@/views/MatchingView.vue'
+import ProjectsView from '@/views/ProjectsView.vue'
+import TableView from '@/views/TableView.vue'
+import MapView from '@/views/MapView.vue'
+import VideoChatView from '@/views/VideoChatView.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    redirect: '/matching'
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: LoginView,
-    meta: { requiresGuest: true }
-  },
-  {
-    path: '/matching',
-    name: 'matching',
-    component: MatchingView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/map',
-    name: 'map',
-    component: MapView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: UserProfileView,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/profile/:id',
-    name: 'userProfile',
-    component: UserProfileView,
-    meta: { requiresAuth: true },
-    props: true
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: UserSettingsView,
+    name: 'Dashboard',
+    component: DashboardPage,
     meta: { requiresAuth: true }
   },
   {
     path: '/admin',
-    name: 'admin',
-    component: AdminView,
+    name: 'Admin',
+    component: AdminboardPage,
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/matching',
+    name: 'Matching',
+    component: MatchingView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/projects',
+    name: 'Projects',
+    component: ProjectsView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/table',
+    name: 'Table',
+    component: TableView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/map',
+    name: 'Map',
+    component: MapView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/videochat',
+    name: 'VideoChat',
+    component: VideoChatView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage,
+    meta: { guest: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
-    name: 'notFound',
-    component: NotFoundView
+    name: 'NotFound',
+    component: NotFoundPage
   }
 ]
 
@@ -78,29 +74,68 @@ const router = createRouter({
   routes
 })
 
-// Navigation guards
+// Navigation guard
 router.beforeEach((to, from, next) => {
-  // Get authentication status from localStorage
-  const currentUser = localStorage.getItem('currentUser')
-  const isAuthenticated = currentUser ? JSON.parse(currentUser).isLoggedIn : false
-  const userRole = currentUser ? JSON.parse(currentUser).role : null
-  const isAdmin = userRole === 'admin'
+  errorLogger.debug(`Navigation requested: ${from.path} → ${to.path}`)
+  
+  try {
+    const authStore = useAuthStore()
+    const isAuthenticated = authStore.isAuthenticated
+    const userRole = authStore.currentUser?.role
+    
+    errorLogger.debug(`Auth check for navigation: ${isAuthenticated ? 'Authenticated' : 'Not authenticated'}, Role: ${userRole || 'none'}`)
+    
+    // Route requires admin role
+    if (to.matched.some(record => record.meta.requiresAdmin)) {
+      if (!isAuthenticated) {
+        errorLogger.warn(`Redirecting to login: ${to.path} requires authentication`)
+        next('/login')
+      } else if (userRole !== 'admin') {
+        errorLogger.warn(`Access denied: ${to.path} requires admin role, current role: ${userRole}`)
+        next('/')  // Redirect non-admins to dashboard
+      } else {
+        errorLogger.debug(`Authorized admin navigation to: ${to.path}`)
+        next()
+      }
+    }
+    // Route requires auth but not admin
+    else if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (!isAuthenticated) {
+        errorLogger.debug(`Redirecting to login: ${to.path} requires authentication`)
+        next('/login')
+      } else {
+        errorLogger.debug(`Authorized navigation to: ${to.path}`)
+        next()
+      }
+    } 
+    // Guest routes (like login)
+    else if (to.matched.some(record => record.meta.guest)) {
+      if (isAuthenticated) {
+        errorLogger.debug(`Redirecting to dashboard: user already authenticated`)
+        next('/')
+      } else {
+        errorLogger.debug(`Guest navigation to: ${to.path}`)
+        next()
+      }
+    } 
+    // Public routes
+    else {
+      errorLogger.debug(`Public navigation to: ${to.path}`)
+      next()
+    }
+  } catch (error) {
+    errorLogger.error("Navigation guard error", error)
+    next('/login') // Safe fallback
+  }
+})
 
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'login', query: { redirect: to.fullPath } })
-  } 
-  // Check if route requires admin role
-  else if (to.meta.requiresAdmin && !isAdmin) {
-    next({ name: 'matching' }) // Redirect to matching if not admin
-  }
-  // Check if route requires guest (non-authenticated)
-  else if (to.meta.requiresGuest && isAuthenticated) {
-    next({ name: 'matching' })
-  } 
-  else {
-    next()
-  }
+// After each navigation
+router.afterEach((to) => {
+  errorLogger.info(`Navigation completed to: ${to.path}`, {
+    route: to.name,
+    params: to.params,
+    query: to.query
+  })
 })
 
 export default router
