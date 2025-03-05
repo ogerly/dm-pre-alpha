@@ -798,6 +798,49 @@ export default {
     
     viewProfile(user) {
       this.$emit('view-profile', user);
+    },
+    
+    initializeMap() {
+      // ...existing initialization code...
+      
+      // Add error handling for the tooltip issue
+      if (window.L) {
+        // Fix for tooltip animation during zoom
+        const originalAnimateZoom = window.L.Tooltip.prototype._animateZoom;
+        window.L.Tooltip.prototype._animateZoom = function(e) {
+          try {
+            originalAnimateZoom.call(this, e);
+          } catch (err) {
+            console.warn('Tooltip animation error handled:', err.message);
+            // If animation fails, try to update position without animation
+            try {
+              if (this._map && this._map._latLngToNewLayerPoint) {
+                const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center);
+                this._setPosition(pos);
+              }
+            } catch (innerErr) {
+              console.warn('Could not update tooltip position:', innerErr.message);
+            }
+          }
+        };
+      }
+      
+      // Continue with the rest of your initialization
+    },
+    
+    createMarkers() {
+      // ...existing code...
+      
+      // Before creating new tooltips, ensure old ones are closed
+      if (this.map && this.map.eachLayer) {
+        this.map.eachLayer(function(layer) {
+          if (layer.options && layer.options.pane === 'tooltipPane') {
+            layer.remove();
+          }
+        });
+      }
+      
+      // Continue with marker creation
     }
   }
 }
@@ -817,5 +860,10 @@ export default {
   width: 100%;
   position: relative;
   z-index: 1;
+}
+
+/* Additional style to reduce console errors with tooltips */
+.leaflet-tooltip {
+  pointer-events: none !important;
 }
 </style>

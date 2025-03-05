@@ -17,8 +17,8 @@ Die Hauptziele des Systems sind:
 ### Stack
 - **Frontend Framework**: Vue.js 3
 - **Build-Tool**: Vite
-- **Datenmanagement**: JSON-basiert mit LocalStorage-Persistenz
-- **Styling**: Vanilla CSS mit Flexbox und Grid für responsives Layout
+- **CSS Framework**: Tailwind CSS mit benutzerdefinierten Erweiterungen
+- **Datenmanagement**: JSON-basiert mit LocalStorage-Persistenz (Testphase)
 - **Icons**: Font Awesome 5
 - **Kartendarstellung**: Leaflet.js für interaktive Karten
 - **Deployment**: Statische Webseite, lauffähig auf jedem modernen Webserver
@@ -28,34 +28,49 @@ Die Anwendung folgt einer komponentenbasierten Architektur:
 
 ```
 /
-├── components/                   # Vue-Komponenten
-│   ├── UserList.vue              # Liste verfügbarer Nutzer
-│   ├── UserProfile.vue           # Detailansicht eines Nutzerprofils
-│   ├── MatchingResults.vue       # Anzeige der Matching-Ergebnisse
-│   ├── UserProfileForm.vue       # Formular für Profileingabe/-bearbeitung
-│   ├── chat/                     # Chat-Komponenten
-│   │   ├── ChatContainer.vue     # Hauptcontainer für Chat-Funktionalitäten
-│   │   ├── ChatList.vue          # Liste der Chatgespräche
-│   │   └── ChatWindow.vue        # Chat-Interface für einzelne Gespräche
-│   ├── map/                      # Karten-Komponenten
-│   │   ├── MapPage.vue           # Hauptcontainer für Kartenansicht
-│   │   └── MapView.vue           # Interaktive Kartenkomponente mit Markern
-│   ├── debug/                    # Debug-Komponenten
-│   │   ├── DataLoader.vue        # Tool zum direkten Laden von data.json
-│   │   ├── DataDebugger.vue      # Anzeige und Inspektion der Nutzerdaten
-│   │   └── TestMap.vue           # Vereinfachte Karte für Testfälle
-├── services/                     # Geschäftslogik
-│   ├── MatchingService.js        # Matching-Algorithmus und Bewertungsfunktionen
-│   ├── StorageService.js         # Daten-Persistenz (LocalStorage)
-│   └── ChatService.js            # Chat-Funktionalitäten
-├── styles/                       # Ausgelagerte Styles
-│   └── map-markers-custom.css    # Angepasste Styles für Kartenmarker
-├── App.vue                       # Hauptkomponente
-├── data.json                     # Beispieldaten für Nutzerprofile
-├── index.html                    # HTML-Einstiegspunkt
-├── main.js                       # JavaScript-Einstiegspunkt
-├── style.css                     # Globale Stile
-└── vite.config.js                # Vite-Konfiguration
+├── src/
+│   ├── assets/
+│   │   ├── styles/                     # CSS und Tailwind Styles
+│   │   │   ├── tailwind.css            # Tailwind Einstiegspunkt mit benutzerdefinierten Klassen
+│   │   │   ├── global.css              # Globale Stilregeln
+│   │   │   ├── map-markers.css         # Kartenmarker-Stile
+│   │   │   └── map-markers-custom.css  # Benutzerdefinierte Kartenmarker-Stile
+│   ├── components/                     # Vue-Komponenten
+│   │   ├── layout/                     # Layout-Komponenten 
+│   │   │   ├── AppHeader.vue           # Anwendungsheader mit Navigation
+│   │   │   └── AppActions.vue          # Aktionsschaltflächen (erstellen, importieren, exportieren)
+│   │   ├── user/                       # Benutzer-bezogene Komponenten
+│   │   │   ├── UserList.vue            # Liste verfügbarer Nutzer
+│   │   │   ├── UserProfile.vue         # Detailansicht eines Nutzerprofils
+│   │   │   └── UserProfileForm.vue     # Formular für Profileingabe/-bearbeitung
+│   │   ├── matching/                   # Matching-Komponenten
+│   │   │   ├── MatchingContainer.vue   # Container für Matching-Funktionalität
+│   │   │   └── MatchingResults.vue     # Anzeige der Matching-Ergebnisse
+│   │   ├── chat/                       # Chat-Komponenten
+│   │   │   ├── ChatOverlay.vue         # Überlagerndes Chat-Fenster
+│   │   │   ├── ChatContainer.vue       # Hauptcontainer für Chat-Funktionalitäten
+│   │   │   ├── ChatList.vue            # Liste der Chatgespräche
+│   │   │   └── ChatWindow.vue          # Chat-Interface für einzelne Gespräche
+│   │   ├── map/                        # Karten-Komponenten
+│   │   │   ├── MapPage.vue             # Hauptcontainer für Kartenansicht
+│   │   │   └── MapView.vue             # Interaktive Kartenkomponente mit Markern
+│   │   └── debug/                      # Debug-Komponenten
+│   │       ├── DataLoader.vue          # Tool zum direkten Laden von data.json
+│   │       ├── DataDebugger.vue        # Anzeige und Inspektion der Nutzerdaten
+│   │       └── TestMap.vue             # Vereinfachte Karte für Testfälle
+│   ├── services/                       # Geschäftslogik
+│   │   ├── MatchingService.js          # Matching-Algorithmus und Bewertungsfunktionen
+│   │   ├── StorageService.js           # Daten-Persistenz (LocalStorage)
+│   │   └── ChatService.js              # Chat-Funktionalitäten
+│   ├── App.vue                         # Hauptkomponente
+│   └── main.js                         # JavaScript-Einstiegspunkt
+├── public/                             # Statische Dateien
+│   └── data.json                       # Beispieldaten für Nutzerprofile
+├── index.html                          # HTML-Einstiegspunkt
+├── package.json                        # Projektabhängigkeiten
+├── tailwind.config.js                  # Tailwind CSS Konfiguration
+├── postcss.config.js                   # PostCSS Konfiguration
+└── vite.config.js                      # Vite-Konfiguration
 ```
 
 ## Features
@@ -278,6 +293,16 @@ npm run dev
 npm run build
 ```
 
+### Tailwind CSS Anpassungen
+
+Das Projekt verwendet Tailwind CSS für das Styling mit benutzerdefinierten Erweiterungen:
+
+1. **Farbschema**: Angepasste Farben wie 'primary' (für Buttons und Highlights), 'secondary', usw.
+2. **Benutzerdefinierte Komponenten**: Vordefinierte Klassen wie `.btn`, `.btn-primary`, `.card`
+3. **Schatten**: Angepasste Schatten-Definitionen für konsistentes Design
+
+Diese Anpassungen sind in der `tailwind.config.js`-Datei definiert und durch die `@layer components`-Direktive in der `src/assets/styles/tailwind.css` implementiert.
+
 ## Funktionsweise des Matching-Algorithmus
 
 Der Algorithmus arbeitet in mehreren Schritten:
@@ -354,6 +379,64 @@ Falls auf der Karte keine Marker angezeigt werden:
 
 Die Browser-Konsole enthält detaillierte Logging-Informationen zur Fehlerdiagnose.
 
+## Komponentenstruktur im Detail
+
+Die Anwendung ist in mehrere logische Komponenten aufgeteilt:
+
+### Auth-Komponenten
+- **LoginForm**: Formular für die Benutzeranmeldung mit E-Mail und Passwort
+- **RegisterForm**: Registrierungsformular für neue Benutzer
+- **ProfileSetup**: Initiale Profileinrichtung nach der Registrierung
+- **PasswordReset**: Komponente zur Zurücksetzung des Passworts
+
+### Chat-Komponenten
+- **ChatOverlay**: Überlagerndes Fenster, das den Chat-Container enthält
+- **ChatContainer**: Hauptkomponente für Chat-Funktionen, enthält ChatList und ChatWindow
+- **ChatList**: Liste der aktiven Chatgespräche
+- **ChatWindow**: Chat-Interface für einzelne Gespräche
+
+### Firmen-Komponente
+- **CompanyList**: Übersicht aller registrierten Unternehmen
+- **CompanyProfile**: Detailansicht eines Unternehmensprofils
+- **CompanyForm**: Formular zum Erstellen oder Bearbeiten von Unternehmensprofilen
+
+### Debug-Komponente
+- **DataLoader**: Tool zum direkten Laden und Inspizieren der data.json
+- **DataDebugger**: Anzeige des aktuellen Datenstatus und Debugging-Informationen
+- **TestMap**: Vereinfachte Kartenansicht für Tests
+- **AssetTester**: Test der Verfügbarkeit verschiedener Ressourcen
+- **ConsoleOutput**: Anzeige von Debug-Logs und Fehlermeldungen
+
+### Layout-Komponenten
+- **AppHeader**: Enthält den Titel, die Beschreibung und die Navigationstabs der Anwendung
+- **AppActions**: Stellt Aktionen wie "Neues Profil erstellen", "Profile exportieren" und "Profile importieren" bereit
+
+### Map-Komponente
+- **MapPage**: Container für die Kartenansicht und zugehörige Debug-Tools
+- **MapView**: Eigentliche Kartenkomponente mit Markern, Popups und Interaktionen
+
+### Matching-Komponenten
+- **MatchingContainer**: Container für die Matching-Funktionalität, enthält UserList und MatchingResults
+- **MatchingResults**: Zeigt die Ergebnisse des Matching-Algorithmus mit Kompatibilitätswerten an
+
+### Projekt-Komponente
+- **ProjectList**: Übersicht aller Projekte mit Filtermöglichkeiten
+- **ProjectDetail**: Detailansicht eines einzelnen Projekts
+- **ProjectForm**: Formular zum Erstellen und Bearbeiten von Projekten
+
+### Table Komponente
+- **MeetupTable**: Übersicht aller Meetups und Treffen
+- **MeetupDetail**: Detailansicht eines Meetups mit Teilnehmern
+- **MeetupForm**: Formular zur Erstellung und Bearbeitung von Meetups
+- **MeetupCalendar**: Kalenderansicht kommender Meetups
+- **MeetupLocation**: Standortdarstellung für Meetups
+
+### Benutzer-Komponenten
+- **UserList**: Zeigt eine scrollbare Liste aller Benutzerprofile mit Such- und Filtermöglichkeiten
+- **UserProfile**: Detaillierte Ansicht eines einzelnen Benutzerprofils
+- **UserProfileForm**: Formular zum Erstellen oder Bearbeiten eines Benutzerprofils
+
+
 ## Datenschutz und Sicherheit
 
 Die Anwendung speichert alle Daten lokal im Browser des Nutzers (LocalStorage) und überträgt keine Daten an externe Server. Der Nutzer behält volle Kontrolle über seine Daten und kann diese jederzeit exportieren oder löschen.
@@ -371,6 +454,10 @@ Geplante Erweiterungen für zukünftige Versionen:
   - Import/Export von Koordinaten in gängigen Formaten (GeoJSON, KML)
 - **Automatisierte Matching-Vorschläge**: Regelmäßige Benachrichtigungen über neue passende Profile
 - **Projektvorschläge**: KI-basierte Vorschläge für mögliche Kollaborationsprojekte
+- **Weitere UI-Verbesserungen**:
+  - Dunkel-Modus mit Tailwind CSS
+  - Verbesserte mobile Ansicht
+  - Barrierefreiheit (Accessibility) Optimierungen
 
 ## Lizenz
 

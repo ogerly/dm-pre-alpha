@@ -200,7 +200,7 @@
     },
     {
         "id": 2,
-        "name": "Lisa Beispiel",
+        "name": "Test User",
         "bio": "Designerin mit Leidenschaft für UX/UI.",
         "iconCategories": {
             "home": {
