@@ -13,6 +13,7 @@ const inspiraVersion = pkg.dependencies?.["inspira-ui"]?.replace(/[\^~]/g, '') |
 const framework = 'Vue.js';
 const frameworkVersion = pkg.dependencies?.vue?.replace(/[\^~]/g, '') || '3.x';
 
+
 export default defineConfig({
   plugins: [vue()],
   // Update base URL for GitHub Pages compatibility with the specific repo

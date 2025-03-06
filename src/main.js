@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import App from './App.vue'
-import router from './router'
-import errorLogger from './services/errorLogger'
+import App from '@/App.vue'
+import router from '@/router'
+import errorLogger from '@/services/errorLogger'
+import { darkModeGlobal } from '@/composables/useDarkMode'
 
 // Import styles with proper order for Inspira-UI integration
 import './assets/styles/main.css'
@@ -31,6 +32,9 @@ router.beforeEach((to, from, next) => {
 
 // Register errorLogger as a plugin to make it accessible in components
 app.provide('errorLogger', errorLogger)
+
+// Make dark mode available globally
+app.provide('darkMode', darkModeGlobal)
 
 app
   .use(pinia)

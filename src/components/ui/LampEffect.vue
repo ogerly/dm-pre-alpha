@@ -70,7 +70,7 @@
 
 <script lang="ts" setup>
 import { computed, type HTMLAttributes } from "vue";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils"; // Updated import path
 
 interface LampEffectProps {
   delay?: number;

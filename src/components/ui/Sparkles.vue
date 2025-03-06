@@ -12,8 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, defineProps, withDefaults } from "vue";
-import { templateRef, useRafFn } from "@vueuse/core";
+import { ref, onMounted, onBeforeUnmount, defineProps, withDefaults  } from "vue";
+import { useRafFn, templateRef } from "@vueuse/core";
+
+
 
 interface Props {
   background?: string;
@@ -157,3 +159,8 @@ onBeforeUnmount(() => {
   }
 });
 </script>
+
+<style>
+/* No imports needed for now */
+/* You can add actual CSS rules here if needed */
+</style>

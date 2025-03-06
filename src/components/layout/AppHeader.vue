@@ -1,10 +1,10 @@
 <template>
-  <header class="bg-white shadow">
+  <header class="bg-white shadow dark:bg-gray-800">
     <div class="container mx-auto px-4 py-4">
       <!-- Top Navigation Bar -->
       <div class="flex justify-between items-center mb-2">
         <div class="flex items-center">
-          <h1 class="text-xl font-semibold text-gray-800">DreamMall</h1>
+          <h1 class="text-xl font-semibold text-gray-800 dark:text-white">DreamMall</h1>
         </div>
         
         <div class="flex items-center space-x-4">
@@ -12,6 +12,7 @@
             {{ authStore.currentUser.name || authStore.currentUser.email }}
             <span v-if="authStore.currentUser.role === 'admin'" class="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Admin</span>
           </span>
+          <DarkModeToggle />
           <button @click="toggleMobileMenu" class="md:hidden text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -67,9 +68,14 @@ import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useErrorTracking } from '@/composables/useErrorTracking'
+import DarkModeToggle from '@/components/ui/DarkModeToggle.vue'
 
 export default defineComponent({
   name: 'AppHeader',
+  
+  components: {
+    DarkModeToggle
+  },
   
   setup() {
     const router = useRouter()

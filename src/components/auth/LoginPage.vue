@@ -1,16 +1,10 @@
 <template>
-  <div class="relative min-h-screen w-full overflow-hidden">
-    <!-- LampEffect as background -->
+  <div class="relative min-h-screen w-full overflow-hidden bg-black">
+   
     <LampEffect class="absolute inset-0 z-0">
-      <div class="absolute inset-0 flex items-center justify-center">
+     
         <span class="font-heading text-6xl text-white opacity-20">DreamMall</span>
-      </div>
-    </LampEffect>
-    
-    <!-- Login form overlay -->
-    <div class=" z-10 min-h-screen flex items-center justify-center">
-      <div class="max-w-md w-full space-y-8 p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-xl">
-        <div>
+         <div>
           <h2 class="text-center text-3xl font-bold text-gray-900">Sign in</h2>
         </div>
         <div v-if="errors && errors.length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -43,29 +37,38 @@
           <div>
             <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/25" :disabled="isLoading">
               <span v-if="isLoading">Logging in...</span>
-              <span v-else>Sign in</span>
+              <span v-else>Treten sie ein</span>
             </button>
           </div>
         </form>
-      </div>
-    </div>
+
+    </LampEffect> 
+    
   </div>
 </template>
+ 
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
 import { useErrorTracking } from '@/composables/useErrorTracking'
 import loginDataJson from '@/assets/store-test-login-data.json'
-import LampEffect from '../ui/LampEffect.vue'
+import LampEffect from '@/components/ui/LampEffect.vue'
+import ParticlesBg from '@/components/ui/ParticlesBg.vue'
+import Sparkles from '@/components/ui/Sparkles.vue'
 
 export default {
   components: {
-    LampEffect
+    LampEffect,
+    ParticlesBg,
+    Sparkles
   },
   setup() {
+    // Create a local dark mode state
+    const isDarkMode = ref(true) // Default to dark mode since your background is black
+
     const email = ref('')
     const password = ref('')
     const errors = ref([])
@@ -76,6 +79,9 @@ export default {
     const authStore = useAuthStore()
     const userStore = useUserStore()
     const { errorLogger, trackAsyncOperation } = useErrorTracking('LoginPage')
+    
+    // Compute particle color based on dark mode state
+    const particlesColor =  "#FFFFFF"  //isDarkMode.value ? '#FFFFFF' : '#000000'
 
     // Load users and login data when component mounts
     onMounted(async () => {
@@ -162,7 +168,9 @@ export default {
       users,
       loginData,
       isLoading,
-      handleLogin
+      handleLogin,
+      particlesColor,
+      isDarkMode
     }
   }
 }
