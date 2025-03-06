@@ -75,9 +75,8 @@ import { useUserStore } from '@/stores/user'
 import { useErrorTracking } from '@/composables/useErrorTracking'
 import loginDataJson from '@/assets/store-test-login-data.json'
 
-import { initFlowbite } from 'flowbite'
 
- 
+
 export default {
   setup() {
     const email = ref('')
@@ -93,7 +92,7 @@ export default {
 
     // Load users and login data when component mounts
     onMounted(async () => {
-       initFlowbite();
+      
       try {
         await trackAsyncOperation('load users', async () => {
           await userStore.loadUsers()

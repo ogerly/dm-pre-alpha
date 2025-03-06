@@ -61,7 +61,7 @@ Die Hauptziele des Systems sind:
 - **CSS-Framework**: Tailwind CSS (inkl. eigener Erweiterungen)
 - **Datenverwaltung**: JSON-basiert mit LocalStorage (Prototyp-/Testphase)
 - **Icons**: Font Awesome 5 (optional via NPM oder CDN)
-- **UI-Komponenten**: Flowbite (Erweiterung für Tailwind CSS)
+- **UI-Komponenten**: Inspira-ui (Open Source Build stunning  websites using Vue & Nuxt)
 - **Kartenanzeige**: Leaflet.js (bisher optional via NPM oder CDN)
 - **Routing**: Vue Router (mit Auth-Guards)
 - **Deployment**: Statische Website (z. B. Netlify, Vercel)
