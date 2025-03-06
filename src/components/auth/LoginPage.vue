@@ -8,7 +8,7 @@
     </LampEffect>
     
     <!-- Login form overlay -->
-    <div class="relative z-10 min-h-screen flex items-center justify-center">
+    <div class=" z-10 min-h-screen flex items-center justify-center">
       <div class="max-w-md w-full space-y-8 p-8 bg-white/80 backdrop-blur-sm rounded-lg shadow-xl">
         <div>
           <h2 class="text-center text-3xl font-bold text-gray-900">Sign in</h2>

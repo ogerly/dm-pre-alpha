@@ -1,5 +1,11 @@
 <template>
   <router-view />
+  <small><b>DreamMall</b> | 
+    App: v{{ version }} | 
+    Vue: v{{ vueVersion }} | 
+    Framework: {{ framework }} {{ frameworkVersion }} | 
+    Inspira-UI: {{ inspiraUiVersion }}
+  </small>
   <ErrorConsole />
 </template>
 
@@ -32,6 +38,13 @@ export default defineComponent({
     const authStore = useAuthStore()
     const userStore = useUserStore()
     const uiStore = useUIStore()
+    
+    // Get version info from environment variables
+    const version = import.meta.env.APP_VERSION
+    const vueVersion = import.meta.env.VUE_VERSION
+    const framework = import.meta.env.FRAMEWORK
+    const frameworkVersion = import.meta.env.FRAMEWORK_VERSION
+    const inspiraUiVersion = import.meta.env.INSPIRA_UI_VERSION
     
     onMounted(async () => {
       try {
@@ -113,7 +126,13 @@ export default defineComponent({
       uiStore,
       handleLogout,
       handleTabChange,
-      importProfilesFromFile
+      importProfilesFromFile,
+      // Add version info to returned properties
+      version,
+      vueVersion,
+      framework,
+      frameworkVersion,
+      inspiraUiVersion  // Added this property to be used in the template
     }
   }
 })
