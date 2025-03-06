@@ -1,5 +1,13 @@
 node_modules/*
-dist/
+dist/*
 env/
 .env
 
+
+# build output
+docs/dist/*
+# generated types
+docs/.astro/*
+
+# dependencies
+docs/node_modules/*

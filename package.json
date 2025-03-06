@@ -4,12 +4,18 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "docs:install": "cd docs && npm install",
+    "docs:dev": "cd docs && npm run dev",
+    "docs:build": "cd docs && npm run build",
+    "docs:preview": "cd docs && npm run preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "4.0.10",
+    "flowbite": "3.1.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
@@ -20,7 +26,7 @@
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5",
-    "vite": "^4.4.11"
+    "tailwindcss": "3.4.17",
+    "vite": "5.2.0"
   }
 }

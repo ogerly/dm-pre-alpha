@@ -63,6 +63,14 @@ const routes = [
     meta: { guest: true }
   },
   {
+    path: '/docs',
+    name: 'Docs',
+    beforeEnter: () => {
+      window.location.href = '/documentation/';
+    },
+    meta: { guest: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: NotFoundPage
