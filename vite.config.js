@@ -13,11 +13,12 @@ const inspiraVersion = pkg.dependencies?.["inspira-ui"]?.replace(/[\^~]/g, '') |
 const framework = 'Vue.js';
 const frameworkVersion = pkg.dependencies?.vue?.replace(/[\^~]/g, '') || '3.x';
 
+// Determine the base URL - this needs to be empty for development with our Express server
+const baseUrl = process.env.NODE_ENV === 'production' ? '/dm-pre-alpha/' : '/';
 
 export default defineConfig({
   plugins: [vue()],
-  // Update base URL for GitHub Pages compatibility with the specific repo
-  base: process.env.NODE_ENV === 'production' ? '/dm-pre-alpha/' : '/',
+  base: baseUrl, // This sets the base path for assets
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
@@ -25,12 +26,25 @@ export default defineConfig({
   },
   server: {
     open: true,
-    port: 3000
+    port: 4000, // Keep using a different port for the dev server
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      }
+    }
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true
+    sourcemap: true,
+    // Ensure assets use proper MIME types
+    assetsInlineLimit: 0
   },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(appVersion),
@@ -38,5 +52,7 @@ export default defineConfig({
     'import.meta.env.FRAMEWORK': JSON.stringify(framework),
     'import.meta.env.FRAMEWORK_VERSION': JSON.stringify(frameworkVersion),
     'import.meta.env.INSPIRA_UI_VERSION': JSON.stringify(inspiraVersion),
+    'import.meta.env.VITE_SOCKET_URL': JSON.stringify('http://localhost:3000'),
+    'import.meta.env.BASE_URL': JSON.stringify(baseUrl),
   },
 });

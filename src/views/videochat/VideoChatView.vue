@@ -1,26 +1,28 @@
 <template>
   <div class="video-chat-view">
-    <div class="header">
-      <h1>WebRTC Videochat</h1>
-    </div>
+    <AppHeader />
     
-    <VideoChat />
-    
-    <div class="footer">
-      <p>© 2025 WebRTC Videochat App</p>
+    <div class="container mx-auto py-6 px-4">
+      <h1 class="text-2xl font-bold mb-6 dark:text-white">Video Chat</h1>
+      
+      <VideoChat />
     </div>
   </div>
 </template>
 
 <script>
-import VideoChat from '../components/VideoChat.vue';
+import { defineComponent } from 'vue';
+import AppHeader from '@/components/layout/AppHeader.vue';
+import VideoChat from '@/components/videochat/VideoChat.vue';
 
-export default {
+export default defineComponent({
   name: 'VideoChatView',
+  
   components: {
+    AppHeader,
     VideoChat
   }
-}
+});
 </script>
 
 <style>

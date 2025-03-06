@@ -1,3 +1,6 @@
+import { io } from 'socket.io-client';
+import errorLogger from '@/services/errorLogger';
+
 // Simple mock chat service - would be replaced with actual WebSocket/Socket.IO implementation
 const STORAGE_KEY = 'dreammall_chats';
 
@@ -112,3 +115,127 @@ export function createWelcomeMessageIfNeeded(userId, conversationId) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
   }
 }
+
+class ChatService {
+  constructor() {
+    this.socket = null;
+    this.connected = false;
+    this.socketId = null;
+    this.handlers = {
+      chatMessage: [],
+      connected: [],
+      disconnected: [],
+      newUser: [],
+      userDisconnected: [],
+      userCount: [],
+    };
+  }
+
+  connect() {
+    if (this.socket) return;
+    
+    try {
+      // Connect to localhost for development
+      // The port should match the port your socket.io server is running on
+      const serverUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000';
+      this.socket = io(serverUrl);
+      
+      this.socket.on('connect', () => {
+        this.connected = true;
+        this.socketId = this.socket.id;
+        errorLogger.info(`Connected to server with ID: ${this.socketId}`);
+        this._notifyHandlers('connected', { id: this.socketId });
+      });
+
+      this.socket.on('disconnect', () => {
+        this.connected = false;
+        errorLogger.warn('Disconnected from server');
+        this._notifyHandlers('disconnected');
+      });
+
+      this.socket.on('chatMessage', (data) => {
+        errorLogger.debug(`Received message: ${data.message} from ${data.id}`);
+        this._notifyHandlers('chatMessage', data);
+      });
+
+      this.socket.on('newUser', (data) => {
+        errorLogger.debug(`New user connected: ${data.id}`);
+        this._notifyHandlers('newUser', data);
+      });
+
+      this.socket.on('userDisconnected', (data) => {
+        errorLogger.debug(`User disconnected: ${data.id}`);
+        this._notifyHandlers('userDisconnected', data);
+      });
+
+      this.socket.on('userCount', (count) => {
+        errorLogger.debug(`User count updated: ${count}`);
+        this._notifyHandlers('userCount', count);
+      });
+
+    } catch (error) {
+      errorLogger.error('Error connecting to socket server', error);
+      throw error;
+    }
+  }
+
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+      this.connected = false;
+      this.socketId = null;
+      errorLogger.info('Manually disconnected from server');
+    }
+  }
+
+  sendMessage(message) {
+    if (!this.connected || !this.socket) {
+      errorLogger.error('Cannot send message: not connected to server');
+      return false;
+    }
+
+    try {
+      this.socket.emit('chatMessage', { message });
+      return true;
+    } catch (error) {
+      errorLogger.error('Error sending message', error);
+      return false;
+    }
+  }
+
+  on(event, handler) {
+    if (!this.handlers[event]) {
+      this.handlers[event] = [];
+    }
+    this.handlers[event].push(handler);
+  }
+
+  off(event, handler) {
+    if (!this.handlers[event]) return;
+    this.handlers[event] = this.handlers[event].filter(h => h !== handler);
+  }
+
+  _notifyHandlers(event, data) {
+    if (!this.handlers[event]) return;
+    this.handlers[event].forEach(handler => {
+      try {
+        handler(data);
+      } catch (error) {
+        errorLogger.error(`Error in ${event} handler`, error);
+      }
+    });
+  }
+
+  isConnected() {
+    return this.connected;
+  }
+
+  getSocketId() {
+    return this.socketId;
+  }
+}
+
+// Singleton instance
+const chatService = new ChatService();
+export default chatService;
