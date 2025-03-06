@@ -7,6 +7,11 @@
   .icon-container {
     @apply flex items-center justify-center;
   }
+
+  /* Font heading for the LampEffect component */
+  .font-heading {
+    @apply font-bold tracking-tight;
+  }
 }
 
 /* External Libraries - Font Awesome */
