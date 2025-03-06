@@ -1,7 +1,7 @@
 {
-  "name": "dreammall-matching-template",
+  "name": "dreammall-prototype",
   "private": true,
-  "version": "0.1.0",
+  "version": "dream-0.2-aplpha",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
@@ -11,7 +11,8 @@
     "docs:install": "cd docs && npm install",
     "docs:dev": "cd docs && npm run dev",
     "docs:build": "cd docs && npm run build",
-    "docs:preview": "cd docs && npm run preview"
+    "docs:preview": "cd docs && npm run preview",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@tailwindcss/vite": "4.0.10",
@@ -25,6 +26,7 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
+    "gh-pages": "6.3.0",
     "postcss": "^8.4.31",
     "tailwindcss": "3.4.17",
     "vite": "5.2.0"
