@@ -53,6 +53,17 @@ export default defineComponent({
       }
     })
     
+    // This ensures the router properly handles paths with the base URL
+    onMounted(() => {
+      // Get the path after the base URL
+      const path = window.location.pathname.replace(import.meta.env.BASE_URL, '/');
+      
+      // If we're on a path that should be handled by the router
+      if (path !== '/' && !path.includes('.')) {
+        router.push(path);
+      }
+    });
+
     // Handle logout
     const handleLogout = () => {
       try {

@@ -13,6 +13,9 @@ import TableView from '@/views/TableView.vue'
 import MapView from '@/views/MapView.vue'
 import VideoChatView from '@/views/VideoChatView.vue'
 
+// Get base URL from the Vite configuration
+const baseUrl = import.meta.env.BASE_URL || '/'
+
 const routes = [
   {
     path: '/',
@@ -78,7 +81,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  // Use the same base path as in Vite config
+  history: createWebHistory(baseUrl),
   routes
 })
 
