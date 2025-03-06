@@ -3,7 +3,9 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import errorLogger from './services/errorLogger'
-import './assets/styles/tailwind.css'
+
+// Import styles with proper order for Inspira-UI integration
+import './assets/styles/main.css'
 
 const pinia = createPinia()
 const app = createApp(App)

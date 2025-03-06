@@ -1,0 +1,85 @@
+/* Custom Marker Styles for Leaflet Map */
+.custom-marker {
+  @apply flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white shadow-md;
+}
+
+.home-icon {
+  @apply bg-emerald-100;
+}
+
+.home-icon i {
+  @apply text-emerald-800;
+}
+
+.firma-icon {
+  @apply bg-sky-100;
+}
+
+.firma-icon i {
+  @apply text-sky-800;
+}
+
+.projekt-icon {
+  @apply bg-purple-100;
+}
+
+.projekt-icon i {
+  @apply text-purple-800;
+}
+
+.tisch-icon {
+  @apply bg-violet-100;
+}
+
+.tisch-icon i {
+  @apply text-violet-800;
+}
+
+.unternehmen-icon {
+  @apply bg-orange-100;
+}
+
+.unternehmen-icon i {
+  @apply text-orange-800;
+}
+
+.wirkungsbereich-icon {
+  @apply bg-fuchsia-100;
+}
+
+.wirkungsbereich-icon i {
+  @apply text-fuchsia-800;
+}
+
+.custom-marker i {
+  @apply text-lg;
+}
+
+/* Type badges */
+.type-badge {
+  @apply px-2 py-0.5 rounded-full text-sm font-medium;
+}
+
+.type-badge.home {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+.type-badge.firma, .type-badge.Firma {
+  @apply bg-sky-100 text-sky-800;
+}
+
+.type-badge.unternehmen, .type-badge.Unternehmen {
+  @apply bg-orange-100 text-orange-800;
+}
+
+.type-badge.projekt, .type-badge.Projekt {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.type-badge.tisch, .type-badge.Tisch {
+  @apply bg-violet-100 text-violet-800;
+}
+
+.type-badge.wirkungsbereich, .type-badge.Wirkungsbereich {
+  @apply bg-fuchsia-100 text-fuchsia-800;
+}

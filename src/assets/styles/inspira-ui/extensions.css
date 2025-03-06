@@ -1,0 +1,22 @@
+/* Inspira-UI custom extensions and overrides */
+
+/* Custom extensions for Inspira-UI components */
+.inspira-btn-extended {
+  @apply transition-all duration-200;
+}
+
+.inspira-card-custom {
+  @apply border border-border;
+}
+
+/* Map component specific Inspira-UI extensions */
+.inspira-map-control {
+  @apply flex items-center gap-2 px-2 py-1.5 bg-background border border-border rounded-md;
+}
+
+/* Responsive adjustments for Inspira-UI components */
+@media (max-width: 768px) {
+  .inspira-responsive-stack {
+    @apply flex-col;
+  }
+}

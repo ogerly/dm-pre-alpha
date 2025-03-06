@@ -2,25 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom component classes can be defined here */
+/* Custom component classes with Inspira-UI compatibility */
 @layer components {
+  /* Use Inspira-UI design patterns for consistency */
   .btn {
-    @apply py-2 px-4 rounded cursor-pointer font-medium transition-colors;
+    @apply py-2 px-4 rounded-md cursor-pointer font-medium transition-all;
   }
   
   .btn-primary {
-    @apply bg-primary text-white hover:bg-indigo-600;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary/25 focus:outline-none;
   }
   
   .btn-secondary {
-    @apply bg-light-bg border border-border-color text-dark-text hover:bg-gray-100;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-2 focus:ring-secondary/25 focus:outline-none;
   }
   
   .card {
-    @apply bg-white p-4 rounded-lg shadow-custom;
+    @apply bg-card text-card-foreground p-4 rounded-lg shadow border border-border;
   }
   
   .form-input {
-    @apply w-full p-2 border border-border-color rounded-md;
+    @apply w-full p-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring;
+  }
+
+  /* Icon button styles - aligned with Inspira-UI patterns */
+  .icon-button {
+    @apply inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-md;
   }
 }
