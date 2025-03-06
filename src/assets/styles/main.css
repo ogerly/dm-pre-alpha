@@ -1,7 +1,9 @@
-/* Main CSS entry point */
+/* Main CSS entry point - IMPORTS MUST COME FIRST */
 @import './tailwind.css';
 @import './theme/variables.css';
 @import './inspira-ui/extensions.css';
 @import './components/map/markers.css';
 @import './components/map/layout.css';
 @import './utilities.css';
+
+/* Any additional CSS rules come AFTER all imports */

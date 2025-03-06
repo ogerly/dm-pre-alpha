@@ -1,5 +1,5 @@
 import animate from "tailwindcss-animate";
-import { setupInspiraUI } from "@inspira-ui/plugins";
+import { setupInspiraUI } from "./src/lib/inspira-ui-plugins";
 
 export default {
   darkMode: "selector",
@@ -49,8 +49,17 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      // Add support for conic gradients used in LampEffect
+      backgroundImage: {
+        'gradient-conic': 'conic-gradient(var(--tw-gradient-stops))',
+      },
+      // Add animations used in LampEffect
+      animation: {
+        'spotlight': 'spotlight-anim 2s ease-in-out forwards',
+        'glowing-line': 'glowing-line-anim 2s ease-in-out forwards',
+        'conic-gradient': 'conic-gradient-anim 2s ease-in-out forwards',
+      },
     },
   },
-
   plugins: [animate, setupInspiraUI],
 };
