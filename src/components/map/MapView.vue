@@ -7,36 +7,60 @@
         <!-- Type Filter -->
         <div class="filter-select">
           <label for="type-filter">Filter:</label>
-          <select id="type-filter" v-model="filterType" class="form-control">
-            <option value="all">Alle Typen</option>
-            <option value="Home">Wohnorte</option>
-            <option value="Firma">Firmen</option>
-            <option value="Projekt">Projekte</option>
-            <option value="Tisch">Meetups</option>
+          <select
+            id="type-filter"
+            v-model="filterType"
+            class="form-control"
+          >
+            <option value="all">
+              Alle Typen
+            </option>
+            <option value="Home">
+              Wohnorte
+            </option>
+            <option value="Firma">
+              Firmen
+            </option>
+            <option value="Projekt">
+              Projekte
+            </option>
+            <option value="Tisch">
+              Meetups
+            </option>
           </select>
         </div>
 
         <!-- Search Input -->
         <div class="search-input">
           <input 
-            type="text" 
             v-model="searchText" 
+            type="text" 
             placeholder="Suchen..." 
             @keyup.enter="updateMap"
           >
-          <button @click="updateMap" class="search-btn">
-            <i class="fas fa-search"></i>
+          <button
+            class="search-btn"
+            @click="updateMap"
+          >
+            <i class="fas fa-search" />
           </button>
         </div>
 
         <!-- Show Service Areas Checkbox -->
         <div class="service-area-toggle">
-          <input type="checkbox" id="show-service-areas" v-model="showServiceAreas">
+          <input
+            id="show-service-areas"
+            v-model="showServiceAreas"
+            type="checkbox"
+          >
           <label for="show-service-areas">Service-Gebiete anzeigen</label>
         </div>
 
-        <button @click="centerMap" class="center-btn">
-          <i class="fas fa-map-marker-alt"></i> Zentrieren
+        <button
+          class="center-btn"
+          @click="centerMap"
+        >
+          <i class="fas fa-map-marker-alt" /> Zentrieren
         </button>
       </div>
 
@@ -49,39 +73,76 @@
       </div>
       
       <!-- Debug Info - remove in production -->
-      <div v-if="debugInfo" class="debug-info">
+      <div
+        v-if="debugInfo"
+        class="debug-info"
+      >
         <span>Points loaded: {{ mapPoints.length }}</span>
         <span>Markers on map: {{ Object.keys(markers).length }}</span>
-        <button @click="debugInfo = !debugInfo">Hide Debug</button>
+        <button @click="debugInfo = !debugInfo">
+          Hide Debug
+        </button>
       </div>
     </div>
     
     <!-- Map Container with Loading Indicator -->
-    <div id="map" ref="mapContainer">
-      <MapLoading v-if="loading" :message="loadingMessage" />
+    <div
+      id="map"
+      ref="mapContainer"
+    >
+      <MapLoading
+        v-if="loading"
+        :message="loadingMessage"
+      />
     </div>
     
     <!-- Info Panel -->
-    <div class="map-info-panel" :class="{ open: selectedPoint }">
+    <div
+      class="map-info-panel"
+      :class="{ open: selectedPoint }"
+    >
       <div class="info-header">
-        <h3 v-if="selectedPoint">{{ selectedPoint.info.title }}</h3>
-        <button @click="closeInfoPanel" class="close-btn">&times;</button>
+        <h3 v-if="selectedPoint">
+          {{ selectedPoint.info.title }}
+        </h3>
+        <button
+          class="close-btn"
+          @click="closeInfoPanel"
+        >
+          &times;
+        </button>
       </div>
-      <div v-if="selectedPoint" class="info-content">
-        <p v-if="selectedPoint.info.description">{{ selectedPoint.info.description }}</p>
-        <span class="type-badge" :class="selectedPoint.type.toLowerCase()">{{ selectedPoint.type }}</span>
+      <div
+        v-if="selectedPoint"
+        class="info-content"
+      >
+        <p v-if="selectedPoint.info.description">
+          {{ selectedPoint.info.description }}
+        </p>
+        <span
+          class="type-badge"
+          :class="selectedPoint.type.toLowerCase()"
+        >{{ selectedPoint.type }}</span>
         
         <!-- Service Area Info -->
-        <div v-if="showServiceForPoint && (selectedPoint.type === 'Firma' || selectedPoint.type === 'Unternehmen')" 
-             class="service-area-info">
+        <div
+          v-if="showServiceForPoint && (selectedPoint.type === 'Firma' || selectedPoint.type === 'Unternehmen')" 
+          class="service-area-info"
+        >
           <h4>Service-Gebiet</h4>
           <p>Radius: {{ selectedPoint.type === 'Firma' ? '5' : '3' }} km um {{ selectedPoint.info.title }}</p>
           <p>Dienstleistungen sind in diesem Bereich verfügbar.</p>
         </div>
         
-        <div v-if="selectedPoint.associatedUser" class="associated-user">
+        <div
+          v-if="selectedPoint.associatedUser"
+          class="associated-user"
+        >
           <p><strong>Verknüpft mit:</strong> {{ selectedPoint.associatedUser.name }}</p>
-          <button @click="viewProfile(selectedPoint.associatedUser)" class="view-profile-btn">
+          <button
+            class="view-profile-btn"
+            @click="viewProfile(selectedPoint.associatedUser)"
+          >
             Profil anzeigen
           </button>
         </div>
@@ -91,13 +152,28 @@
         </div>
       </div>
     </div>
+    
+    <!-- The popover with a button that emits view-profile -->
+    <div
+      v-if="selectedProfile"
+      class="popover-footer"
+    >
+      <button
+        class="view-profile-btn"
+        @click="$emit('view-profile', selectedProfile)"
+      >
+        Profil anzeigen
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
 import MapLoading from './MapLoading.vue';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
+  name: 'MapView',
   components: {
     MapLoading
   },
@@ -119,6 +195,7 @@ export default {
       default: () => []
     }
   },
+  emits: ['view-profile'],
   data() {
     return {
       map: null,
@@ -237,7 +314,7 @@ export default {
           this.users.forEach(user => {
             try {
               if (user.iconCategories?.wirkungsbereich && Array.isArray(user.iconCategories.wirkungsbereich)) {
-                user.iconCategories.wirkungsbereich.forEach((area, idx) => {
+                user.iconCategories.wirkungsbereich.forEach((area, _idx) => {
                   if (area && this.validateCoordinates(area.coordinates)) {
                     points.push({
                       type: 'Wirkungsbereich',
@@ -263,7 +340,7 @@ export default {
           this.users.forEach(user => {
             try {
               if (user.iconCategories?.unternehmen && Array.isArray(user.iconCategories.unternehmen)) {
-                user.iconCategories.unternehmen.forEach((company, idx) => {
+                user.iconCategories.unternehmen.forEach((company, _idx) => {
                   if (company && this.validateCoordinates(company.coordinates)) {
                     points.push({
                       type: 'Unternehmen',
@@ -290,7 +367,7 @@ export default {
           this.users.forEach(user => {
             try {
               if (user.companies && Array.isArray(user.companies)) {
-                user.companies.forEach((company, idx) => {
+                user.companies.forEach((company, _idx) => {
                   if (company && this.validateCoordinates(company.coordinates)) {
                     points.push({
                       type: 'Unternehmen',
@@ -318,7 +395,7 @@ export default {
             try {
               // Process from iconCategories.projekt
               if (user.iconCategories?.projekt && Array.isArray(user.iconCategories.projekt)) {
-                user.iconCategories.projekt.forEach((project, idx) => {
+                user.iconCategories.projekt.forEach((project, _idx) => {
                   if (project && this.validateCoordinates(project.coordinates)) {
                     points.push({
                       type: 'Projekt',
@@ -336,7 +413,7 @@ export default {
               
               // Process own projects with coordinates
               if (user.ownProjects && Array.isArray(user.ownProjects)) {
-                user.ownProjects.forEach((project, idx) => {
+                user.ownProjects.forEach((project, _idx) => {
                   if (project && this.validateCoordinates(project.coordinates)) {
                     points.push({
                       type: 'Projekt',
@@ -354,7 +431,7 @@ export default {
               
               // Process contributed projects with coordinates
               if (user.contributedProjects && Array.isArray(user.contributedProjects)) {
-                user.contributedProjects.forEach((project, idx) => {
+                user.contributedProjects.forEach((project, _idx) => {
                   if (project && this.validateCoordinates(project.coordinates)) {
                     points.push({
                       type: 'Projekt',
@@ -380,7 +457,7 @@ export default {
           this.users.forEach(user => {
             try {
               if (user.iconCategories?.tisch && Array.isArray(user.iconCategories.tisch)) {
-                user.iconCategories.tisch.forEach((table, idx) => {
+                user.iconCategories.tisch.forEach((table, _idx) => {
                   if (table && this.validateCoordinates(table.coordinates)) {
                     points.push({
                       type: 'Tisch',
@@ -843,7 +920,7 @@ export default {
       // Continue with marker creation
     }
   }
-}
+});
 </script>
 
 <style scoped>

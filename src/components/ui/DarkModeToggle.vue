@@ -2,8 +2,8 @@
   <button 
     type="button" 
     class="rounded-md p-2 text-gray-500 hover:bg-gray-100 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-800"
-    @click="toggleDarkMode"
     aria-label="Toggle dark mode"
+    @click="toggleDarkMode"
   >
     <!-- Sun icon for dark mode (shown when in dark mode) -->
     <svg

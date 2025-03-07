@@ -2,12 +2,18 @@
   <div class="chat-list-container">
     <h3>Deine Gespräche</h3>
     
-    <div v-if="conversations.length === 0" class="no-chats">
+    <div
+      v-if="conversations.length === 0"
+      class="no-chats"
+    >
       <p>Du hast noch keine Gespräche.</p>
       <p>Starte ein Gespräch mit einem Match.</p>
     </div>
     
-    <ul v-else class="conversations">
+    <ul
+      v-else
+      class="conversations"
+    >
       <li 
         v-for="conversation in conversations" 
         :key="conversation.id"
@@ -21,7 +27,10 @@
         </div>
         <div class="conversation-meta">
           <span class="time">{{ formatTime(conversation.lastMessage.timestamp) }}</span>
-          <span v-if="conversation.unread > 0" class="unread-badge">{{ conversation.unread }}</span>
+          <span
+            v-if="conversation.unread > 0"
+            class="unread-badge"
+          >{{ conversation.unread }}</span>
         </div>
       </li>
     </ul>
@@ -30,8 +39,11 @@
 
 <script>
 import { getUserConversations } from '../../services/ChatService.js';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
+  name: 'ChatList',
+  
   props: {
     currentUserId: {
       type: Number,
@@ -46,6 +58,8 @@ export default {
       default: null
     }
   },
+  
+  emits: ['select-conversation'],
   data() {
     return {
       conversations: []
@@ -88,7 +102,7 @@ export default {
       }
     }
   }
-};
+});
 </script>
 
 <style scoped>

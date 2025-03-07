@@ -1,16 +1,29 @@
 <template>
-  <router-view />
-  <small><b>DreamMall</b> | 
-    App: v{{ version }} | 
-    Vue: v{{ vueVersion }} | 
-    Framework: {{ framework }} {{ frameworkVersion }} | 
-    Inspira-UI: {{ inspiraUiVersion }}
-  </small>
-  <ErrorConsole />
+  <div class="app">
+    <!-- Add the AppHeader component at the top -->
+    <AppHeader />
+
+    <!-- Main content area -->
+    <main class="main-content">
+      <router-view />
+    </main>
+
+    <!-- Add the AppActions component (floating buttons) -->
+    <AppActions />
+
+    <!-- Add the ChatOverlay component -->
+    <ChatOverlay v-if="uiStore.isChatOpen" />
+
+    <!-- Help overlay (if needed) -->
+    <HelpOverlay v-if="uiStore.isHelpOpen" />
+
+    <!-- Debug console - use the original component for now -->
+    <ErrorConsole v-if="isDev" />
+  </div>
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
@@ -20,6 +33,7 @@ import { useUIStore } from '@/stores/ui'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppActions from '@/components/layout/AppActions.vue'
 import ChatOverlay from '@/components/chat/ChatOverlay.vue'
+import HelpOverlay from '@/components/ui/HelpOverlay.vue'
 import ErrorConsole from '@/components/debug/ErrorConsole.vue'
 import errorLogger from '@/services/errorLogger'
 
@@ -30,6 +44,7 @@ export default defineComponent({
     AppHeader,
     AppActions,
     ChatOverlay,
+    HelpOverlay,
     ErrorConsole
   },
   
@@ -38,6 +53,9 @@ export default defineComponent({
     const authStore = useAuthStore()
     const userStore = useUserStore()
     const uiStore = useUIStore()
+    
+    // Create a computed property for DEV mode check
+    const isDev = computed(() => import.meta.env.DEV)
     
     // Get version info from environment variables
     const version = import.meta.env.APP_VERSION
@@ -124,6 +142,7 @@ export default defineComponent({
       authStore,
       userStore,
       uiStore,
+      isDev, // Return the computed property for the template
       handleLogout,
       handleTabChange,
       importProfilesFromFile,
@@ -132,16 +151,20 @@ export default defineComponent({
       vueVersion,
       framework,
       frameworkVersion,
-      inspiraUiVersion  // Added this property to be used in the template
+      inspiraUiVersion
     }
   }
 })
 </script>
 
 <style>
-.login-container {
+.app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
 }
 </style>

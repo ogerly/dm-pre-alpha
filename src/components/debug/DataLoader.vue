@@ -6,17 +6,26 @@
       <div class="status-item">
         <h4>Data Status</h4>
         <div class="status-indicator">
-          <span class="status-dot" :class="{ active: hasDataInStore }"></span>
+          <span
+            class="status-dot"
+            :class="{ active: hasDataInStore }"
+          />
           <span>{{ hasDataInStore ? 'Data in Store' : 'No Data in Store' }}</span>
         </div>
         
         <div class="status-indicator">
-          <span class="status-dot" :class="{ active: hasCoordinatesInStore }"></span>
+          <span
+            class="status-dot"
+            :class="{ active: hasCoordinatesInStore }"
+          />
           <span>{{ hasCoordinatesInStore ? 'Coordinates in Store' : 'No Coordinates in Store' }}</span>
         </div>
         
         <div class="status-indicator">
-          <span class="status-dot" :class="{ active: hasDataLoaded }"></span>
+          <span
+            class="status-dot"
+            :class="{ active: hasDataLoaded }"
+          />
           <span>{{ hasDataLoaded ? 'Data JSON Loaded' : 'Data JSON Not Loaded' }}</span>
         </div>
       </div>
@@ -27,23 +36,43 @@
       <h4>Data Path</h4>
       <div class="radio-group">
         <div>
-          <input type="radio" id="path1" value="/data.json" v-model="dataPath">
+          <input
+            id="path1"
+            v-model="dataPath"
+            type="radio"
+            value="/data.json"
+          >
           <label for="path1">/data.json (root)</label>
         </div>
         <div>
-          <input type="radio" id="path2" value="./data.json" v-model="dataPath">
+          <input
+            id="path2"
+            v-model="dataPath"
+            type="radio"
+            value="./data.json"
+          >
           <label for="path2">./data.json (relative)</label>
         </div>
         <div>
-          <input type="radio" id="path3" value="../data.json" v-model="dataPath">
+          <input
+            id="path3"
+            v-model="dataPath"
+            type="radio"
+            value="../data.json"
+          >
           <label for="path3">../data.json (one level up)</label>
         </div>
         <div>
-          <input type="radio" id="path4" v-model="dataPath" value="custom">
+          <input
+            id="path4"
+            v-model="dataPath"
+            type="radio"
+            value="custom"
+          >
           <label for="path4">Custom:</label>
           <input 
-            type="text" 
             v-model="customPath" 
+            type="text" 
             placeholder="Enter custom path" 
             :disabled="dataPath !== 'custom'"
             class="custom-path-input"
@@ -53,14 +82,24 @@
     </div>
     
     <div class="action-panel">
-      <button @click="loadDataJson" class="action-btn primary">
-        <i class="fas fa-download"></i> Load data.json directly
+      <button
+        class="action-btn primary"
+        @click="loadDataJson"
+      >
+        <i class="fas fa-download" /> Load data.json directly
       </button>
-      <button @click="applyDataToUsers" class="action-btn success" :disabled="!hasDataLoaded">
-        <i class="fas fa-check"></i> Apply to Users
+      <button
+        class="action-btn success"
+        :disabled="!hasDataLoaded"
+        @click="applyDataToUsers"
+      >
+        <i class="fas fa-check" /> Apply to Users
       </button>
-      <button @click="addTestPoints" class="action-btn">
-        <i class="fas fa-map-pin"></i> Add Test Points
+      <button
+        class="action-btn"
+        @click="addTestPoints"
+      >
+        <i class="fas fa-map-pin" /> Add Test Points
       </button>
     </div>
     
@@ -73,13 +112,19 @@
         placeholder="Paste JSON data here..." 
         rows="5"
         class="json-textarea"
-      ></textarea>
-      <button @click="loadManualJson" class="action-btn">
-        <i class="fas fa-file-import"></i> Parse Manual JSON
+      />
+      <button
+        class="action-btn"
+        @click="loadManualJson"
+      >
+        <i class="fas fa-file-import" /> Parse Manual JSON
       </button>
     </div>
     
-    <div class="compare-panel" v-if="showComparison">
+    <div
+      v-if="showComparison"
+      class="compare-panel"
+    >
       <h4>Comparison of Data</h4>
       <div class="comparison-columns">
         <div class="column">
@@ -93,20 +138,29 @@
       </div>
     </div>
     
-    <div class="load-status" :class="{ error: loadError, success: !loadError && loadStatus }">
+    <div
+      class="load-status"
+      :class="{ error: loadError, success: !loadError && loadStatus }"
+    >
       <p>{{ loadStatus }}</p>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'DataLoader',
+  
   props: {
     users: {
       type: Array,
       required: true
     }
   },
+  
+  emits: ['update-users', 'add-test-users'],
   data() {
     return {
       loadedData: null,
@@ -292,7 +346,7 @@ export default {
       this.loadStatus = 'Added test points!';
     }
   }
-}
+})
 </script>
 
 <style scoped>

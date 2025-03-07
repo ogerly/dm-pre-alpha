@@ -9,7 +9,7 @@
               'w-3 h-3 rounded-full mr-2', 
               isConnected ? 'bg-green-500' : 'bg-red-500'
             ]"
-          ></div>
+          />
           <span class="font-medium text-sm dark:text-white">
             {{ connectionStatus }}
           </span>
@@ -56,20 +56,25 @@
             {{ formatTime(msg.timestamp) }}
           </span>
         </div>
-        <p :class="{ 'text-white': msg.isOwn }">{{ msg.text }}</p>
+        <p :class="{ 'text-white': msg.isOwn }">
+          {{ msg.text }}
+        </p>
       </div>
     </div>
 
     <!-- Message input -->
     <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700">
-      <form @submit.prevent="sendMessage" class="flex">
+      <form
+        class="flex"
+        @submit.prevent="sendMessage"
+      >
         <input 
           v-model="newMessage" 
           type="text" 
           placeholder="Type a message..." 
           class="flex-grow bg-white dark:bg-gray-800 dark:text-white px-3 py-2 rounded-l-md border focus:outline-none focus:ring-2 focus:ring-blue-500"
           :disabled="!isConnected"
-        />
+        >
         <button 
           type="submit" 
           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-r-md transition"

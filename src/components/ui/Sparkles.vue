@@ -12,10 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, defineProps, withDefaults  } from "vue";
-import { useRafFn, templateRef } from "@vueuse/core";
+// Fix: Remove the imports that are causing issues
+// import { ref, onMounted, onBeforeUnmount, defineProps, withDefaults } from "vue";
+// import { useRafFn, templateRef } from "@vueuse/core";
 
-
+// Alternative approach that works with both bundler and node moduleResolution
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useRafFn } from "@vueuse/core";
 
 interface Props {
   background?: string;
@@ -46,8 +49,9 @@ const props = withDefaults(defineProps<Props>(), {
   particleDensity: 120,
 });
 
-const containerRef = templateRef<HTMLElement | null>("containerRef");
-const canvasRef = templateRef<HTMLCanvasElement | null>("canvasRef");
+// Fix: Use ref instead of templateRef
+const containerRef = ref<HTMLElement | null>(null);
+const canvasRef = ref<HTMLCanvasElement | null>(null);
 const particles = ref<Particle[]>([]);
 const ctx = ref<CanvasRenderingContext2D | null>(null);
 

@@ -1,16 +1,26 @@
 <template>
   <div class="not-found">
     <div class="container">
-      <h1 class="error-code">404</h1>
-      <h2 class="error-title">Page Not Found</h2>
+      <h1 class="error-code">
+        404
+      </h1>
+      <h2 class="error-title">
+        Page Not Found
+      </h2>
       <p class="error-message">
         Sorry, the page you are looking for doesn't exist or has been moved.
       </p>
       <div class="actions">
-        <button class="action-button primary" @click="goToHome">
+        <button
+          class="action-button primary"
+          @click="goToHome"
+        >
           Go to Dashboard
         </button>
-        <button class="action-button secondary" @click="goBack">
+        <button
+          class="action-button secondary"
+          @click="goBack"
+        >
           Go Back
         </button>
       </div>

@@ -5,10 +5,10 @@
       <input 
         type="text" 
         :value="modelValue"
+        placeholder="Nach Namen, Fähigkeiten oder Interessen suchen..."
+        class="w-full p-2.5 border border-border-color rounded-md text-base" 
         @input="$emit('update:modelValue', $event.target.value)"
-        placeholder="Nach Namen, Fähigkeiten oder Interessen suchen..." 
-        class="w-full p-2.5 border border-border-color rounded-md text-base"
-      />
+      >
     </div>
     
     <!-- Two Column Layout -->
@@ -16,10 +16,12 @@
       <!-- User List Column -->
       <div class="col-span-1">
         <div class="bg-white rounded-lg shadow-custom p-4">
-          <h2 class="text-xl font-bold mb-4 text-secondary">Nutzer</h2>
+          <h2 class="text-xl font-bold mb-4 text-secondary">
+            Nutzer
+          </h2>
           <UserList 
             :users="filteredUsers" 
-            :selectedUserId="userForMatching?.id"
+            :selected-user-id="userForMatching?.id"
             @select-user="$emit('select-user', $event)"
             @select-for-matching="$emit('select-for-matching', $event)"
             @edit-user="$emit('edit-user', $event)"
@@ -32,22 +34,33 @@
       <div class="col-span-2">
         <div class="bg-white rounded-lg shadow-custom p-4">
           <!-- Selected User For Matching Header -->
-          <div v-if="userForMatching" class="flex justify-between items-center bg-gray-100 p-3 rounded-md mb-4">
-            <h3 class="font-medium">Matching für: {{ userForMatching.name }}</h3>
+          <div
+            v-if="userForMatching"
+            class="flex justify-between items-center bg-gray-100 p-3 rounded-md mb-4"
+          >
+            <h3 class="font-medium">
+              Matching für: {{ userForMatching.name }}
+            </h3>
             <button 
-              @click="$emit('clear-matching')" 
-              class="bg-red-100 text-red-700 px-3 py-1 rounded"
+              class="bg-red-100 text-red-700 px-3 py-1 rounded" 
+              @click="$emit('clear-matching')"
             >
               Auswahl aufheben
             </button>
           </div>
           
-          <h2 v-else class="text-xl font-bold mb-4 text-secondary">
+          <h2
+            v-else
+            class="text-xl font-bold mb-4 text-secondary"
+          >
             Matching-Ergebnisse
           </h2>
           
           <!-- Matching Instructions -->
-          <p v-if="!userForMatching && !matchResults.length" class="text-gray-500 italic">
+          <p
+            v-if="!userForMatching && !matchResults.length"
+            class="text-gray-500 italic"
+          >
             Wähle einen Nutzer für das Matching aus, um potenzielle Partner zu finden.
           </p>
           
@@ -58,12 +71,15 @@
           />
           
           <!-- Chat Actions -->
-          <div v-if="matchResults.length > 0" class="mt-4">
+          <div
+            v-if="matchResults.length > 0"
+            class="mt-4"
+          >
             <button 
               v-for="match in matchResults" 
               :key="match.id"
-              @click="$emit('start-chat', match)"
               class="bg-primary text-white border-0 py-2 px-4 rounded-full inline-flex items-center gap-1.5 mr-3 mb-3"
+              @click="$emit('start-chat', match)"
             >
               <span class="text-lg">💬</span> Mit {{ match.name }} chatten
             </button>
@@ -73,8 +89,12 @@
     </div>
     
     <div class="container mx-auto p-4 mt-8">
-      <h1 class="text-2xl font-bold mb-4">Matching System</h1>
-      <p class="mb-4">Find potential matches based on shared interests and complementary skills.</p>
+      <h1 class="text-2xl font-bold mb-4">
+        Matching System
+      </h1>
+      <p class="mb-4">
+        Find potential matches based on shared interests and complementary skills.
+      </p>
       
       <div class="bg-gray-100 p-4 rounded-lg">
         <p>Matching functionality will be implemented here.</p>

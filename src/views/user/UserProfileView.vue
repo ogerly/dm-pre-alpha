@@ -1,13 +1,21 @@
 <template>
   <div class="profile-view">
-    
-    <div v-if="loading" class="loading-indicator">
+    <div
+      v-if="loading"
+      class="loading-indicator"
+    >
       <p>Lade Benutzerprofil...</p>
     </div>
     
-    <div v-else-if="error" class="error-message">
+    <div
+      v-else-if="error"
+      class="error-message"
+    >
       <p>{{ error }}</p>
-      <button @click="router.push('/matching')" class="back-btn">
+      <button
+        class="back-btn"
+        @click="router.push('/matching')"
+      >
         Zurück zur Übersicht
       </button>
     </div>
@@ -31,7 +39,7 @@
       <UserProfileForm
         v-if="editing"
         :user="viewedUser"
-        :editMode="true"
+        :edit-mode="true"
         @save="saveProfile"
         @cancel="editing = false"
       />
@@ -46,7 +54,7 @@ import UserProfile from '@/components/user/UserProfile.vue'
 import UserOverview from '@/components/user/UserOverview.vue'
 import UserProfileForm from '@/components/user/UserProfileForm.vue'
 import { 
-  getAllProfiles,
+  getAllProfiles as _getAllProfiles,
   saveProfile as saveProfileToStorage,
   resetToInitialData 
 } from '@/services/StorageService.js'
@@ -65,6 +73,7 @@ export default {
     }
   },
   setup(props) {
+    const _props = props;
     const router = useRouter()
     const route = useRoute()
     const users = ref([])

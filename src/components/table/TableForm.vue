@@ -2,45 +2,81 @@
   <div class="table-form-container">
     <h2>{{ editMode ? 'Tisch bearbeiten' : 'Neuen Tisch erstellen' }}</h2>
     
-    <form @submit.prevent="saveTable" class="table-form">
+    <form
+      class="table-form"
+      @submit.prevent="saveTable"
+    >
       <!-- Basisdaten -->
       <div class="form-section">
         <h3>Allgemeine Informationen</h3>
         
         <div class="form-group">
           <label for="table-name">Name des Tisches</label>
-          <input type="text" id="table-name" v-model="formData.name" required>
+          <input
+            id="table-name"
+            v-model="formData.name"
+            type="text"
+            required
+          >
         </div>
         
         <div class="form-group">
           <label for="description">Beschreibung</label>
-          <textarea id="description" v-model="formData.description" rows="4" required></textarea>
+          <textarea
+            id="description"
+            v-model="formData.description"
+            rows="4"
+            required
+          />
         </div>
         
         <div class="form-row">
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" v-model="formData.status">
-              <option value="active">Aktiv</option>
-              <option value="scheduled">Geplant</option>
-              <option value="finished">Abgeschlossen</option>
+            <select
+              id="status"
+              v-model="formData.status"
+            >
+              <option value="active">
+                Aktiv
+              </option>
+              <option value="scheduled">
+                Geplant
+              </option>
+              <option value="finished">
+                Abgeschlossen
+              </option>
             </select>
           </div>
           
           <div class="form-group">
             <label for="table-date">Datum</label>
-            <input type="date" id="table-date" v-model="formData.date">
+            <input
+              id="table-date"
+              v-model="formData.date"
+              type="date"
+            >
           </div>
           
           <div class="form-group">
             <label for="table-time">Zeit</label>
-            <input type="time" id="table-time" v-model="formData.time">
+            <input
+              id="table-time"
+              v-model="formData.time"
+              type="time"
+            >
           </div>
         </div>
         
         <div class="form-group">
           <label for="max-participants">Maximale Teilnehmerzahl</label>
-          <input type="number" id="max-participants" v-model.number="formData.maxParticipants" min="1" step="1">
+          <input
+            id="max-participants"
+            v-model.number="formData.maxParticipants"
+            type="number"
+            min="1"
+            step="1"
+          >
         </div>
       </div>
       
@@ -50,15 +86,23 @@
         
         <div class="tag-input">
           <input 
-            type="text" 
             v-model="newTopic" 
-            @keyup.enter="addTopic"
+            type="text" 
             placeholder="Thema eingeben und Enter drücken"
+            @keyup.enter="addTopic"
           >
           <div class="tags-container">
-            <span v-for="(topic, index) in formData.topics" :key="index" class="tag topic-tag">
+            <span
+              v-for="(topic, index) in formData.topics"
+              :key="index"
+              class="tag topic-tag"
+            >
               {{ topic }}
-              <button type="button" @click="removeTopic(index)" class="remove-tag">&times;</button>
+              <button
+                type="button"
+                class="remove-tag"
+                @click="removeTopic(index)"
+              >&times;</button>
             </span>
           </div>
         </div>
@@ -70,12 +114,20 @@
         
         <div class="form-group">
           <label for="host-name">Name des Gastgebers</label>
-          <input type="text" id="host-name" v-model="formData.host.name">
+          <input
+            id="host-name"
+            v-model="formData.host.name"
+            type="text"
+          >
         </div>
         
         <div class="form-group">
           <label for="host-details">Weitere Informationen zum Gastgeber</label>
-          <textarea id="host-details" v-model="formData.host.details" rows="2"></textarea>
+          <textarea
+            id="host-details"
+            v-model="formData.host.details"
+            rows="2"
+          />
         </div>
       </div>
       
@@ -85,20 +137,29 @@
         
         <div class="form-group">
           <label for="location-address">Adresse</label>
-          <input type="text" id="location-address" v-model="formData.location.address" required>
+          <input
+            id="location-address"
+            v-model="formData.location.address"
+            type="text"
+            required
+          >
           <small class="form-hint">Die genaue Adresse wird benutzt, um den Tisch auf der Karte anzuzeigen</small>
         </div>
         
         <div class="form-group">
           <label for="location-details">Zusätzliche Hinweise zum Ort</label>
-          <textarea id="location-details" v-model="formData.location.details" rows="2"></textarea>
+          <textarea
+            id="location-details"
+            v-model="formData.location.details"
+            rows="2"
+          />
           <small class="form-hint">z.B. "Im Hinterhof", "2. Etage" oder "Eingang an der Südseite"</small>
         </div>
         
         <div class="map-preview">
           <!-- Placeholder for Map Preview -->
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Kartenvorschau (wird nach dem Speichern angezeigt)</p>
           </div>
         </div>
@@ -110,18 +171,34 @@
         
         <div class="form-group">
           <div class="checkbox-group">
-            <input type="checkbox" id="has-video-call" v-model="formData.hasVideoCall">
+            <input
+              id="has-video-call"
+              v-model="formData.hasVideoCall"
+              type="checkbox"
+            >
             <label for="has-video-call">BigBlueButton Meeting für diesen Tisch aktivieren</label>
           </div>
           <small class="form-hint">Ein Video-Meeting-Link wird automatisch generiert und kann von Teilnehmern genutzt werden</small>
         </div>
         
-        <div class="form-group" v-if="formData.hasVideoCall">
+        <div
+          v-if="formData.hasVideoCall"
+          class="form-group"
+        >
           <label for="video-call-link">Meeting-Link</label>
           <div class="input-with-button">
-            <input type="text" id="video-call-link" v-model="formData.videoCallLink" readonly>
-            <button type="button" class="copy-btn" @click="copyVideoLink">
-              <i class="bi bi-clipboard"></i> Kopieren
+            <input
+              id="video-call-link"
+              v-model="formData.videoCallLink"
+              type="text"
+              readonly
+            >
+            <button
+              type="button"
+              class="copy-btn"
+              @click="copyVideoLink"
+            >
+              <i class="bi bi-clipboard" /> Kopieren
             </button>
           </div>
           <small class="form-hint">Sie können diesen Link mit den Teilnehmern teilen</small>
@@ -129,30 +206,63 @@
       </div>
       
       <!-- Aktuelle Teilnehmer -->
-      <div class="form-section" v-if="editMode && formData.participants && formData.participants.length > 0">
+      <div
+        v-if="editMode && formData.participants && formData.participants.length > 0"
+        class="form-section"
+      >
         <h3>Aktuelle Teilnehmer</h3>
         
         <div class="participants-list">
-          <div v-for="(participant, index) in formData.participants" :key="participant.id" class="participant-item">
+          <div
+            v-for="(participant, index) in formData.participants"
+            :key="participant.id"
+            class="participant-item"
+          >
             <div class="participant-info">
               <span class="participant-name">{{ participant.name }}</span>
-              <input type="text" v-model="participant.role" placeholder="Rolle (optional)">
+              <input
+                v-model="participant.role"
+                type="text"
+                placeholder="Rolle (optional)"
+              >
             </div>
-            <button type="button" class="remove-btn" @click="removeParticipant(index)">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeParticipant(index)"
+            >
+              Entfernen
+            </button>
           </div>
         </div>
       </div>
       
       <div class="form-actions">
-        <button type="button" @click="$emit('cancel')" class="cancel-btn">Abbrechen</button>
-        <button type="submit" class="save-btn">{{ editMode ? 'Speichern' : 'Erstellen' }}</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          @click="$emit('cancel')"
+        >
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          class="save-btn"
+          @click="saveTable"
+        >
+          {{ editMode ? 'Speichern' : 'Erstellen' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'TableForm',
+  
   props: {
     tableData: {
       type: Object,
@@ -167,6 +277,8 @@ export default {
       default: null
     }
   },
+  
+  emits: ['save', 'cancel'],
   data() {
     return {
       formData: {
@@ -276,7 +388,7 @@ export default {
         });
     }
   }
-}
+})
 </script>
 
 <style scoped>

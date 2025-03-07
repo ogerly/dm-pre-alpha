@@ -4,18 +4,30 @@
     
     <div class="test-section">
       <h4>Available Asset Tests</h4>
-      <button @click="testDataJson" class="test-btn">
-        <i class="fas fa-file-code"></i> Test data.json
+      <button
+        class="test-btn"
+        @click="testDataJson"
+      >
+        <i class="fas fa-file-code" /> Test data.json
       </button>
-      <button @click="testFetchAssets" class="test-btn">
-        <i class="fas fa-network-wired"></i> Test All Asset Paths
+      <button
+        class="test-btn"
+        @click="testFetchAssets"
+      >
+        <i class="fas fa-network-wired" /> Test All Asset Paths
       </button>
-      <button @click="testImageAssets" class="test-btn">
-        <i class="fas fa-image"></i> Test Image Loading
+      <button
+        class="test-btn"
+        @click="testImageAssets"
+      >
+        <i class="fas fa-image" /> Test Image Loading
       </button>
     </div>
     
-    <div v-if="testResults.length > 0" class="results-section">
+    <div
+      v-if="testResults.length > 0"
+      class="results-section"
+    >
       <h4>Test Results</h4>
       <div 
         v-for="(result, index) in testResults" 
@@ -28,8 +40,11 @@
       </div>
     </div>
     
-    <div v-if="testRunning" class="loading">
-      Testing in progress... <i class="fas fa-spinner fa-spin"></i>
+    <div
+      v-if="testRunning"
+      class="loading"
+    >
+      Testing in progress... <i class="fas fa-spinner fa-spin" />
     </div>
     
     <div class="console-output">

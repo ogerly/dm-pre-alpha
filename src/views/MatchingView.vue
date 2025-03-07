@@ -3,29 +3,31 @@
     <AppHeader />
     
     <main class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6">Matching System</h1>
+      <h1 class="text-2xl font-bold mb-6">
+        Matching System
+      </h1>
       
       <!-- Matching Type Tabs -->
       <div class="mb-6 flex border-b">
         <button 
-          @click="matchingType = 'users'" 
           :class="[
             'py-2 px-4 font-medium text-sm focus:outline-none',
             matchingType === 'users' 
               ? 'border-b-2 border-blue-500 text-blue-600' 
               : 'text-gray-500 hover:text-gray-700'
-          ]"
+          ]" 
+          @click="matchingType = 'users'"
         >
           User Matching
         </button>
         <button 
-          @click="matchingType = 'projects'"
           :class="[
             'py-2 px-4 font-medium text-sm focus:outline-none',
             matchingType === 'projects' 
               ? 'border-b-2 border-blue-500 text-blue-600' 
               : 'text-gray-500 hover:text-gray-700'
           ]"
+          @click="matchingType = 'projects'"
         >
           Project Matching
         </button>
@@ -35,7 +37,9 @@
       <div v-if="matchingType === 'users'">
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
           <div class="mb-4">
-            <h2 class="text-xl font-semibold mb-3">Find Your Match</h2>
+            <h2 class="text-xl font-semibold mb-3">
+              Find Your Match
+            </h2>
             <p class="text-gray-600 mb-4">
               Discover potential partners and collaborators based on shared interests and complementary skills.
             </p>
@@ -46,13 +50,13 @@
                 <button 
                   v-for="(filter, index) in filterOptions" 
                   :key="index"
-                  @click="toggleFilter(filter.value)"
                   :class="[
                     'px-3 py-1 rounded-full text-sm',
                     activeFilters.includes(filter.value)
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   ]"
+                  @click="toggleFilter(filter.value)"
                 >
                   {{ filter.label }}
                 </button>
@@ -68,8 +72,12 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   @change="generateMatches"
                 >
-                  <option value="">Select a user</option>
-                  <option value="current">Use My Profile</option>
+                  <option value="">
+                    Select a user
+                  </option>
+                  <option value="current">
+                    Use My Profile
+                  </option>
                   <option 
                     v-for="user in userStore.users" 
                     :key="user.id" 
@@ -79,8 +87,8 @@
                   </option>
                 </select>
                 <button 
-                  @click="generateMatches"
                   class="ml-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
+                  @click="generateMatches"
                 >
                   Find Matches
                 </button>
@@ -96,15 +104,33 @@
         />
         
         <!-- User Grid Display -->
-        <div v-if="!matches.length" class="mt-6">
-          <h2 class="text-xl font-semibold mb-3">All Users</h2>
+        <div
+          v-if="!matches.length"
+          class="mt-6"
+        >
+          <h2 class="text-xl font-semibold mb-3">
+            All Users
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-for="user in matchedUsers" :key="user.id" class="border border-gray-200 rounded-lg p-4 hover:border-blue-300">
-              <div class="font-medium">{{ user.name }}</div>
-              <p class="text-sm text-gray-500">{{ user.email }}</p>
+            <div
+              v-for="user in matchedUsers"
+              :key="user.id"
+              class="border border-gray-200 rounded-lg p-4 hover:border-blue-300"
+            >
+              <div class="font-medium">
+                {{ user.name }}
+              </div>
+              <p class="text-sm text-gray-500">
+                {{ user.email }}
+              </p>
               
-              <div class="mt-2" v-if="user.skills && user.skills.length">
-                <div class="text-xs font-medium text-gray-500 mb-1">Skills</div>
+              <div
+                v-if="user.skills && user.skills.length"
+                class="mt-2"
+              >
+                <div class="text-xs font-medium text-gray-500 mb-1">
+                  Skills
+                </div>
                 <div class="flex flex-wrap gap-1">
                   <span 
                     v-for="skill in user.skills.slice(0, 3)" 
@@ -113,20 +139,23 @@
                   >
                     {{ skill }}
                   </span>
-                  <span v-if="user.skills.length > 3" class="inline-block text-xs text-gray-500">+{{ user.skills.length - 3 }}</span>
+                  <span
+                    v-if="user.skills.length > 3"
+                    class="inline-block text-xs text-gray-500"
+                  >+{{ user.skills.length - 3 }}</span>
                 </div>
               </div>
               
               <div class="mt-3">
                 <button 
-                  @click="generateMatchesFor(user.id)" 
-                  class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md mr-2"
+                  class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md mr-2" 
+                  @click="generateMatchesFor(user.id)"
                 >
                   Match Me
                 </button>
                 <button 
-                  @click="viewProfile(user)" 
-                  class="text-sm text-blue-600 hover:text-blue-800"
+                  class="text-sm text-blue-600 hover:text-blue-800" 
+                  @click="viewProfile(user)"
                 >
                   View Profile
                 </button>
@@ -140,7 +169,9 @@
       <div v-else>
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
           <div class="mb-4">
-            <h2 class="text-xl font-semibold mb-3">Find Matching Projects</h2>
+            <h2 class="text-xl font-semibold mb-3">
+              Find Matching Projects
+            </h2>
             <p class="text-gray-600 mb-4">
               Discover projects that match your skills and interests or find projects for specific users.
             </p>
@@ -151,13 +182,13 @@
                 <button 
                   v-for="(filter, index) in projectFilterOptions" 
                   :key="index"
-                  @click="toggleProjectFilter(filter.value)"
                   :class="[
                     'px-3 py-1 rounded-full text-sm',
                     activeProjectFilters.includes(filter.value)
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   ]"
+                  @click="toggleProjectFilter(filter.value)"
                 >
                   {{ filter.label }}
                 </button>
@@ -172,7 +203,9 @@
                   v-model="selectedUserForProjects"
                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
                 >
-                  <option value="current">My Profile</option>
+                  <option value="current">
+                    My Profile
+                  </option>
                   <option 
                     v-for="user in userStore.users" 
                     :key="user.id" 
@@ -182,8 +215,8 @@
                   </option>
                 </select>
                 <button 
-                  @click="findMatchingProjects"
                   class="ml-3 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm"
+                  @click="findMatchingProjects"
                 >
                   Find Projects
                 </button>
@@ -198,23 +231,32 @@
             {{ matchingProjects.length ? 'Matching Projects' : 'Available Projects' }}
           </h2>
           
-          <div v-if="matchingProjects.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            v-if="matchingProjects.length > 0"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             <div 
               v-for="project in matchingProjects" 
               :key="project.id || project.name"
               class="border border-gray-200 rounded-lg p-4 hover:border-green-300"
             >
               <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-medium">{{ project.name }}</h3>
+                <h3 class="text-lg font-medium">
+                  {{ project.name }}
+                </h3>
                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                   {{ project.matchScore }}% Match
                 </span>
               </div>
               
-              <p class="text-gray-600 text-sm mb-3">{{ project.description }}</p>
+              <p class="text-gray-600 text-sm mb-3">
+                {{ project.description }}
+              </p>
               
               <div class="mb-3">
-                <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Required Skills</div>
+                <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                  Required Skills
+                </div>
                 <div class="flex flex-wrap gap-1">
                   <span 
                     v-for="(skill, i) in project.requiredSkills" 
@@ -234,8 +276,8 @@
                   {{ project.owner || 'Community Project' }} · {{ project.year || 'Ongoing' }}
                 </span>
                 <button 
-                  @click="viewProject(project)"
                   class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md"
+                  @click="viewProject(project)"
                 >
                   View Details
                 </button>
@@ -243,12 +285,14 @@
             </div>
           </div>
           
-          <div v-else class="text-center py-8 text-gray-500">
+          <div
+            v-else
+            class="text-center py-8 text-gray-500"
+          >
             <p>No matching projects found. Try adjusting your filter criteria or expanding your skills profile.</p>
           </div>
         </div>
       </div>
-      
     </main>
     
     <AppActions />
@@ -437,8 +481,8 @@ export default defineComponent({
       }
       
       // Calculate percentage (max score is somewhat arbitrary)
-      const maxPossibleScore = 100
-      const percentage = Math.min(Math.round((totalScore / maxPossibleScore) * 100), 100)
+      const _maxScore = 100
+      const percentage = Math.min(Math.round((totalScore / _maxScore) * 100), 100)
       
       return {
         percentage,
@@ -510,7 +554,7 @@ export default defineComponent({
       if (!user || !project) return { percentage: 0, matchingSkills: [] }
       
       let score = 0
-      let maxScore = 100
+      const _maxScore = 100
       const matchingDetails = {}
       
       // Calculate matching skills

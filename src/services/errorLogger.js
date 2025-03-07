@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+// Add eslint-disable for console statements at the top of the file
+
 import { reactive } from 'vue'
 
 // Log levels
@@ -16,7 +19,7 @@ const getLevelValue = (levelString) => {
     'warn': LOG_LEVEL.WARN,
     'error': LOG_LEVEL.ERROR
   }
-  return levels[levelString.toLowerCase()] || LOG_LEVEL.DEBUG
+  return levels[levelString?.toLowerCase()] || LOG_LEVEL.DEBUG
 }
 
 // Get config from environment variables
@@ -30,34 +33,59 @@ const state = reactive({
   filter: 'all'
 })
 
-const errorLogger = {
-  // Log methods
+/**
+ * Enhanced error logger with console handling for development/production
+ */
+class ErrorLogger {
+  constructor() {
+    this.maxLogs = 100;
+    this.filteredLogs = [];
+  }
+
+  /**
+   * Log debug message (only visible in development)
+   */
   debug(message, metadata = {}) {
-    this.addLog(message, LOG_LEVEL.DEBUG, metadata)
-  },
-  
+    this._addLog('DEBUG', message, metadata);
+    if (import.meta.env.DEV) {
+      console.debug(`[DEBUG] ${message}`, metadata);
+    }
+  }
+
+  /**
+   * Log info message
+   */
   info(message, metadata = {}) {
-    this.addLog(message, LOG_LEVEL.INFO, metadata)
-  },
-  
+    this._addLog('INFO', message, metadata);
+    if (import.meta.env.DEV) {
+      console.info(`[INFO] ${message}`, metadata);
+    }
+  }
+
+  /**
+   * Log warning message
+   */
   warn(message, metadata = {}) {
-    this.addLog(message, LOG_LEVEL.WARN, metadata)
-  },
-  
-  error(message, error = null, metadata = {}) {
-    const errorData = error ? {
-      message: error.message,
-      stack: error.stack,
-      ...error
-    } : null
-    
-    this.addLog(message, LOG_LEVEL.ERROR, { ...metadata, error: errorData })
-  },
-  
+    this._addLog('WARN', message, metadata);
+    if (import.meta.env.DEV) {
+      console.warn(`[WARN] ${message}`, metadata);
+    }
+  }
+
+  /**
+   * Log error message (always logged to console in both dev and prod)
+   */
+  error(message, error = null) {
+    const metadata = { error };
+    this._addLog('ERROR', message, metadata);
+    // Errors are important enough to always log
+    console.error(`[ERROR] ${message}`, error);
+  }
+
   // Add log entry if enabled and level is appropriate
-  addLog(message, level, metadata = {}) {
+  _addLog(level, message, metadata = {}) {
     // Only log if console is enabled and level is high enough
-    if (isEnabled && level >= configLevel) {
+    if (isEnabled && getLevelValue(level.toLowerCase()) >= configLevel) {
       const timestamp = new Date()
       
       // Create log entry
@@ -67,49 +95,47 @@ const errorLogger = {
         formattedTime: timestamp.toLocaleTimeString(),
         message,
         level,
-        levelName: Object.keys(LOG_LEVEL).find(key => LOG_LEVEL[key] === level),
+        levelName: level,
         metadata: metadata
       }
       
       // Add to state
       state.logs.unshift(log)
       
-      // Also output to browser console
-      const consoleMethod = level === LOG_LEVEL.ERROR ? 'error' : 
-                           level === LOG_LEVEL.WARN ? 'warn' :
-                           level === LOG_LEVEL.INFO ? 'info' : 'log'
-      
-      console[consoleMethod](`[${log.levelName}] ${message}`, metadata)
+      // Keep logs at a reasonable size
+      if (state.logs.length > this.maxLogs) {
+        state.logs.pop()
+      }
     }
-  },
-  
+  }
+
   // Component lifecycle tracking
   trackComponentMount(componentName) {
     this.debug(`Component mounted: ${componentName}`, { type: 'component', lifecycle: 'mount' })
-  },
+  }
   
   trackComponentUnmount(componentName) {
     this.debug(`Component unmounted: ${componentName}`, { type: 'component', lifecycle: 'unmount' })
-  },
+  }
   
   trackViewLoad(viewName) {
     this.info(`View loaded: ${viewName}`, { type: 'view', lifecycle: 'load' })
-  },
+  }
   
   // Clear logs
   clear() {
     state.logs = []
-  },
+  }
   
   // Toggle visibility
   toggleVisibility() {
     state.isVisible = !state.isVisible
-  },
+  }
   
   // Filter logs
   setFilter(filter) {
     state.filter = filter
-  },
+  }
   
   // Get filtered logs
   get filteredLogs() {
@@ -119,16 +145,16 @@ const errorLogger = {
     
     const filterLevel = getLevelValue(state.filter)
     return state.logs.filter(log => log.level === filterLevel)
-  },
+  }
   
   // State access
   get logs() {
     return state.logs
-  },
+  }
   
   get isVisible() {
     return state.isVisible
-  },
+  }
   
   get filter() {
     return state.filter
@@ -136,4 +162,4 @@ const errorLogger = {
 }
 
 // Export singleton
-export default errorLogger
+export default new ErrorLogger()

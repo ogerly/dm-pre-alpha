@@ -18,7 +18,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
 
-    const handleLoginSuccess = (user) => {
+    const handleLoginSuccess = (_user) => {
       // Redirect to the requested page or default to matching
       const redirectPath = route.query.redirect || '/matching'
       router.push(redirectPath)

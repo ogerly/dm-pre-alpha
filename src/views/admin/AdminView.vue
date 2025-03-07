@@ -1,15 +1,23 @@
 <template>
   <div class="admin-view">
-    
     <!-- Loading State -->
-    <div v-if="userStore.isLoading" class="loading-indicator">
+    <div
+      v-if="userStore.isLoading"
+      class="loading-indicator"
+    >
       <p>Lade Admin-Daten...</p>
     </div>
     
     <!-- Error State -->
-    <div v-else-if="userStore.lastError" class="error-message">
+    <div
+      v-else-if="userStore.lastError"
+      class="error-message"
+    >
       <p>{{ userStore.lastError }}</p>
-      <button @click="userStore.loadUsers(true)" class="retry-btn">
+      <button
+        class="retry-btn"
+        @click="userStore.loadUsers(true)"
+      >
         Erneut versuchen
       </button>
     </div>
@@ -29,7 +37,7 @@
     <UserProfileForm
       v-if="userStore.editingUser"
       :user="userStore.editingUser"
-      :editMode="true"
+      :edit-mode="true"
       @save="saveProfile"
       @cancel="cancelEditing"
     />

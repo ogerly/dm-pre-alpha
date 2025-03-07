@@ -1,0 +1,436 @@
+.error-console {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 500px;
+  max-width: 100%;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #f0f0f0;
+  border-top-left-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  box-shadow: -2px -2px 10px rgba(0, 0, 0, 0.3);
+  font-family: monospace;
+}
+
+/* Header styles */
+.error-console-header {
+  padding: 8px 12px;
+  background-color: #222;
+  border-top-left-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-left h3 {
+  margin: 0;
+  font-size: 16px;
+  margin-right: 12px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-connected {
+  background-color: #4CAF50;
+  box-shadow: 0 0 4px #4CAF50;
+}
+
+.status-connecting {
+  background-color: #FFC107;
+  animation: pulse 1.5s infinite;
+}
+
+.status-disconnected {
+  background-color: #F44336;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.error-console-controls {
+  display: flex;
+  align-items: center;
+}
+
+.error-console-controls button {
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 8px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.error-console-controls button:hover {
+  background: #555;
+}
+
+.close-btn {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.filter-select {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+/* Stats bar styles */
+.stats-bar {
+  display: flex;
+  background: #222;
+  padding: 4px 12px;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.stat-label {
+  margin-right: 4px;
+  opacity: 0.7;
+}
+
+.stat-value {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.stat-debug {
+  background-color: #696969;
+  color: white;
+}
+
+.stat-info {
+  background-color: #2196F3;
+  color: white;
+}
+
+.stat-warning,
+.stat-connect {
+  background-color: #FF9800;
+  color: white;
+}
+
+.stat-error {
+  background-color: #F44336;
+  color: white;
+}
+
+.stat-success {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.websocket-stats {
+  margin-left: auto;
+  display: flex;
+}
+
+/* Content area */
+.error-console-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Log entry styles */
+.log-entry {
+  padding: 6px 12px;
+  border-bottom: 1px solid #333;
+  font-size: 12px;
+}
+
+.log-header {
+  display: flex;
+  margin-bottom: 4px;
+  align-items: center;
+}
+
+.log-time {
+  opacity: 0.7;
+  margin-right: 10px;
+}
+
+.log-level {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.log-category {
+  font-size: 10px;
+  background-color: #555;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: auto;
+}
+
+.chat-connected {
+  background-color: #4CAF50;
+}
+
+.log-message {
+  word-break: break-word;
+}
+
+.log-metadata, .log-stack {
+  margin-top: 4px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.log-metadata pre, .log-stack pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.stack-title {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.log-level-debug .log-level {
+  background-color: #696969;
+  color: white;
+}
+
+.log-level-info .log-level {
+  background-color: #2196F3;
+  color: white;
+}
+
+.log-level-warn .log-level {
+  background-color: #FF9800;
+  color: white;
+}
+
+.log-level-error .log-level {
+  background-color: #F44336;
+  color: white;
+}
+
+.log-level-error {
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.no-logs {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* Tab bar styles */
+.tab-bar {
+  display: flex;
+  background: #333;
+  border-bottom: 1px solid #444;
+}
+
+.tab-button {
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+}
+
+.tab-button.active {
+  background: #444;
+  color: white;
+}
+
+.tab-button:hover:not(.active) {
+  background: #3a3a3a;
+}
+
+/* Badge styles */
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+}
+
+.error-badge {
+  background-color: #F44336;
+}
+
+.warning-badge {
+  background-color: #FF9800;
+}
+
+/* Lint tab specific styles */
+.lint-container {
+  padding: 8px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.no-lint-issues {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #4CAF50;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.lint-summary {
+  margin-bottom: 12px;
+  padding: 8px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+.lint-error-count {
+  color: #F44336;
+  font-weight: bold;
+}
+
+.lint-warning-count {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.lint-timestamp {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.lint-section-title {
+  margin: 12px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #444;
+  font-size: 14px;
+}
+
+.lint-issue {
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.lint-error {
+  background: rgba(244, 67, 54, 0.1);
+  border-left: 3px solid #F44336;
+}
+
+.lint-warning {
+  background: rgba(255, 152, 0, 0.1);
+  border-left: 3px solid #FF9800;
+}
+
+.lint-location {
+  font-family: monospace;
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.lint-message {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.lint-rule {
+  font-size: 11px;
+  color: #999;
+}
+
+.lint-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #FF9800;
+}
+
+.lint-check-btn {
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 8px;
+  margin-left: 6px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.lint-check-btn:hover {
+  background: #666;
+}
+
+.lint-check-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Logs container */
+.logs-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Lint-specific category styling */
+.lint-category {
+  background-color: #673AB7;
+}

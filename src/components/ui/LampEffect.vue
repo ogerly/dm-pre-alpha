@@ -39,27 +39,27 @@
 
       <div
         class="absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 bg-slate-950 blur-2xl"
-      ></div>
+      />
 
       <div
         class="absolute top-1/2 z-50 h-48 w-full bg-transparent opacity-10 backdrop-blur-md"
-      ></div>
+      />
 
       <div
         class="absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-cyan-500 opacity-50 blur-3xl"
-      ></div>
+      />
 
       <!-- Spotlight -->
       <div
         class="animate-spotlight absolute inset-auto z-30 h-36 w-32 -translate-y-24 rounded-full bg-cyan-400 blur-2xl"
-      ></div>
+      />
 
       <!-- Glowing Line -->
       <div
         class="animate-glowing-line absolute inset-auto z-50 h-0.5 w-60 -translate-y-28 bg-cyan-400"
-      ></div>
+      />
 
-      <div class="absolute inset-auto z-40 h-44 w-full translate-y-[-12.5rem] bg-slate-950"></div>
+      <div class="absolute inset-auto z-40 h-44 w-full translate-y-[-12.5rem] bg-slate-950" />
     </div>
 
     <div class="relative z-50 flex -translate-y-80 flex-col items-center px-5">
@@ -81,6 +81,7 @@ interface LampEffectProps {
 const props = withDefaults(defineProps<LampEffectProps>(), {
   delay: 0.5,
   duration: 0.8,
+  class: '' // Empty string is a sensible default for a CSS class
 });
 
 const durationInSeconds = computed(() => `${props.duration}s`);

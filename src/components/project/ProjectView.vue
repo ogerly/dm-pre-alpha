@@ -3,15 +3,26 @@
     <div class="project-header">
       <div class="project-title">
         <h2>{{ project.name }}</h2>
-        <div class="project-status" :class="project.status">{{ project.status }}</div>
+        <div
+          class="project-status"
+          :class="project.status"
+        >
+          {{ project.status }}
+        </div>
       </div>
       <div class="project-meta">
-        <div class="meta-item" v-if="project.startDate">
-          <i class="bi bi-calendar3"></i>
+        <div
+          v-if="project.startDate"
+          class="meta-item"
+        >
+          <i class="bi bi-calendar3" />
           Start: {{ formatDate(project.startDate) }}
         </div>
-        <div class="meta-item" v-if="project.endDate">
-          <i class="bi bi-calendar3"></i>
+        <div
+          v-if="project.endDate"
+          class="meta-item"
+        >
+          <i class="bi bi-calendar3" />
           Ende: {{ formatDate(project.endDate) }}
         </div>
       </div>
@@ -24,40 +35,74 @@
           <p>{{ project.description }}</p>
         </div>
         
-        <div class="info-section" v-if="project.goals && project.goals.length">
+        <div
+          v-if="project.goals && project.goals.length"
+          class="info-section"
+        >
           <h3>Projektziele</h3>
           <ul class="goals-list">
-            <li v-for="(goal, index) in project.goals" :key="index">{{ goal }}</li>
+            <li
+              v-for="(goal, index) in project.goals"
+              :key="index"
+            >
+              {{ goal }}
+            </li>
           </ul>
         </div>
         
         <div class="info-section">
           <h3>Kategorien & Tags</h3>
           <div class="tag-container">
-            <span v-for="(category, index) in project.categories" :key="'cat-'+index" class="tag category-tag">
+            <span
+              v-for="(category, index) in project.categories"
+              :key="'cat-'+index"
+              class="tag category-tag"
+            >
               {{ category }}
             </span>
-            <span v-for="(tag, index) in project.tags" :key="'tag-'+index" class="tag tag-item">
+            <span
+              v-for="(tag, index) in project.tags"
+              :key="'tag-'+index"
+              class="tag tag-item"
+            >
               {{ tag }}
             </span>
           </div>
         </div>
         
-        <div class="info-section" v-if="project.requiredSkills && project.requiredSkills.length">
+        <div
+          v-if="project.requiredSkills && project.requiredSkills.length"
+          class="info-section"
+        >
           <h3>Gesuchte Fähigkeiten</h3>
           <div class="tag-container">
-            <span v-for="(skill, index) in project.requiredSkills" :key="index" class="tag skill-tag">
+            <span
+              v-for="(skill, index) in project.requiredSkills"
+              :key="index"
+              class="tag skill-tag"
+            >
               {{ skill }}
             </span>
           </div>
         </div>
         
-        <div class="info-section" v-if="project.team && project.team.length">
+        <div
+          v-if="project.team && project.team.length"
+          class="info-section"
+        >
           <h3>Projektteam</h3>
           <div class="team-list">
-            <div v-for="(member, index) in project.team" :key="index" class="team-member">
-              <div class="member-name">{{ member.name }}</div>
-              <div class="member-role">{{ member.role }}</div>
+            <div
+              v-for="(member, index) in project.team"
+              :key="index"
+              class="team-member"
+            >
+              <div class="member-name">
+                {{ member.name }}
+              </div>
+              <div class="member-role">
+                {{ member.role }}
+              </div>
             </div>
           </div>
         </div>
@@ -65,15 +110,23 @@
       
       <div class="project-map-section">
         <div class="map-header">
-          <h3 v-if="project.location">Projektstandort</h3>
-          <div class="location-info" v-if="project.location">
-            <i class="bi bi-geo-alt"></i>
+          <h3 v-if="project.location">
+            Projektstandort
+          </h3>
+          <div
+            v-if="project.location"
+            class="location-info"
+          >
+            <i class="bi bi-geo-alt" />
             {{ project.location.address }}
           </div>
         </div>
         
         <!-- Placeholder for Map - Would be replaced with actual map component -->
-        <div class="map-container" v-if="project.location || (project.radius && project.radius.center)">
+        <div
+          v-if="project.location || (project.radius && project.radius.center)"
+          class="map-container"
+        >
           <div class="map-overlay">
             <div class="map-info">
               <p v-if="project.location">
@@ -85,56 +138,93 @@
             </div>
           </div>
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Karte wird geladen...</p>
           </div>
         </div>
         
-        <div class="radius-info" v-if="project.radius">
+        <div
+          v-if="project.radius"
+          class="radius-info"
+        >
           <h4>Wirkungsbereich</h4>
           <p>Der Wirkungsbereich des Projekts erstreckt sich über {{ project.radius.distance }}km um den Standort.</p>
         </div>
         
-        <div class="collaboration-info" v-if="project.collaboration">
+        <div
+          v-if="project.collaboration"
+          class="collaboration-info"
+        >
           <h3>Zusammenarbeit</h3>
           <div class="collab-item">
-            <div class="collab-label">Art:</div>
-            <div class="collab-value">{{ project.collaboration.type }}</div>
+            <div class="collab-label">
+              Art:
+            </div>
+            <div class="collab-value">
+              {{ project.collaboration.type }}
+            </div>
           </div>
           <div class="collab-item">
-            <div class="collab-label">Verfügbarkeit:</div>
-            <div class="collab-value">{{ project.collaboration.availability }}</div>
+            <div class="collab-label">
+              Verfügbarkeit:
+            </div>
+            <div class="collab-value">
+              {{ project.collaboration.availability }}
+            </div>
           </div>
-          <div class="collab-item" v-if="project.collaboration.notes">
-            <div class="collab-label">Hinweise:</div>
-            <div class="collab-value">{{ project.collaboration.notes }}</div>
+          <div
+            v-if="project.collaboration.notes"
+            class="collab-item"
+          >
+            <div class="collab-label">
+              Hinweise:
+            </div>
+            <div class="collab-value">
+              {{ project.collaboration.notes }}
+            </div>
           </div>
         </div>
       </div>
     </div>
     
     <div class="project-actions">
-      <button v-if="project.status === 'Offen'" class="join-btn" @click="joinProject">
-        <i class="bi bi-person-plus"></i> Mitarbeiten
+      <button
+        v-if="project.status === 'Offen'"
+        class="join-btn"
+        @click="$emit('join', project.id)"
+      >
+        <i class="bi bi-person-plus" /> Mitarbeiten
       </button>
-      <button class="edit-btn" @click="$emit('edit')">
-        <i class="bi bi-pencil"></i> Bearbeiten
+      <button
+        class="edit-btn"
+        @click="$emit('edit', project)"
+      >
+        <i class="bi bi-pencil" /> Bearbeiten
       </button>
-      <button class="back-btn" @click="$emit('back')">
-        <i class="bi bi-arrow-left"></i> Zurück
+      <button
+        class="back-btn"
+        @click="$emit('back')"
+      >
+        <i class="bi bi-arrow-left" /> Zurück
       </button>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'ProjectView',
+  
   props: {
     project: {
       type: Object,
       required: true
     }
   },
+  
+  emits: ['edit', 'back', 'join'],
   methods: {
     formatDate(dateStr) {
       if (!dateStr) return '';
@@ -146,7 +236,7 @@ export default {
       this.$emit('join');
     }
   }
-}
+})
 </script>
 
 <style scoped>

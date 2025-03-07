@@ -2,12 +2,14 @@
   <div class="user-overview">
     <div class="bg-white p-6 rounded-lg shadow-md">
       <div class="flex justify-between items-start mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Mein Profil</h2>
+        <h2 class="text-2xl font-bold text-gray-800">
+          Mein Profil
+        </h2>
         <button 
-          @click="$emit('edit-profile', user)" 
-          class="bg-primary text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors flex items-center gap-2"
+          class="bg-primary text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors flex items-center gap-2" 
+          @click="$emit('edit-profile', user)"
         >
-          <i class="fas fa-edit"></i> Bearbeiten
+          <i class="fas fa-edit" /> Bearbeiten
         </button>
       </div>
       
@@ -18,23 +20,35 @@
             {{ userInitials }}
           </div>
           <div>
-            <h3 class="text-xl font-medium">{{ user.name }}</h3>
-            <p class="text-gray-600">{{ user.email }}</p>
-            <p class="mt-1 text-sm bg-green-100 text-green-800 px-2 py-1 rounded inline-block">Account aktiv</p>
+            <h3 class="text-xl font-medium">
+              {{ user.name }}
+            </h3>
+            <p class="text-gray-600">
+              {{ user.email }}
+            </p>
+            <p class="mt-1 text-sm bg-green-100 text-green-800 px-2 py-1 rounded inline-block">
+              Account aktiv
+            </p>
           </div>
         </div>
       </div>
       
       <!-- Bio Section -->
       <div class="mb-6">
-        <h3 class="text-lg font-medium text-gray-800 mb-2">Über mich</h3>
-        <p class="text-gray-600">{{ user.bio || 'Keine Biografie verfügbar.' }}</p>
+        <h3 class="text-lg font-medium text-gray-800 mb-2">
+          Über mich
+        </h3>
+        <p class="text-gray-600">
+          {{ user.bio || 'Keine Biografie verfügbar.' }}
+        </p>
       </div>
       
       <!-- Skills & Interests -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <h3 class="text-lg font-medium text-gray-800 mb-2">Fähigkeiten</h3>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Fähigkeiten
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span 
               v-for="(skill, index) in user.skills" 
@@ -43,14 +57,19 @@
             >
               {{ skill }}
             </span>
-            <span v-if="!user.skills || user.skills.length === 0" class="text-gray-500 italic">
+            <span
+              v-if="!user.skills || user.skills.length === 0"
+              class="text-gray-500 italic"
+            >
               Keine Fähigkeiten angegeben.
             </span>
           </div>
         </div>
         
         <div>
-          <h3 class="text-lg font-medium text-gray-800 mb-2">Interessen</h3>
+          <h3 class="text-lg font-medium text-gray-800 mb-2">
+            Interessen
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span 
               v-for="(interest, index) in user.interests" 
@@ -59,7 +78,10 @@
             >
               {{ interest }}
             </span>
-            <span v-if="!user.interests || user.interests.length === 0" class="text-gray-500 italic">
+            <span
+              v-if="!user.interests || user.interests.length === 0"
+              class="text-gray-500 italic"
+            >
               Keine Interessen angegeben.
             </span>
           </div>
@@ -68,7 +90,9 @@
       
       <!-- Account Info -->
       <div class="border-t border-gray-200 pt-4 mt-6">
-        <h3 class="text-lg font-medium text-gray-800 mb-2">Account Informationen</h3>
+        <h3 class="text-lg font-medium text-gray-800 mb-2">
+          Account Informationen
+        </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-y-2">
           <div>
             <span class="text-gray-500">Benutzer-ID:</span>
@@ -92,10 +116,10 @@
       <!-- Actions -->
       <div class="flex flex-wrap gap-3 mt-6 pt-4 border-t border-gray-200">
         <button class="bg-indigo-50 text-indigo-700 py-2 px-4 rounded hover:bg-indigo-100 transition-colors">
-          <i class="fas fa-file-export mr-2"></i> Daten exportieren
+          <i class="fas fa-file-export mr-2" /> Daten exportieren
         </button>
         <button class="bg-red-50 text-red-700 py-2 px-4 rounded hover:bg-red-100 transition-colors">
-          <i class="fas fa-trash-alt mr-2"></i> Account löschen
+          <i class="fas fa-trash-alt mr-2" /> Account löschen
         </button>
       </div>
     </div>

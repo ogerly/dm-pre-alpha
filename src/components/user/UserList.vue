@@ -1,47 +1,63 @@
 <template>
-    <div class="user-list-container">
-        <h2>Verfügbare Nutzer</h2>
-        <ul class="user-list">
-            <li 
-              v-for="user in users" 
-              :key="user.id" 
-              class="user-item"
-              :class="{ 'selected': selectedUserId === user.id }"
+  <div class="user-list-container">
+    <h2>Verfügbare Nutzer</h2>
+    <ul class="user-list">
+      <li 
+        v-for="user in users" 
+        :key="user.id" 
+        class="user-item"
+        :class="{ 'selected': selectedUserId === user.id }"
+      >
+        <div
+          class="user-info"
+          @click="$emit('select-user', user)"
+        >
+          <h3>{{ user.name }}</h3>
+          <p class="user-bio">
+            {{ user.bio }}
+          </p>
+          <div class="skill-tags">
+            <span
+              v-for="(skill, index) in user.skills"
+              :key="index"
+              class="skill-tag"
             >
-                <div class="user-info" @click="$emit('select-user', user)">
-                    <h3>{{ user.name }}</h3>
-                    <p class="user-bio">{{ user.bio }}</p>
-                    <div class="skill-tags">
-                        <span v-for="(skill, index) in user.skills" :key="index" class="skill-tag">
-                            {{ skill }}
-                        </span>
-                    </div>
-                </div>
-                <button 
-                  class="match-button"
-                  @click="$emit('select-for-matching', user)"
-                  :disabled="selectedUserId === user.id"
-                >
-                    Finde Matches
-                </button>
-            </li>
-        </ul>
-    </div>
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+        <button 
+          class="match-button"
+          :disabled="selectedUserId === user.id"
+          @click="$emit('select-for-matching', user)"
+        >
+          Finde Matches
+        </button>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
-export default {
-    props: {
-        users: {
-            type: Array,
-            required: true
-        },
-        selectedUserId: {
-            type: Number,
-            default: null
-        }
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'UserList',
+  
+  props: {
+    users: {
+      type: Array,
+      required: true
+    },
+    selectedUserId: {
+      type: Number,
+      default: null
     }
-};
+  },
+  
+  // Add missing emits declarations
+  emits: ['select-user', 'select-for-matching']
+});
 </script>
 
 <style>

@@ -6,18 +6,21 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "jsx": "preserve",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "vue": ["node_modules/vue"],
+      "@vueuse/core": ["node_modules/@vueuse/core"]
     },
     "types": ["vite/client"]
   },
@@ -25,8 +28,8 @@
     "src/**/*.ts", 
     "src/**/*.d.ts", 
     "src/**/*.tsx", 
-    "src/**/*.vue",
-    "vite.config.ts"
+    "src/**/*.vue"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

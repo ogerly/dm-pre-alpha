@@ -2,35 +2,59 @@
   <div class="company-form-container">
     <h2>{{ editMode ? 'Unternehmen bearbeiten' : 'Neues Unternehmen erstellen' }}</h2>
     
-    <form @submit.prevent="saveCompany" class="company-form">
+    <form
+      class="company-form"
+      @submit.prevent="handleSubmit"
+    >
       <!-- Basisdaten -->
       <div class="form-section">
         <h3>Unternehmensdaten</h3>
         
         <div class="form-group">
           <label for="company-name">Unternehmensname</label>
-          <input type="text" id="company-name" v-model="formData.name" required>
+          <input
+            id="company-name"
+            v-model="formData.name"
+            type="text"
+            required
+          >
         </div>
         
         <div class="form-group">
           <label for="description">Beschreibung</label>
-          <textarea id="description" v-model="formData.description" rows="4"></textarea>
+          <textarea
+            id="description"
+            v-model="formData.description"
+            rows="4"
+          />
         </div>
         
         <div class="form-row">
           <div class="form-group">
             <label for="founded-year">Gründungsjahr</label>
-            <input type="text" id="founded-year" v-model="formData.foundedYear">
+            <input
+              id="founded-year"
+              v-model="formData.foundedYear"
+              type="text"
+            >
           </div>
           
           <div class="form-group">
             <label for="employees">Anzahl der Mitarbeiter</label>
-            <input type="text" id="employees" v-model="formData.employees">
+            <input
+              id="employees"
+              v-model="formData.employees"
+              type="text"
+            >
           </div>
           
           <div class="form-group">
             <label for="industry">Branche</label>
-            <input type="text" id="industry" v-model="formData.industry">
+            <input
+              id="industry"
+              v-model="formData.industry"
+              type="text"
+            >
           </div>
         </div>
       </div>
@@ -41,15 +65,23 @@
         
         <div class="tag-input">
           <input 
-            type="text" 
             v-model="newService" 
-            @keyup.enter="addService"
+            type="text" 
             placeholder="Produkt/Dienstleistung eingeben und Enter drücken"
+            @keyup.enter="addService"
           >
           <div class="tags-container">
-            <span v-for="(service, index) in formData.services" :key="index" class="tag service-tag">
+            <span
+              v-for="(service, index) in formData.services"
+              :key="index"
+              class="tag service-tag"
+            >
               {{ service }}
-              <button type="button" @click="removeService(index)" class="remove-tag">&times;</button>
+              <button
+                type="button"
+                class="remove-tag"
+                @click="removeService(index)"
+              >&times;</button>
             </span>
           </div>
         </div>
@@ -61,21 +93,31 @@
         
         <div class="form-group">
           <label for="address">Adresse</label>
-          <input type="text" id="address" v-model="formData.location.address">
+          <input
+            id="address"
+            v-model="formData.location.address"
+            type="text"
+          >
           <small class="form-hint">Die genaue Adresse wird benutzt, um den Standort auf der Karte anzuzeigen</small>
         </div>
         
         <div class="map-preview">
           <!-- Placeholder for Map Preview -->
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Kartenvorschau (wird nach dem Speichern angezeigt)</p>
           </div>
         </div>
         
         <div class="form-group">
           <label for="radius-distance">Wirkungsbereich (in km)</label>
-          <input type="number" id="radius-distance" v-model.number="formData.radius.distance" min="0" step="1">
+          <input
+            id="radius-distance"
+            v-model.number="formData.radius.distance"
+            type="number"
+            min="0"
+            step="1"
+          >
           <small class="form-hint">Der Radius wird als Kreis um den Standort auf der Karte dargestellt</small>
         </div>
       </div>
@@ -86,17 +128,29 @@
         
         <div class="form-group">
           <label for="email">E-Mail-Adresse</label>
-          <input type="email" id="email" v-model="formData.contactInfo.email">
+          <input
+            id="email"
+            v-model="formData.contactInfo.email"
+            type="email"
+          >
         </div>
         
         <div class="form-group">
           <label for="phone">Telefonnummer</label>
-          <input type="tel" id="phone" v-model="formData.contactInfo.phone">
+          <input
+            id="phone"
+            v-model="formData.contactInfo.phone"
+            type="tel"
+          >
         </div>
         
         <div class="form-group">
           <label for="website">Webseite</label>
-          <input type="url" id="website" v-model="formData.contactInfo.website">
+          <input
+            id="website"
+            v-model="formData.contactInfo.website"
+            type="url"
+          >
         </div>
       </div>
       
@@ -104,37 +158,72 @@
       <div class="form-section">
         <h3>Team</h3>
         
-        <div v-for="(member, index) in formData.team" :key="index" class="team-member-input">
+        <div
+          v-for="(member, index) in formData.team"
+          :key="index"
+          class="team-member-input"
+        >
           <div class="form-row">
             <div class="form-group">
               <label>Name</label>
-              <input type="text" v-model="member.name">
+              <input
+                v-model="member.name"
+                type="text"
+              >
             </div>
             
             <div class="form-group">
               <label>Rolle</label>
-              <input type="text" v-model="member.role">
+              <input
+                v-model="member.role"
+                type="text"
+              >
             </div>
             
-            <button type="button" class="remove-btn" @click="removeMember(index)">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeMember(index)"
+            >
+              Entfernen
+            </button>
           </div>
         </div>
         
-        <button type="button" class="add-btn" @click="addMember">
-          <i class="bi bi-plus"></i> Teammitglied hinzufügen
+        <button
+          type="button"
+          class="add-btn"
+          @click="addMember"
+        >
+          <i class="bi bi-plus" /> Teammitglied hinzufügen
         </button>
       </div>
       
       <div class="form-actions">
-        <button type="button" @click="$emit('cancel')" class="cancel-btn">Abbrechen</button>
-        <button type="submit" class="save-btn">{{ editMode ? 'Speichern' : 'Erstellen' }}</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          @click="$emit('cancel')"
+        >
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          class="save-btn"
+        >
+          {{ editMode ? 'Speichern' : 'Erstellen' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent, ref } from 'vue'
+
+export default defineComponent({
+  name: 'CompanyForm',
+  
   props: {
     companyData: {
       type: Object,
@@ -145,84 +234,93 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      formData: {
-        name: '',
-        description: '',
-        foundedYear: '',
-        employees: '',
-        industry: '',
-        services: [],
-        location: {
-          address: '',
-          coordinates: null // Would be populated after geocoding
-        },
-        radius: {
-          distance: 0,
-          center: null // Would be set to match location coordinates
-        },
-        contactInfo: {
-          email: '',
-          phone: '',
-          website: ''
-        },
-        team: []
+  
+  // Add emits declaration
+  emits: ['cancel', 'save'],
+  
+  setup(props, { emit }) {
+    const formData = ref({
+      name: '',
+      description: '',
+      foundedYear: '',
+      employees: '',
+      industry: '',
+      services: [],
+      location: {
+        address: '',
+        coordinates: null // Would be populated after geocoding
       },
-      newService: ''
-    }
-  },
-  created() {
-    if (this.companyData) {
+      radius: {
+        distance: 0,
+        center: null // Would be set to match location coordinates
+      },
+      contactInfo: {
+        email: '',
+        phone: '',
+        website: ''
+      },
+      team: []
+    })
+    
+    const newService = ref('')
+    
+    if (props.companyData) {
       // Deep copy to avoid mutating props
-      this.formData = JSON.parse(JSON.stringify(this.companyData));
+      formData.value = JSON.parse(JSON.stringify(props.companyData));
       
       // Ensure all nested objects exist
-      if (!this.formData.location) this.formData.location = { address: '', coordinates: null };
-      if (!this.formData.radius) this.formData.radius = { distance: 0, center: null };
-      if (!this.formData.contactInfo) this.formData.contactInfo = { email: '', phone: '', website: '' };
-      if (!this.formData.services) this.formData.services = [];
-      if (!this.formData.team) this.formData.team = [];
+      if (!formData.value.location) formData.value.location = { address: '', coordinates: null };
+      if (!formData.value.radius) formData.value.radius = { distance: 0, center: null };
+      if (!formData.value.contactInfo) formData.value.contactInfo = { email: '', phone: '', website: '' };
+      if (!formData.value.services) formData.value.services = [];
+      if (!formData.value.team) formData.value.team = [];
     }
-  },
-  methods: {
-    saveCompany() {
+    
+    const handleSubmit = () => {
       // Clone the form data to avoid reference issues
-      const companyData = JSON.parse(JSON.stringify(this.formData));
+      const companyData = JSON.parse(JSON.stringify(formData.value));
       
       // Generate ID if new company
-      if (!this.editMode) {
+      if (!props.editMode) {
         companyData.id = Date.now();
       }
       
-      this.$emit('save', companyData);
-    },
+      emit('save', companyData);
+    }
     
-    // Service methods
-    addService() {
-      if (this.newService.trim() && !this.formData.services.includes(this.newService.trim())) {
-        this.formData.services.push(this.newService.trim());
-        this.newService = '';
+    const addService = () => {
+      if (newService.value.trim() && !formData.value.services.includes(newService.value.trim())) {
+        formData.value.services.push(newService.value.trim());
+        newService.value = '';
       }
-    },
+    }
     
-    removeService(index) {
-      this.formData.services.splice(index, 1);
-    },
+    const removeService = (index) => {
+      formData.value.services.splice(index, 1);
+    }
     
-    // Team methods
-    addMember() {
-      this.formData.team.push({
+    const addMember = () => {
+      formData.value.team.push({
         name: '',
         role: ''
       });
-    },
+    }
     
-    removeMember(index) {
-      this.formData.team.splice(index, 1);
+    const removeMember = (index) => {
+      formData.value.team.splice(index, 1);
+    }
+    
+    return {
+      formData,
+      newService,
+      handleSubmit,
+      addService,
+      removeService,
+      addMember,
+      removeMember
     }
   }
-}
+})
 </script>
 
 <style scoped>

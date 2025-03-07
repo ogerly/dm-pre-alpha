@@ -1,27 +1,45 @@
 <template>
   <div>
-    <h2><i class="fas fa-map"></i> Test Map</h2>
-    <div class="debug-map" ref="debugMap"></div>
+    <h2><i class="fas fa-map" /> Test Map</h2>
+    <div
+      ref="debugMap"
+      class="debug-map"
+    />
     <div class="debug-controls">
-      <button @click="addTestMarker"><i class="fas fa-map-marker"></i> Add Test Marker</button>
-      <button @click="centerMap"><i class="fas fa-crosshairs"></i> Center Map</button>
+      <button @click="addTestMarker">
+        <i class="fas fa-map-marker" /> Add Test Marker
+      </button>
+      <button @click="centerMap">
+        <i class="fas fa-crosshairs" /> Center Map
+      </button>
     </div>
     <div class="status">
       <p>Map loaded: {{ mapLoaded ? 'Yes' : 'No' }}</p>
       <p>Markers added: {{ markers.length }}</p>
       <p>Errors: {{ errors.length > 0 ? 'Yes' : 'No' }}</p>
     </div>
-    <div v-if="errors.length > 0" class="errors">
+    <div
+      v-if="errors.length > 0"
+      class="errors"
+    >
       <h3>Errors:</h3>
       <ul>
-        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+        <li
+          v-for="(error, index) in errors"
+          :key="index"
+        >
+          {{ error }}
+        </li>
       </ul>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'TestMap',
   data() {
     return {
       map: null,
@@ -47,7 +65,8 @@ export default {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
         script.onload = () => this.initMap();
-        script.onerror = (e) => this.errors.push('Failed to load Leaflet script');
+        // Fix: Change 'e' parameter to '_e' to follow the naming convention for unused variables
+        script.onerror = (_e) => this.errors.push('Failed to load Leaflet script');
         document.head.appendChild(script);
       } catch (err) {
         this.errors.push(`Error loading resources: ${err.message}`);
@@ -113,7 +132,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style scoped>

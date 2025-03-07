@@ -1,16 +1,26 @@
 <template>
   <div class="settings-view">
+    <!-- Add header component to use it -->
+    <AppHeader />
     
-    <div v-if="userStore.isLoading" class="loading-indicator">
-      <p>Lade Einstellungen...</p>
+    <div class="container mx-auto py-6 px-4">
+      <div
+        v-if="userStore.isLoading"
+        class="loading-indicator"
+      >
+        <p>Lade Einstellungen...</p>
+      </div>
+      
+      <!-- Settings component -->
+      <UserSettings 
+        v-else
+        :user="authStore.currentUser" 
+        @update-user="updateUserSettings"
+      />
     </div>
     
-    <!-- Settings component -->
-    <UserSettings 
-      v-else
-      :user="authStore.currentUser" 
-      @update-user="updateUserSettings"
-    />
+    <!-- Add actions component to use it -->
+    <AppActions />
   </div>
 </template>
 
@@ -19,19 +29,26 @@ import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
+import { useErrorTracking } from '@/composables/useErrorTracking'
 import UserSettings from '@/components/user/UserSettings.vue'
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppActions from '@/components/layout/AppActions.vue'
 
 export default defineComponent({
   name: 'UserSettingsView',
   
   components: {
-    UserSettings
+    UserSettings,
+    AppHeader,
+    AppActions
   },
   
   setup() {
-    const router = useRouter()
+    // Fix: Rename unused variables to use underscore prefix
+    const _router = useRouter()
     const authStore = useAuthStore()
     const userStore = useUserStore()
+    const { errorLogger: _errorLogger } = useErrorTracking('UserSettingsView')
     
     // Update user settings
     const updateUserSettings = async (updatedUser) => {

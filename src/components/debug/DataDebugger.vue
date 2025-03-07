@@ -3,19 +3,34 @@
     <h2>Data Debugger</h2>
     
     <div class="debug-controls">
-      <button @click="showRawData = !showRawData" class="debug-button">
+      <button
+        class="debug-button"
+        @click="showRawData = !showRawData"
+      >
         {{ showRawData ? 'Hide' : 'Show' }} Raw Data
       </button>
       
-      <select v-model="selectedUser" class="user-select">
-        <option :value="null">Select a user...</option>
-        <option v-for="user in users" :key="user.id" :value="user">
+      <select
+        v-model="selectedUser"
+        class="user-select"
+      >
+        <option :value="null">
+          Select a user...
+        </option>
+        <option
+          v-for="user in users"
+          :key="user.id"
+          :value="user"
+        >
           {{ user.name }}
         </option>
       </select>
     </div>
     
-    <div v-if="selectedUser" class="debug-info">
+    <div
+      v-if="selectedUser"
+      class="debug-info"
+    >
       <h3>{{ selectedUser.name }}</h3>
       
       <div class="data-section">
@@ -49,7 +64,10 @@
       </div>
     </div>
     
-    <div v-if="showRawData" class="raw-data">
+    <div
+      v-if="showRawData"
+      class="raw-data"
+    >
       <h3>Raw User Data</h3>
       <pre>{{ JSON.stringify(users, null, 2) }}</pre>
     </div>

@@ -1,26 +1,25 @@
 <template>
   <div class="matching-view">
-    
     <!-- Matching Container -->
     <MatchingContainer 
+      v-model="searchTerm"
       :users="userStore.users"
-      :filteredUsers="userStore.filteredUsers"
-      :userForMatching="userStore.userForMatching"
-      :matchResults="userStore.matchResults"
+      :filtered-users="userStore.filteredUsers"
+      :user-for-matching="userStore.userForMatching"
+      :match-results="userStore.matchResults"
       @select-user="selectUser"
       @select-for-matching="userStore.selectForMatching"
       @edit-user="userStore.startEditing"
       @delete-user="deleteUser"
       @clear-matching="userStore.clearMatching"
       @start-chat="startChatWith"
-      v-model="searchTerm"
     />
     
     <!-- Profile Form Modal -->
     <UserProfileForm
       v-if="userStore.editingUser || userStore.creatingUser"
       :user="userStore.editingUser"
-      :editMode="!!userStore.editingUser"
+      :edit-mode="!!userStore.editingUser"
       @save="saveProfile"
       @cancel="userStore.cancelEditing"
     />
@@ -28,7 +27,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'

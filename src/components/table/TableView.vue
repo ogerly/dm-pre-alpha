@@ -3,15 +3,26 @@
     <div class="table-header">
       <div class="table-title">
         <h2>{{ table.name }}</h2>
-        <div class="table-status" :class="table.status || 'active'">{{ table.status || 'Aktiv' }}</div>
+        <div
+          class="table-status"
+          :class="table.status || 'active'"
+        >
+          {{ table.status || 'Aktiv' }}
+        </div>
       </div>
       <div class="table-meta">
-        <div class="meta-item" v-if="table.date">
-          <i class="bi bi-calendar3"></i>
+        <div
+          v-if="table.date"
+          class="meta-item"
+        >
+          <i class="bi bi-calendar3" />
           Datum: {{ formatDate(table.date) }}
         </div>
-        <div class="meta-item" v-if="table.time">
-          <i class="bi bi-clock"></i>
+        <div
+          v-if="table.time"
+          class="meta-item"
+        >
+          <i class="bi bi-clock" />
           Zeit: {{ table.time }}
         </div>
       </div>
@@ -24,38 +35,75 @@
           <p>{{ table.description }}</p>
         </div>
         
-        <div class="info-section" v-if="table.topics && table.topics.length">
+        <div
+          v-if="table.topics && table.topics.length"
+          class="info-section"
+        >
           <h3>Themen</h3>
           <div class="tag-container">
-            <span v-for="(topic, index) in table.topics" :key="index" class="tag topic-tag">
+            <span
+              v-for="(topic, index) in table.topics"
+              :key="index"
+              class="tag topic-tag"
+            >
               {{ topic }}
             </span>
           </div>
         </div>
         
-        <div class="info-section" v-if="table.host">
+        <div
+          v-if="table.host"
+          class="info-section"
+        >
           <h3>Gastgeber</h3>
           <div class="host-info">
-            <div class="host-name">{{ table.host.name }}</div>
-            <div class="host-details" v-if="table.host.details">{{ table.host.details }}</div>
-          </div>
-        </div>
-        
-        <div class="info-section" v-if="table.participants && table.participants.length">
-          <h3>Teilnehmer</h3>
-          <div class="participants-list">
-            <div v-for="(participant, index) in table.participants" :key="index" class="participant-item">
-              <div class="participant-name">{{ participant.name }}</div>
-              <div class="participant-role" v-if="participant.role">{{ participant.role }}</div>
+            <div class="host-name">
+              {{ table.host.name }}
+            </div>
+            <div
+              v-if="table.host.details"
+              class="host-details"
+            >
+              {{ table.host.details }}
             </div>
           </div>
         </div>
         
-        <div class="info-section" v-if="table.maxParticipants">
+        <div
+          v-if="table.participants && table.participants.length"
+          class="info-section"
+        >
+          <h3>Teilnehmer</h3>
+          <div class="participants-list">
+            <div
+              v-for="(participant, index) in table.participants"
+              :key="index"
+              class="participant-item"
+            >
+              <div class="participant-name">
+                {{ participant.name }}
+              </div>
+              <div
+                v-if="participant.role"
+                class="participant-role"
+              >
+                {{ participant.role }}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div
+          v-if="table.maxParticipants"
+          class="info-section"
+        >
           <h3>Kapazität</h3>
           <div class="capacity-info">
             <div class="capacity-gauge">
-              <div class="gauge-fill" :style="{ width: capacityPercentage + '%' }"></div>
+              <div
+                class="gauge-fill"
+                :style="{ width: capacityPercentage + '%' }"
+              />
             </div>
             <div class="capacity-numbers">
               {{ table.participants ? table.participants.length : 0 }} / {{ table.maxParticipants }} Plätze belegt
@@ -67,15 +115,21 @@
       <div class="table-map-section">
         <div class="map-header">
           <h3>Ort</h3>
-          <div class="location-info" v-if="table.location">
-            <i class="bi bi-geo-alt"></i>
+          <div
+            v-if="table.location"
+            class="location-info"
+          >
+            <i class="bi bi-geo-alt" />
             {{ table.location.address }}
           </div>
         </div>
         
         <!-- Placeholder for Map - Would be replaced with actual map component -->
         <div class="map-container">
-          <div class="map-overlay" v-if="table.location">
+          <div
+            v-if="table.location"
+            class="map-overlay"
+          >
             <div class="map-info">
               <p>
                 <strong>Standort:</strong> {{ table.location.address }}
@@ -86,18 +140,24 @@
             </div>
           </div>
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Karte wird geladen...</p>
           </div>
         </div>
         
-        <div class="video-call-section" v-if="table.hasVideoCall">
+        <div
+          v-if="table.hasVideoCall"
+          class="video-call-section"
+        >
           <h3>Video-Meeting</h3>
           <p class="video-info">
             Für diesen Tisch ist ein Video-Meeting mit BigBlueButton verfügbar.
           </p>
-          <button class="join-video-btn" @click="joinVideoCall">
-            <i class="bi bi-camera-video"></i> Video-Meeting beitreten
+          <button
+            class="join-video-btn"
+            @click="joinVideoCall"
+          >
+            <i class="bi bi-camera-video" /> Video-Meeting beitreten
           </button>
         </div>
       </div>
@@ -107,29 +167,39 @@
       <button 
         v-if="canJoin" 
         class="join-btn" 
-        @click="joinTable"
+        @click="$emit('join', table.id)"
       >
-        <i class="bi bi-person-plus"></i> Teilnehmen
+        <i class="bi bi-person-plus" /> Teilnehmen
       </button>
       <button 
         v-if="isParticipant" 
         class="leave-btn" 
-        @click="leaveTable"
+        @click="$emit('leave', table.id)"
       >
-        <i class="bi bi-box-arrow-right"></i> Verlassen
+        <i class="bi bi-box-arrow-right" /> Verlassen
       </button>
-      <button class="edit-btn" @click="$emit('edit')">
-        <i class="bi bi-pencil"></i> Bearbeiten
+      <button
+        class="edit-btn"
+        @click="$emit('edit', table)"
+      >
+        <i class="bi bi-pencil" /> Bearbeiten
       </button>
-      <button class="back-btn" @click="$emit('back')">
-        <i class="bi bi-arrow-left"></i> Zurück
+      <button
+        class="back-btn"
+        @click="$emit('back')"
+      >
+        <i class="bi bi-arrow-left" /> Zurück
       </button>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'TableView',
+  
   props: {
     table: {
       type: Object,
@@ -140,6 +210,8 @@ export default {
       default: null
     }
   },
+  
+  emits: ['edit', 'back', 'join', 'leave', 'join-video-call'],
   computed: {
     capacityPercentage() {
       if (!this.table.maxParticipants || this.table.maxParticipants === 0) return 0;
@@ -180,7 +252,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style scoped>

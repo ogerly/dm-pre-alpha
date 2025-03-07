@@ -8,39 +8,48 @@
     <!-- Debug checkbox -->
     <div class="debug-toggle">
       <label>
-        <input type="checkbox" v-model="showDebug">
+        <input
+          v-model="showDebug"
+          type="checkbox"
+        >
         Debug-Modus aktivieren
       </label>
     </div>
     
     <!-- Debug section with expanded tools -->
-    <div v-if="showDebug" class="debug-section">
+    <div
+      v-if="showDebug"
+      class="debug-section"
+    >
       <div class="debug-tabs">
         <button 
-          @click="activeDebugTab = 'data-loader'"
           :class="{ active: activeDebugTab === 'data-loader' }"
           class="debug-tab"
+          @click="activeDebugTab = 'data-loader'"
         >
           Data Loader
         </button>
         <button 
-          @click="activeDebugTab = 'asset-test'"
           :class="{ active: activeDebugTab === 'asset-test' }"
           class="debug-tab"
+          @click="activeDebugTab = 'asset-test'"
         >
           Asset Test
         </button>
         <button 
-          @click="activeDebugTab = 'test-map'"
           :class="{ active: activeDebugTab === 'test-map' }"
           class="debug-tab"
+          @click="activeDebugTab = 'test-map'"
         >
           Test Map
         </button>
       </div>
       
       <!-- DataLoader -->
-      <div v-if="activeDebugTab === 'data-loader'" class="debug-tab-content">
+      <div
+        v-if="activeDebugTab === 'data-loader'"
+        class="debug-tab-content"
+      >
         <DataLoader 
           :users="users" 
           @update-users="updateUsers" 
@@ -49,12 +58,18 @@
       </div>
       
       <!-- Asset Test -->
-      <div v-if="activeDebugTab === 'asset-test'" class="debug-tab-content">
+      <div
+        v-if="activeDebugTab === 'asset-test'"
+        class="debug-tab-content"
+      >
         <AssetTest />
       </div>
       
       <!-- Test Map -->
-      <div v-if="activeDebugTab === 'test-map'" class="debug-tab-content">
+      <div
+        v-if="activeDebugTab === 'test-map'"
+        class="debug-tab-content"
+      >
         <TestMap />
       </div>
     </div>
@@ -71,7 +86,10 @@
     </div>
     
     <!-- Debug data display -->
-    <div v-if="showDebug" class="debug-data">
+    <div
+      v-if="showDebug"
+      class="debug-data"
+    >
       <h3>Debug Data</h3>
       <div class="data-counts">
         <p>Users: {{ users.length }}</p>
@@ -80,18 +98,45 @@
         <p>Projects: {{ projects.length }}</p>
         <p>Tables: {{ tables.length }}</p>
       </div>
-      <div class="user-sample" v-if="(localUsers || users).length > 0">
+      <div
+        v-if="(localUsers || users).length > 0"
+        class="user-sample"
+      >
         <h4>First User Sample</h4>
         <pre>{{ JSON.stringify((localUsers || users)[0], null, 2) }}</pre>
       </div>
     </div>
     
-    <div v-if="userProfile" class="profile-overlay">
+    <div
+      v-if="userProfile"
+      class="profile-overlay"
+    >
       <div class="profile-container">
-        <button class="close-btn" @click="userProfile = null">&times;</button>
+        <button
+          class="close-btn"
+          @click="userProfile = null"
+        >
+          &times;
+        </button>
         <UserProfile :user="userProfile" />
       </div>
     </div>
+    
+    <!-- Example of a button that emits update-users -->
+    <button 
+      class="update-btn"
+      @click="updateUserLocations"
+    >
+      Update User Locations
+    </button>
+    
+    <!-- Another location where the update-users event is emitted -->
+    <button 
+      class="save-btn" 
+      @click="saveMapChanges"
+    >
+      Save Changes
+    </button>
   </div>
 </template>
 
@@ -102,8 +147,11 @@ import TestMap from '@/components/debug/TestMap.vue';
 import DataLoader from '@/components/debug/DataLoader.vue';
 import AssetTest from '@/components/debug/AssetTest.vue'; 
 import { resetToInitialData } from '@/services/StorageService.js'; // Import the new function
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
+  name: 'MapPage',
+  
   components: {
     MapView,
     UserProfile,
@@ -129,6 +177,9 @@ export default {
       default: () => []
     }
   },
+  
+  // Add missing emits declaration
+  emits: ['update-users'],
   data() {
     return {
       userProfile: null,
@@ -155,6 +206,10 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    console.log('MapPage mounted');
+    console.log('User data sample:', this.users.slice(0, 1));
   },
   methods: {
     selectUser(user) {
@@ -204,13 +259,23 @@ export default {
       this.localUsers = initialData;
       this.$emit('update-users', initialData);
       this.dataLoaded = true;
+    },
+    // Function that triggers the update-users event
+    updateUserLocations() {
+      // Fix: Create a properly defined variable instead of using an undefined one
+      const updatedUserData = this.localUsers || this.users;
+      console.log('Updating user locations:', updatedUserData.length);
+      this.$emit('update-users', updatedUserData);
+    },
+    
+    saveMapChanges() {
+      // Fix: Create a properly defined variable instead of using an undefined one
+      const processedData = this.localUsers || this.users;
+      console.log('Saving map changes:', processedData.length);
+      this.$emit('update-users', processedData);
     }
-  },
-  mounted() {
-    console.log('MapPage mounted');
-    console.log('User data sample:', this.users.slice(0, 1));
   }
-}
+});
 </script>
 
 <style scoped>

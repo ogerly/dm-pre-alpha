@@ -1,193 +1,287 @@
 <template>
-  <div class="matching-container">
-    <h2>Deine Top Matches</h2>
+  <div class="matching-results">
+    <h2 class="text-xl font-semibold mb-4">
+      {{ matches.length > 0 ? 'Matching Results' : '' }}
+    </h2>
     
-    <div v-if="matches.length === 0" class="no-matches">
-      <p>Wähle einen Nutzer aus, um passende Profile zu finden.</p>
-    </div>
-    
-    <div v-else class="results-container">
-      <div v-for="match in matches" :key="match.id" class="match-card">
-        <div class="match-header">
-          <h3>{{ match.name }}</h3>
-          <div class="match-percentage">{{ match.matchResult.percentage }}%</div>
+    <!-- Show matches if available -->
+    <div 
+      v-if="matches.length > 0"
+      class="match-cards-container"
+    >
+      <div 
+        v-for="match in matches" 
+        :key="match.id"
+        class="match-card"
+      >
+        <div class="match-score">
+          <div class="percent">
+            {{ match.matchResult.percentage }}%
+          </div>
+          <div class="label">
+            Match
+          </div>
         </div>
         
-        <p class="match-bio">{{ match.bio }}</p>
-        
-        <div class="match-details">
-          <!-- Gemeinsame Interessen -->
-          <div class="match-section" v-if="match.matchResult.matchDetails.sharedInterests.length > 0">
-            <h4>Gemeinsame Interessen</h4>
-            <div class="tags">
-              <span class="tag interest-tag" 
-                    v-for="(interest, i) in match.matchResult.matchDetails.sharedInterests" 
-                    :key="i">
-                {{ interest }}
-              </span>
-            </div>
-          </div>
+        <div class="match-info">
+          <h3 class="user-name">
+            {{ match.name || 'Unnamed User' }}
+          </h3>
           
-          <!-- Ergänzende Fähigkeiten -->
-          <div class="match-section" v-if="match.matchResult.matchDetails.complementarySkills.length > 0">
-            <h4>Ergänzende Fähigkeiten</h4>
+          <!-- Skills section -->
+          <div
+            v-if="match.skills && match.skills.length"
+            class="skills-section"
+          >
+            <h4>Skills</h4>
             <div class="tags">
-              <span class="tag skill-tag" 
-                    v-for="(skill, i) in match.matchResult.matchDetails.complementarySkills" 
-                    :key="i">
+              <span 
+                v-for="(skill, idx) in match.skills.slice(0, 3)" 
+                :key="idx"
+                class="tag skill-tag"
+              >
                 {{ skill }}
               </span>
+              <span
+                v-if="match.skills.length > 3"
+                class="more-tags"
+              >+{{ match.skills.length - 3 }}</span>
             </div>
           </div>
           
-          <!-- Weitere Matching-Attribute -->
-          <div class="match-section" v-if="match.matchResult.matchDetails.matchingAttributes && match.matchResult.matchDetails.matchingAttributes.length > 0">
-            <h4>Weitere Übereinstimmungen</h4>
-            <div class="matching-attributes">
-              <div class="attribute-item" 
-                   v-for="(attr, i) in match.matchResult.matchDetails.matchingAttributes" 
-                   :key="i">
-                <span class="attribute-name">{{ attr.category }}:</span>
-                <span class="attribute-value">{{ attr.similarity || attr.value }}</span>
-              </div>
+          <!-- Interests section -->
+          <div
+            v-if="match.interests && match.interests.length"
+            class="interests-section"
+          >
+            <h4>Interests</h4>
+            <div class="tags">
+              <span 
+                v-for="(interest, idx) in match.interests.slice(0, 3)" 
+                :key="idx"
+                class="tag interest-tag"
+              >
+                {{ interest }}
+              </span>
+              <span
+                v-if="match.interests.length > 3"
+                class="more-tags"
+              >+{{ match.interests.length - 3 }}</span>
             </div>
+          </div>
+          
+          <!-- Match details section -->
+          <div class="match-details">
+            <template v-if="match.matchResult.matchDetails.sharedInterests.length">
+              <div class="detail-item">
+                <span class="detail-label">Shared Interests:</span>
+                <span class="detail-value">{{ match.matchResult.matchDetails.sharedInterests.length }}</span>
+              </div>
+            </template>
+            
+            <template v-if="match.matchResult.matchDetails.complementarySkills.length">
+              <div class="detail-item">
+                <span class="detail-label">Complementary Skills:</span>
+                <span class="detail-value">{{ match.matchResult.matchDetails.complementarySkills.length }}</span>
+              </div>
+            </template>
+            
+            <template
+              v-for="(attr, idx) in match.matchResult.matchDetails.matchingAttributes"
+              :key="idx"
+            >
+              <div class="detail-item">
+                <span class="detail-label">{{ attr.category }}:</span>
+                <span class="detail-value">{{ attr.similarity }}</span>
+              </div>
+            </template>
           </div>
         </div>
         
-        <button class="view-profile-btn" @click="$emit('view-profile', match)">
-          Profil ansehen
-        </button>
+        <div class="match-actions">
+          <button 
+            class="profile-btn"
+            @click="$emit('view-profile', match)"
+          >
+            View Profile
+          </button>
+        </div>
       </div>
+    </div>
+    
+    <!-- No matches message -->
+    <div 
+      v-else-if="showEmpty"
+      class="no-matches"
+    >
+      No matches found. Try adjusting your matching criteria or selecting a different user.
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'MatchingResults',
+  
   props: {
     matches: {
       type: Array,
-      default: () => []
+      required: true
+    },
+    showEmpty: {
+      type: Boolean,
+      default: true
     }
-  }
-}
+  },
+  
+  // Fix: Add missing emits declaration
+  emits: ['view-profile']
+})
 </script>
 
 <style scoped>
-.matching-container {
-  margin-top: 30px;
-}
-
-.no-matches {
-  background-color: #f9fafb;
-  padding: 20px;
-  text-align: center;
+.matching-results {
+  background-color: white;
   border-radius: 8px;
-  color: #6b7280;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
 }
 
-.results-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.match-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 .match-card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.match-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.match-percentage {
-  background-color: #047857;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.match-bio {
-  color: #4b5563;
-  font-size: 0.95rem;
-  margin-bottom: 15px;
-}
-
-.match-details {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.match-section h4 {
-  margin: 0 0 8px 0;
-  font-size: 0.9rem;
+.match-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.match-score {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.match-score .percent {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.match-score .label {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.match-info {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.user-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.skills-section,
+.interests-section {
+  margin-bottom: 0.75rem;
+}
+
+.skills-section h4,
+.interests-section h4 {
+  font-size: 0.875rem;
   color: #6b7280;
+  margin-bottom: 0.25rem;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 0.35rem;
 }
 
 .tag {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.interest-tag {
-  background-color: #dcfce7;
-  color: #166534;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
 }
 
 .skill-tag {
   background-color: #e0f2fe;
-  color: #0369a1;
+  color: #0284c7;
 }
 
-.matching-attributes {
+.interest-tag {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.more-tags {
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding: 0.25rem 0;
+}
+
+.match-details {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.detail-item {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
 }
 
-.attribute-item {
-  font-size: 0.85rem;
+.detail-label {
+  color: #6b7280;
 }
 
-.attribute-name {
+.detail-value {
   font-weight: 500;
-  margin-right: 5px;
 }
 
-.attribute-value {
-  color: #4b5563;
+.match-actions {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  text-align: center;
 }
 
-.view-profile-btn {
+.profile-btn {
   background-color: #4f46e5;
   color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
   transition: background-color 0.2s;
-  width: 100%;
 }
 
-.view-profile-btn:hover {
+.profile-btn:hover {
   background-color: #4338ca;
+}
+
+.no-matches {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
 }
 </style>

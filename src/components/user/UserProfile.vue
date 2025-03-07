@@ -1,19 +1,30 @@
 <template>
-  <div class="profile-container" v-if="user">
+  <div
+    v-if="user"
+    class="profile-container"
+  >
     <div class="profile-header">
       <h2>{{ user.name }}</h2>
-      <p class="bio">{{ user.bio }}</p>
+      <p class="bio">
+        {{ user.bio }}
+      </p>
     </div>
     
     <div class="profile-details">
       <!-- Icon Categories -->
-      <div class="section icon-categories" v-if="user.iconCategories">
+      <div
+        v-if="user.iconCategories"
+        class="section icon-categories"
+      >
         <h3>Standorte & Aktivitäten</h3>
         
         <!-- Home -->
-        <div class="icon-category" v-if="user.iconCategories.home">
+        <div
+          v-if="user.iconCategories.home"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-home"></i>
+            <i class="fas fa-home" />
             <h4>Wohnort</h4>
           </div>
           <div class="icon-content">
@@ -23,9 +34,12 @@
         </div>
         
         <!-- Firma -->
-        <div class="icon-category" v-if="user.iconCategories.firma">
+        <div
+          v-if="user.iconCategories.firma"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-building"></i>
+            <i class="fas fa-building" />
             <h4>Firma</h4>
           </div>
           <div class="icon-content">
@@ -36,14 +50,21 @@
         </div>
         
         <!-- Wirkungsbereich -->
-        <div class="icon-category" v-if="user.iconCategories.wirkungsbereich && user.iconCategories.wirkungsbereich.length">
+        <div
+          v-if="user.iconCategories.wirkungsbereich && user.iconCategories.wirkungsbereich.length"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-compass"></i>
+            <i class="fas fa-compass" />
             <h4>Wirkungsbereich</h4>
           </div>
           <div class="icon-content">
             <div class="tags">
-              <span class="tag location-tag" v-for="(location, index) in user.iconCategories.wirkungsbereich" :key="index">
+              <span
+                v-for="(location, index) in user.iconCategories.wirkungsbereich"
+                :key="index"
+                class="tag location-tag"
+              >
                 {{ location }}
               </span>
             </div>
@@ -51,33 +72,51 @@
         </div>
         
         <!-- Unternehmen -->
-        <div class="icon-category" v-if="user.iconCategories.unternehmen && user.iconCategories.unternehmen.length">
+        <div
+          v-if="user.iconCategories.unternehmen && user.iconCategories.unternehmen.length"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-briefcase"></i>
+            <i class="fas fa-briefcase" />
             <h4>Unternehmen</h4>
           </div>
           <div class="icon-content">
             <div class="company-list">
-              <div class="company-item" v-for="(company, index) in user.iconCategories.unternehmen" :key="index">
+              <div
+                v-for="(company, index) in user.iconCategories.unternehmen"
+                :key="index"
+                class="company-item"
+              >
                 <h5>{{ company.name }}</h5>
                 <p>{{ company.role }} <span v-if="company.period || company.year">({{ company.period || company.year }})</span></p>
-                <p v-if="company.description">{{ company.description }}</p>
+                <p v-if="company.description">
+                  {{ company.description }}
+                </p>
               </div>
             </div>
           </div>
         </div>
         
         <!-- Projekt -->
-        <div class="icon-category" v-if="user.iconCategories.projekt && user.iconCategories.projekt.length">
+        <div
+          v-if="user.iconCategories.projekt && user.iconCategories.projekt.length"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-folder"></i>
+            <i class="fas fa-folder" />
             <h4>Projekte</h4>
           </div>
           <div class="icon-content">
             <div class="project-list">
-              <div class="project-item" v-for="(project, index) in user.iconCategories.projekt" :key="index">
+              <div
+                v-for="(project, index) in user.iconCategories.projekt"
+                :key="index"
+                class="project-item"
+              >
                 <h5>{{ project.name }}</h5>
-                <p v-if="project.role"><em>{{ project.role }}</em></p>
+                <p v-if="project.role">
+                  <em>{{ project.role }}</em>
+                </p>
                 <p>{{ project.description }}</p>
                 <div class="project-meta">
                   <span v-if="project.year">{{ project.year }}</span>
@@ -89,17 +128,26 @@
         </div>
         
         <!-- Tisch -->
-        <div class="icon-category" v-if="user.iconCategories.tisch && user.iconCategories.tisch.length">
+        <div
+          v-if="user.iconCategories.tisch && user.iconCategories.tisch.length"
+          class="icon-category"
+        >
           <div class="icon-header">
-            <i class="fas fa-table"></i>
+            <i class="fas fa-table" />
             <h4>Meetups & Veranstaltungen</h4>
           </div>
           <div class="icon-content">
             <div class="table-list">
-              <div class="table-item" v-for="(table, index) in user.iconCategories.tisch" :key="index">
+              <div
+                v-for="(table, index) in user.iconCategories.tisch"
+                :key="index"
+                class="table-item"
+              >
                 <h5>{{ table.name }}</h5>
                 <p>{{ table.description }}</p>
-                <p v-if="table.location"><i class="fas fa-map-marker-alt"></i> {{ table.location }}</p>
+                <p v-if="table.location">
+                  <i class="fas fa-map-marker-alt" /> {{ table.location }}
+                </p>
               </div>
             </div>
           </div>
@@ -107,26 +155,47 @@
       </div>
 
       <!-- Interessen -->
-      <div class="section" v-if="user.interests && user.interests.length">
+      <div
+        v-if="user.interests && user.interests.length"
+        class="section"
+      >
         <h3>Interessen</h3>
         <div class="tags">
-          <span class="tag interest-tag" v-for="(interest, index) in user.interests" :key="index">{{ interest }}</span>
+          <span
+            v-for="(interest, index) in user.interests"
+            :key="index"
+            class="tag interest-tag"
+          >{{ interest }}</span>
         </div>
       </div>
 
       <!-- Fähigkeiten -->
-      <div class="section" v-if="user.skills && user.skills.length">
+      <div
+        v-if="user.skills && user.skills.length"
+        class="section"
+      >
         <h3>Fähigkeiten</h3>
         <div class="tags">
-          <span class="tag skill-tag" v-for="(skill, index) in user.skills" :key="index">{{ skill }}</span>
+          <span
+            v-for="(skill, index) in user.skills"
+            :key="index"
+            class="tag skill-tag"
+          >{{ skill }}</span>
         </div>
       </div>
       
       <!-- Ausbildung -->
-      <div class="section" v-if="user.education && user.education.length">
+      <div
+        v-if="user.education && user.education.length"
+        class="section"
+      >
         <h3>Ausbildung</h3>
         <div class="timeline">
-          <div class="timeline-item" v-for="(edu, index) in user.education" :key="index">
+          <div
+            v-for="(edu, index) in user.education"
+            :key="index"
+            class="timeline-item"
+          >
             <span class="timeline-period">{{ edu.period }}</span>
             <div class="timeline-content">
               <span class="timeline-title">{{ edu.title }}</span>
@@ -137,10 +206,17 @@
       </div>
       
       <!-- Berufserfahrung -->
-      <div class="section" v-if="user.experience && user.experience.length">
+      <div
+        v-if="user.experience && user.experience.length"
+        class="section"
+      >
         <h3>Berufserfahrung</h3>
         <div class="timeline">
-          <div class="timeline-item" v-for="(exp, index) in user.experience" :key="index">
+          <div
+            v-for="(exp, index) in user.experience"
+            :key="index"
+            class="timeline-item"
+          >
             <span class="timeline-period">{{ exp.period }}</span>
             <div class="timeline-content">
               <span class="timeline-title">{{ exp.role }}</span>
@@ -151,25 +227,42 @@
       </div>
       
       <!-- Eigene Projekte -->
-      <div class="section" v-if="user.ownProjects && user.ownProjects.length">
+      <div
+        v-if="user.ownProjects && user.ownProjects.length"
+        class="section"
+      >
         <h3>Realisierte Projekte</h3>
         <div class="project-cards">
-          <div class="project-card" v-for="(project, index) in user.ownProjects" :key="index">
+          <div
+            v-for="(project, index) in user.ownProjects"
+            :key="index"
+            class="project-card"
+          >
             <h4>{{ project.name }}</h4>
             <p>{{ project.description }}</p>
             <div class="project-meta">
               <span class="project-year">{{ project.year }}</span>
-              <span class="project-note" v-if="project.note">{{ project.note }}</span>
+              <span
+                v-if="project.note"
+                class="project-note"
+              >{{ project.note }}</span>
             </div>
           </div>
         </div>
       </div>
       
       <!-- Projekte mit Beteiligung -->
-      <div class="section" v-if="user.contributedProjects && user.contributedProjects.length">
+      <div
+        v-if="user.contributedProjects && user.contributedProjects.length"
+        class="section"
+      >
         <h3>Projektbeteiligungen</h3>
         <div class="project-cards">
-          <div class="project-card" v-for="(project, index) in user.contributedProjects" :key="index">
+          <div
+            v-for="(project, index) in user.contributedProjects"
+            :key="index"
+            class="project-card"
+          >
             <h4>{{ project.name }}</h4>
             <span class="project-role">{{ project.role }}</span>
             <p>{{ project.description }}</p>
@@ -179,10 +272,17 @@
       </div>
       
       <!-- Unternehmen -->
-      <div class="section" v-if="user.companies && user.companies.length">
+      <div
+        v-if="user.companies && user.companies.length"
+        class="section"
+      >
         <h3>Unternehmen</h3>
         <div class="company-list">
-          <div class="company-item" v-for="(company, index) in user.companies" :key="index">
+          <div
+            v-for="(company, index) in user.companies"
+            :key="index"
+            class="company-item"
+          >
             <h4>{{ company.name }}</h4>
             <span class="company-role">{{ company.role }} ({{ company.year }})</span>
             <p>{{ company.description }}</p>
@@ -191,65 +291,107 @@
       </div>
       
       <!-- Dienstleistungen -->
-      <div class="section" v-if="user.services && user.services.length">
+      <div
+        v-if="user.services && user.services.length"
+        class="section"
+      >
         <h3>Dienstleistungen</h3>
         <ul class="service-list">
-          <li v-for="(service, index) in user.services" :key="index">{{ service }}</li>
+          <li
+            v-for="(service, index) in user.services"
+            :key="index"
+          >
+            {{ service }}
+          </li>
         </ul>
       </div>
       
-      <div class="section goals-section" v-if="user.dreammallGoals">
+      <div
+        v-if="user.dreammallGoals"
+        class="section goals-section"
+      >
         <h3>Ziele bei DreamMall</h3>
         <div class="quote-container">
-          <p class="quote">{{ user.dreammallGoals }}</p>
+          <p class="quote">
+            {{ user.dreammallGoals }}
+          </p>
         </div>
       </div>
       
       <!-- Präferenzen -->
-      <div class="preferences-section" v-if="user.collaborationPreferences || user.leadershipPhilosophy || user.educationOpinion || user.valueOrientation">
+      <div
+        v-if="user.collaborationPreferences || user.leadershipPhilosophy || user.educationOpinion || user.valueOrientation"
+        class="preferences-section"
+      >
         <h3>Präferenzen & Einstellungen</h3>
         
-        <div class="preference-item" v-if="user.collaborationPreferences">
+        <div
+          v-if="user.collaborationPreferences"
+          class="preference-item"
+        >
           <h4>Zusammenarbeit</h4>
           <p>{{ user.collaborationPreferences }}</p>
         </div>
         
-        <div class="preference-item" v-if="user.leadershipPhilosophy">
+        <div
+          v-if="user.leadershipPhilosophy"
+          class="preference-item"
+        >
           <h4>Führungsstil</h4>
           <p>{{ user.leadershipPhilosophy }}</p>
         </div>
         
-        <div class="preference-item" v-if="user.educationOpinion">
+        <div
+          v-if="user.educationOpinion"
+          class="preference-item"
+        >
           <h4>Bildungssystem</h4>
           <p>{{ user.educationOpinion }}</p>
         </div>
         
-        <div class="preference-item" v-if="user.valueOrientation">
+        <div
+          v-if="user.valueOrientation"
+          class="preference-item"
+        >
           <h4>Werte</h4>
           <p>{{ user.valueOrientation }}</p>
         </div>
       </div>
       
       <!-- Allgemeine Ziele -->
-      <div class="section" v-if="user.goals">
+      <div
+        v-if="user.goals"
+        class="section"
+      >
         <h3>Allgemeine Ziele</h3>
         <p>{{ user.goals }}</p>
       </div>
     </div>
     
-    <button class="back-button" @click="$emit('close')">Zurück zur Liste</button>
+    <button
+      class="back-button"
+      @click="$emit('close')"
+    >
+      Zurück zur Liste
+    </button>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'UserProfile',
+  
   props: {
     user: {
       type: Object,
       required: true
     }
-  }
-}
+  },
+  
+  emits: ['close']
+})
 </script>
 
 <style scoped>

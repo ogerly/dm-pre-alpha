@@ -2,39 +2,69 @@
   <div class="project-form-container">
     <h2>{{ editMode ? 'Projekt bearbeiten' : 'Neues Projekt erstellen' }}</h2>
     
-    <form @submit.prevent="saveProject" class="project-form">
+    <form
+      class="project-form"
+      @submit.prevent="saveProject"
+    >
       <!-- Basisdaten -->
       <div class="form-section">
         <h3>Projektdaten</h3>
         
         <div class="form-group">
           <label for="project-name">Projektname</label>
-          <input type="text" id="project-name" v-model="formData.name" required>
+          <input
+            id="project-name"
+            v-model="formData.name"
+            type="text"
+            required
+          >
         </div>
         
         <div class="form-group">
           <label for="description">Beschreibung</label>
-          <textarea id="description" v-model="formData.description" rows="4" required></textarea>
+          <textarea
+            id="description"
+            v-model="formData.description"
+            rows="4"
+            required
+          />
         </div>
         
         <div class="form-row">
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" v-model="formData.status">
-              <option value="Offen">Offen für Teilnehmer</option>
-              <option value="Laufend">Laufend</option>
-              <option value="Abgeschlossen">Abgeschlossen</option>
+            <select
+              id="status"
+              v-model="formData.status"
+            >
+              <option value="Offen">
+                Offen für Teilnehmer
+              </option>
+              <option value="Laufend">
+                Laufend
+              </option>
+              <option value="Abgeschlossen">
+                Abgeschlossen
+              </option>
             </select>
           </div>
           
           <div class="form-group">
             <label for="start-date">Startdatum</label>
-            <input type="date" id="start-date" v-model="formData.startDate">
+            <input
+              id="start-date"
+              v-model="formData.startDate"
+              type="date"
+            >
           </div>
           
           <div class="form-group">
             <label for="end-date">Enddatum (optional)</label>
-            <input type="date" id="end-date" v-model="formData.endDate">
+            <input
+              id="end-date"
+              v-model="formData.endDate"
+              type="date"
+            >
           </div>
         </div>
       </div>
@@ -47,15 +77,23 @@
           <label>Kategorien</label>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newCategory" 
-              @keyup.enter="addCategory"
+              type="text" 
               placeholder="Kategorie eingeben und Enter drücken"
+              @keyup.enter="addCategory"
             >
             <div class="tags-container">
-              <span v-for="(category, index) in formData.categories" :key="index" class="tag category-tag">
+              <span
+                v-for="(category, index) in formData.categories"
+                :key="index"
+                class="tag category-tag"
+              >
                 {{ category }}
-                <button type="button" @click="removeCategory(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeCategory(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -65,15 +103,23 @@
           <label>Tags</label>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newTag" 
-              @keyup.enter="addTag"
+              type="text" 
               placeholder="Tag eingeben und Enter drücken"
+              @keyup.enter="addTag"
             >
             <div class="tags-container">
-              <span v-for="(tag, index) in formData.tags" :key="index" class="tag tag-item">
+              <span
+                v-for="(tag, index) in formData.tags"
+                :key="index"
+                class="tag tag-item"
+              >
                 {{ tag }}
-                <button type="button" @click="removeTag(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeTag(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -84,17 +130,35 @@
       <div class="form-section">
         <h3>Projektziele</h3>
         
-        <div v-for="(goal, index) in formData.goals" :key="index" class="goal-input">
+        <div
+          v-for="(goal, index) in formData.goals"
+          :key="index"
+          class="goal-input"
+        >
           <div class="form-row">
             <div class="form-group goal-field">
-              <input type="text" v-model="formData.goals[index]" placeholder="Ziel beschreiben...">
-              <button type="button" @click="removeGoal(index)" class="remove-btn">Entfernen</button>
+              <input
+                v-model="formData.goals[index]"
+                type="text"
+                placeholder="Ziel beschreiben..."
+              >
+              <button
+                type="button"
+                class="remove-btn"
+                @click="removeGoal(index)"
+              >
+                Entfernen
+              </button>
             </div>
           </div>
         </div>
         
-        <button type="button" class="add-btn" @click="addGoal">
-          <i class="bi bi-plus"></i> Projektziel hinzufügen
+        <button
+          type="button"
+          class="add-btn"
+          @click="addGoal"
+        >
+          <i class="bi bi-plus" /> Projektziel hinzufügen
         </button>
       </div>
       
@@ -105,15 +169,23 @@
         <div class="form-group">
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newSkill" 
-              @keyup.enter="addSkill"
+              type="text" 
               placeholder="Fähigkeit eingeben und Enter drücken"
+              @keyup.enter="addSkill"
             >
             <div class="tags-container">
-              <span v-for="(skill, index) in formData.requiredSkills" :key="index" class="tag skill-tag">
+              <span
+                v-for="(skill, index) in formData.requiredSkills"
+                :key="index"
+                class="tag skill-tag"
+              >
                 {{ skill }}
-                <button type="button" @click="removeSkill(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeSkill(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -127,21 +199,31 @@
         
         <div class="form-group">
           <label for="location">Projektstandort</label>
-          <input type="text" id="location" v-model="formData.location.address">
+          <input
+            id="location"
+            v-model="formData.location.address"
+            type="text"
+          >
           <small class="form-hint">Die genaue Adresse wird benutzt, um den Standort auf der Karte anzuzeigen (optional)</small>
         </div>
         
         <div class="map-preview">
           <!-- Placeholder for Map Preview -->
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Kartenvorschau (wird nach dem Speichern angezeigt)</p>
           </div>
         </div>
         
         <div class="form-group">
           <label for="radius-distance">Wirkungsbereich (in km)</label>
-          <input type="number" id="radius-distance" v-model.number="formData.radius.distance" min="0" step="1">
+          <input
+            id="radius-distance"
+            v-model.number="formData.radius.distance"
+            type="number"
+            min="0"
+            step="1"
+          >
           <small class="form-hint">Der Radius wird als Kreis um den Standort auf der Karte dargestellt (optional)</small>
         </div>
       </div>
@@ -152,26 +234,50 @@
         
         <div class="form-group">
           <label for="collab-type">Art der Zusammenarbeit</label>
-          <select id="collab-type" v-model="formData.collaboration.type">
-            <option value="Vor Ort">Vor Ort</option>
-            <option value="Remote">Remote</option>
-            <option value="Hybrid">Hybrid (Remote & Vor Ort)</option>
+          <select
+            id="collab-type"
+            v-model="formData.collaboration.type"
+          >
+            <option value="Vor Ort">
+              Vor Ort
+            </option>
+            <option value="Remote">
+              Remote
+            </option>
+            <option value="Hybrid">
+              Hybrid (Remote & Vor Ort)
+            </option>
           </select>
         </div>
         
         <div class="form-group">
           <label for="collab-availability">Verfügbarkeit</label>
-          <select id="collab-availability" v-model="formData.collaboration.availability">
-            <option value="Vollzeit">Vollzeit</option>
-            <option value="Teilzeit">Teilzeit</option>
-            <option value="Flexibel">Flexibel</option>
-            <option value="Nach Vereinbarung">Nach Vereinbarung</option>
+          <select
+            id="collab-availability"
+            v-model="formData.collaboration.availability"
+          >
+            <option value="Vollzeit">
+              Vollzeit
+            </option>
+            <option value="Teilzeit">
+              Teilzeit
+            </option>
+            <option value="Flexibel">
+              Flexibel
+            </option>
+            <option value="Nach Vereinbarung">
+              Nach Vereinbarung
+            </option>
           </select>
         </div>
         
         <div class="form-group">
           <label for="collab-notes">Hinweise zur Zusammenarbeit</label>
-          <textarea id="collab-notes" v-model="formData.collaboration.notes" rows="2"></textarea>
+          <textarea
+            id="collab-notes"
+            v-model="formData.collaboration.notes"
+            rows="2"
+          />
         </div>
       </div>
       
@@ -179,37 +285,72 @@
       <div class="form-section">
         <h3>Team</h3>
         
-        <div v-for="(member, index) in formData.team" :key="index" class="team-member-input">
+        <div
+          v-for="(member, index) in formData.team"
+          :key="index"
+          class="team-member-input"
+        >
           <div class="form-row">
             <div class="form-group">
               <label>Name</label>
-              <input type="text" v-model="member.name">
+              <input
+                v-model="member.name"
+                type="text"
+              >
             </div>
             
             <div class="form-group">
               <label>Rolle</label>
-              <input type="text" v-model="member.role">
+              <input
+                v-model="member.role"
+                type="text"
+              >
             </div>
             
-            <button type="button" class="remove-btn" @click="removeMember(index)">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeMember(index)"
+            >
+              Entfernen
+            </button>
           </div>
         </div>
         
-        <button type="button" class="add-btn" @click="addMember">
-          <i class="bi bi-plus"></i> Teammitglied hinzufügen
+        <button
+          type="button"
+          class="add-btn"
+          @click="addMember"
+        >
+          <i class="bi bi-plus" /> Teammitglied hinzufügen
         </button>
       </div>
       
       <div class="form-actions">
-        <button type="button" @click="$emit('cancel')" class="cancel-btn">Abbrechen</button>
-        <button type="submit" class="save-btn">{{ editMode ? 'Speichern' : 'Erstellen' }}</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          @click="$emit('cancel')"
+        >
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          class="save-btn"
+        >
+          {{ editMode ? 'Speichern' : 'Erstellen' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'ProjectForm',
+  
   props: {
     projectData: {
       type: Object,
@@ -220,6 +361,8 @@ export default {
       default: false
     }
   },
+  
+  emits: ['save', 'cancel'],
   data() {
     return {
       formData: {
@@ -340,7 +483,7 @@ export default {
       this.formData.team.splice(index, 1);
     }
   }
-}
+})
 </script>
 
 <style scoped>

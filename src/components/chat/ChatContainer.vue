@@ -2,60 +2,86 @@
   <div class="chat-container">
     <div class="chat-header">
       <h3>Chats</h3>
-      <button class="close-btn" @click="$emit('close')">&times;</button>
+      <button
+        class="close-btn"
+        @click="$emit('close')"
+      >
+        &times;
+      </button>
     </div>
     
     <div class="chat-content">
       <div class="chat-sidebar">
         <ChatList 
-          :currentUserId="currentUserId" 
+          :current-user-id="currentUserId" 
           :users="users"
-          :activeConversationId="activeConversationId"
+          :active-conversation-id="activeConversationId"
           @select-conversation="selectConversation" 
         />
       </div>
       <div class="chat-main">
-        <div v-if="!selectedUser" class="no-chat-selected">
+        <div
+          v-if="!selectedUser"
+          class="no-chat-selected"
+        >
           <p>Wähle ein Gespräch aus oder starte ein neues mit einem deiner Matches.</p>
         </div>
         <ChatWindow 
           v-else
-          :currentUserId="currentUserId"
-          :otherUser="selectedUser"
-          :conversationId="activeConversationId"
+          :current-user-id="currentUserId"
+          :other-user="selectedUser"
+          :conversation-id="activeConversationId"
           @close="closeChat"
         />
       </div>
     </div>
     
     <!-- Floating chat button for mobile -->
-    <button class="floating-chat-btn" @click="showMobileChats = !showMobileChats" v-if="isMobile">
+    <button
+      v-if="isMobile"
+      class="floating-chat-btn"
+      @click="showMobileChats = !showMobileChats"
+    >
       <span class="icon">💬</span>
-      <span class="badge" v-if="totalUnread > 0">{{ totalUnread }}</span>
+      <span
+        v-if="totalUnread > 0"
+        class="badge"
+      >{{ totalUnread }}</span>
     </button>
     
     <!-- Mobile chat overlay -->
-    <div class="mobile-chat-overlay" v-if="isMobile && showMobileChats">
+    <div
+      v-if="isMobile && showMobileChats"
+      class="mobile-chat-overlay"
+    >
       <div class="mobile-chat-content">
         <div class="mobile-header">
           <h2>Chats</h2>
-          <button @click="showMobileChats = false" class="close-btn">×</button>
+          <button
+            class="close-btn"
+            @click="showMobileChats = false"
+          >
+            ×
+          </button>
         </div>
         <ChatList 
-          :currentUserId="currentUserId" 
+          :current-user-id="currentUserId" 
           :users="users"
-          :activeConversationId="activeConversationId"
+          :active-conversation-id="activeConversationId"
           @select-conversation="selectMobileConversation" 
         />
       </div>
     </div>
     
     <!-- Mobile active chat -->
-    <div class="mobile-active-chat" v-if="isMobile && activeMobileChat">
+    <div
+      v-if="isMobile && activeMobileChat"
+      class="mobile-active-chat"
+    >
       <ChatWindow 
-        :currentUserId="currentUserId"
-        :otherUser="selectedUser"
-        :conversationId="activeConversationId"
+        :current-user-id="currentUserId"
+        :other-user="selectedUser"
+        :conversation-id="activeConversationId"
         @close="closeMobileChat"
       />
     </div>
@@ -66,8 +92,11 @@
 import ChatList from './ChatList.vue';
 import ChatWindow from './ChatWindow.vue';
 import { getConversationId, getUserConversations } from '../../services/ChatService.js';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
+  name: 'ChatContainer',
+  
   components: {
     ChatList,
     ChatWindow
@@ -86,6 +115,9 @@ export default {
       default: null
     }
   },
+  
+  // Add emits declaration
+  emits: ['close'],
   data() {
     return {
       selectedUser: null,
@@ -101,6 +133,17 @@ export default {
       return conversations.reduce((total, conv) => total + conv.unread, 0);
     }
   },
+  watch: {
+    // Watch for initialOtherUserId changes to open chats automatically
+    initialOtherUserId: {
+      immediate: true,
+      handler(newVal) {
+        if (newVal) {
+          this.openChatWithUser(newVal);
+        }
+      }
+    }
+  },
   created() {
     this.checkMobile();
     window.addEventListener('resize', this.checkMobile);
@@ -113,19 +156,8 @@ export default {
       }
     }
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener('resize', this.checkMobile);
-  },
-  watch: {
-    // Watch for initialOtherUserId changes to open chats automatically
-    initialOtherUserId: {
-      immediate: true,
-      handler(newVal) {
-        if (newVal) {
-          this.openChatWithUser(newVal);
-        }
-      }
-    }
   },
   methods: {
     selectConversation(conversation) {
@@ -168,7 +200,7 @@ export default {
       }
     }
   }
-};
+});
 </script>
 
 <style scoped>

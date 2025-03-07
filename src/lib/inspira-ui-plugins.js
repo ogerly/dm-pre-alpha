@@ -1,20 +1,21 @@
+import * as components from './components';
+import * as utilities from './utilities';
+
 /**
  * Mock implementation of Inspira UI plugins setup since the actual package doesn't exist
  */
-export function setupInspiraUI(tailwindConfig) {
-  // This is a placeholder function that mimics what the real plugin would do
+export default function inspiraPlugin(_tailwindConfig) {
+  // Rename 'tailwindConfig' to '_tailwindConfig' since it's unused
   return {
-    handler: function(addComponents) {
-      // Add some base component classes
-      addComponents({
-        '.inspira-btn': {
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '0.375rem',
-          fontWeight: '500',
-          transition: 'all 0.2s',
-        }
+    install(app) {
+      // Register all components
+      Object.entries(components).forEach(([key, component]) => {
+        app.component(key, component);
+      });
+
+      // Register global utilities
+      Object.entries(utilities).forEach(([key, utility]) => {
+        app.config.globalProperties[`$${key}`] = utility;
       });
     }
   };

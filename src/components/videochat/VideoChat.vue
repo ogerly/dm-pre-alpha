@@ -1,12 +1,16 @@
 <template>
   <div class="video-chat-container p-4">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-xl font-bold mb-4 dark:text-white">Video Chat Room</h2>
+      <h2 class="text-xl font-bold mb-4 dark:text-white">
+        Video Chat Room
+      </h2>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Video chat connections (left panel) -->
         <div class="col-span-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-3 dark:text-white">Video</h3>
+          <h3 class="text-lg font-semibold mb-3 dark:text-white">
+            Video
+          </h3>
           
           <div class="space-y-4">
             <div class="bg-black aspect-video rounded-lg flex items-center justify-center text-white">
@@ -18,7 +22,10 @@
               <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
                 <span>Start Camera</span>
               </button>
-              <button class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition" disabled>
+              <button
+                class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                disabled
+              >
                 <span>End Call</span>
               </button>
             </div>

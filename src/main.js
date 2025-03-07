@@ -1,12 +1,12 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import App from '@/App.vue'
-import router from '@/router'
+import App from './App.vue'
+import router from './router'
 import errorLogger from '@/services/errorLogger'
 import { darkModeGlobal } from '@/composables/useDarkMode'
 
-// Import styles with proper order for Inspira-UI integration
-import './assets/styles/main.css'
+// Import our fixed CSS file with proper import order
+import './assets/styles/global.css'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -42,4 +42,10 @@ app
   .mount('#app')
 
 // Log app startup
-errorLogger.info("Application started")
+errorLogger.info("Application started", {
+  timestamp: new Date().toISOString(),
+  vueVersion: app.version
+})
+
+// For debugging
+window.errorLogger = errorLogger;

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { findTopMatches } from '@/services/MatchingService'
+import errorLogger from '../services/errorLogger';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -65,24 +66,24 @@ export const useUserStore = defineStore('user', {
       try {
         for (const path of this.AUTH_JSON_PATHS) {
           try {
-            console.log(`Attempting to load auth data from: ${path}`)
+            errorLogger.debug(`Attempting to load auth data from: ${path}`)
             const response = await fetch(path)
             
             if (response.ok) {
               this.authUsers = await response.json()
-              console.log(`Successfully loaded ${this.authUsers.length} auth users from ${path}`)
+              errorLogger.info(`Successfully loaded ${this.authUsers.length} auth users from ${path}`)
               return this.authUsers
             }
           } catch (error) {
-            console.warn(`Error loading auth data from ${path}:`, error.message)
+            errorLogger.warn(`Error loading auth data from ${path}:`, error.message)
           }
         }
         
-        console.error('Failed to load auth data from any path')
+        errorLogger.error('Failed to load auth data from any path')
         this.authUsers = []
         return []
       } catch (error) {
-        console.error('Error in loadAuthUsers:', error)
+        errorLogger.error('Error in loadAuthUsers:', error)
         this.authUsers = []
         return []
       }
@@ -98,7 +99,7 @@ export const useUserStore = defineStore('user', {
         await this.loadAuthUsers()
         
         if (forceReset) {
-          console.log('Force reset requested, loading from JSON files')
+          errorLogger.debug('Force reset requested, loading from JSON files')
           await this.loadAndMergeDataJson()
           return this.users
         }
@@ -106,7 +107,7 @@ export const useUserStore = defineStore('user', {
         const existingProfiles = this.getAllProfilesFromStorage()
         
         if (!existingProfiles || existingProfiles.length === 0) {
-          console.log('No existing profiles found, importing from JSON files')
+          errorLogger.debug('No existing profiles found, importing from JSON files')
           await this.loadAndMergeDataJson()
         } else {
           this.users = existingProfiles
@@ -114,7 +115,7 @@ export const useUserStore = defineStore('user', {
         
         return this.users
       } catch (error) {
-        console.error('Error loading users:', error)
+        errorLogger.error('Error loading users:', error)
         this.lastError = error.message || 'Failed to load users'
         
         // Create minimal fallback data
@@ -130,10 +131,10 @@ export const useUserStore = defineStore('user', {
       try {
         const profilesJson = localStorage.getItem(this.STORAGE_KEY)
         const profiles = profilesJson ? JSON.parse(profilesJson) : []
-        console.log(`Found ${profiles.length} profiles in localStorage`)
+        errorLogger.debug(`Found ${profiles.length} profiles in localStorage`)
         return profiles
       } catch (error) {
-        console.error('Error getting profiles from storage:', error)
+        errorLogger.error('Error getting profiles from storage:', error)
         return []
       }
     },
@@ -145,24 +146,24 @@ export const useUserStore = defineStore('user', {
       // Try each path for user data in sequence until one works
       for (const path of this.DATA_JSON_PATHS) {
         try {
-          console.log(`Attempting to load user data from: ${path}`)
+          errorLogger.debug(`Attempting to load user data from: ${path}`)
           const response = await fetch(path)
           
           if (response.ok) {
             userData = await response.json()
-            console.log(`Successfully loaded ${userData.length} profiles from ${path}`)
+            errorLogger.info(`Successfully loaded ${userData.length} profiles from ${path}`)
             break
           } else {
-            console.warn(`Failed to load from ${path}: ${response.status}`)
+            errorLogger.warn(`Failed to load from ${path}: ${response.status}`)
           }
         } catch (error) {
-          console.warn(`Error loading from ${path}:`, error.message)
+          errorLogger.warn(`Error loading from ${path}:`, error.message)
         }
       }
       
       // If we couldn't load user data from any path
       if (!userData) {
-        console.error('Failed to load user data from any path')
+        errorLogger.error('Failed to load user data from any path')
         if (this.authUsers.length > 0) {
           // Create minimal profiles from auth users
           userData = this.authUsers.map(auth => ({
@@ -217,7 +218,7 @@ export const useUserStore = defineStore('user', {
         // Add auth users that aren't in the profile data
         this.authUsers.forEach(authUser => {
           if (!mergedProfiles.some(p => p.id === authUser.id)) {
-            console.log(`Adding missing auth user with id ${authUser.id} to profiles`)
+            errorLogger.debug(`Adding missing auth user with id ${authUser.id} to profiles`)
             mergedProfiles.push({
               id: authUser.id,
               name: authUser.email.split('@')[0], // Generate a name from email
@@ -232,7 +233,7 @@ export const useUserStore = defineStore('user', {
           }
         })
         
-        console.log(`Final merged profiles count: ${mergedProfiles.length}`)
+        errorLogger.info(`Final merged profiles count: ${mergedProfiles.length}`)
         
         // Save merged data to localStorage
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(mergedProfiles))
@@ -242,7 +243,7 @@ export const useUserStore = defineStore('user', {
         
         return mergedProfiles
       } catch (error) {
-        console.error('Error during profile merging:', error)
+        errorLogger.error('Error during profile merging:', error)
         const fallbackProfiles = this.createFallbackProfiles()
         this.users = fallbackProfiles
         return fallbackProfiles
@@ -251,7 +252,7 @@ export const useUserStore = defineStore('user', {
     
     // Create fallback profiles if everything else fails
     createFallbackProfiles() {
-      console.warn('Creating fallback profiles')
+      errorLogger.warn('Creating fallback profiles')
       
       // Start with auth users if available
       let fallbackProfiles = []
@@ -284,7 +285,7 @@ export const useUserStore = defineStore('user', {
       }
       
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(fallbackProfiles))
-      console.log(`Fallback: saved ${fallbackProfiles.length} minimal profiles`)
+      errorLogger.info(`Fallback: saved ${fallbackProfiles.length} minimal profiles`)
       return fallbackProfiles
     },
     
@@ -365,7 +366,7 @@ export const useUserStore = defineStore('user', {
         
         return userData
       } catch (error) {
-        console.error('Error saving user:', error)
+        errorLogger.error('Error saving user:', error)
         this.lastError = error.message || 'Failed to save user'
         throw error
       } finally {
@@ -401,7 +402,7 @@ export const useUserStore = defineStore('user', {
         
         return true
       } catch (error) {
-        console.error('Error deleting user:', error)
+        errorLogger.error('Error deleting user:', error)
         this.lastError = error.message || 'Failed to delete user'
         return false
       } finally {
@@ -422,7 +423,7 @@ export const useUserStore = defineStore('user', {
         downloadAnchorNode.remove()
         return true
       } catch (error) {
-        console.error('Error exporting users:', error)
+        errorLogger.error('Error exporting users:', error)
         this.lastError = error.message || 'Failed to export users'
         alert('Fehler beim Exportieren der Profile.')
         return false
@@ -460,7 +461,7 @@ export const useUserStore = defineStore('user', {
         
         return true
       } catch (error) {
-        console.error('Error importing users:', error)
+        errorLogger.error('Error importing users:', error)
         this.lastError = error.message || 'Failed to import users'
         return false
       } finally {
@@ -483,7 +484,7 @@ export const useUserStore = defineStore('user', {
         
         return true
       } catch (error) {
-        console.error('Error updating all users:', error)
+        errorLogger.error('Error updating all users:', error)
         this.lastError = error.message || 'Failed to update all users'
         return false
       }
@@ -642,7 +643,7 @@ export const useUserStore = defineStore('user', {
         
         return true
       } catch (error) {
-        console.error('Error updating user role:', error)
+        errorLogger.error('Error updating user role:', error)
         this.lastError = error.message || 'Failed to update user role'
         return false
       } finally {
@@ -652,14 +653,14 @@ export const useUserStore = defineStore('user', {
 
     // Add debugging method to check roles
     logUserRoles() {
-      console.log("Current users and their roles:")
+      errorLogger.debug("Current users and their roles:")
       this.users.forEach(user => {
-        console.log(`User: ${user.name}, ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
+        errorLogger.debug(`User: ${user.name}, ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
       })
       
-      console.log("\nAuth users:")
+      errorLogger.debug("\nAuth users:")
       this.authUsers.forEach(user => {
-        console.log(`Auth User: ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
+        errorLogger.debug(`Auth User: ID: ${user.id}, Email: ${user.email}, Role: ${user.role || 'undefined'}`)
       })
       
       // Check localStorage
@@ -667,13 +668,13 @@ export const useUserStore = defineStore('user', {
         const storageData = localStorage.getItem(this.STORAGE_KEY)
         if (storageData) {
           const profiles = JSON.parse(storageData)
-          console.log("\nUsers in localStorage:")
+          errorLogger.debug("\nUsers in localStorage:")
           profiles.forEach(user => {
-            console.log(`User: ${user.name}, ID: ${user.id}, Role: ${user.role || 'undefined'}`)
+            errorLogger.debug(`User: ${user.name}, ID: ${user.id}, Role: ${user.role || 'undefined'}`)
           })
         }
       } catch (e) {
-        console.error("Error reading localStorage:", e)
+        errorLogger.error("Error reading localStorage:", e)
       }
     }
   }

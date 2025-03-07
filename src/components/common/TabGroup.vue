@@ -1,13 +1,20 @@
 <template>
   <div class="tabs-container">
-    <div class="tabs" :class="customClass">
+    <div
+      class="tabs"
+      :class="customClass"
+    >
       <button 
         v-for="tab in tabs" 
         :key="tab.id"
-        @click="selectTab(tab.id)"
         :class="['tab', { 'active': modelValue === tab.id }]"
+        @click="selectTab(tab.id)"
       >
-        <i v-if="tab.icon" :class="tab.icon" class="mr-2"></i>
+        <i
+          v-if="tab.icon"
+          :class="tab.icon"
+          class="mr-2"
+        />
         {{ tab.name }}
       </button>
     </div>

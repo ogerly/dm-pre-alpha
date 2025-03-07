@@ -1,24 +1,32 @@
 <template>
-  <div class="map-loading">
-    <div class="spinner">
-      <i class="fas fa-spinner fa-spin"></i>
+  <div class="map-loading-container">
+    <div class="loading-spinner">
+      <!-- Spinner animation -->
+      <div class="spinner" />
     </div>
-    <div class="loading-text">
-      <p>{{ message || 'Loading map data...' }}</p>
-    </div>
+    <p class="loading-message">
+      {{ message }}
+    </p>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'MapLoading',
   props: {
-    message: String
+    // Fix: Add default value for message prop
+    message: {
+      type: String,
+      default: 'Loading map...' // Default message when none is provided
+    }
   }
-}
+})
 </script>
 
 <style scoped>
-.map-loading {
+.map-loading-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -29,18 +37,33 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, 0.8);
-  z-index: 500;
+  z-index: 10;
 }
 
-.spinner {
-  font-size: 2rem;
-  color: #4f46e5;
+.loading-spinner {
   margin-bottom: 15px;
 }
 
-.loading-text {
-  text-align: center;
-  color: #374151;
-  font-size: 1rem;
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-message {
+  font-size: 16px;
+  color: #4b5563;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

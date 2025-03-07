@@ -3,32 +3,56 @@
     <AppHeader />
     
     <main class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6">Interactive Map</h1>
+      <h1 class="text-2xl font-bold mb-6">
+        Interactive Map
+      </h1>
       
       <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-4">
           <div>
-            <h2 class="text-xl font-semibold">User Locations</h2>
-            <p class="text-gray-600">Visualize user locations and projects on the map</p>
+            <h2 class="text-xl font-semibold">
+              User Locations
+            </h2>
+            <p class="text-gray-600">
+              Visualize user locations and projects on the map
+            </p>
           </div>
           
           <div class="flex space-x-2">
-            <select v-model="mapView" class="px-3 py-2 border border-gray-300 rounded-md">
-              <option value="users">Show Users</option>
-              <option value="projects">Show Projects</option>
-              <option value="all">Show All</option>
+            <select
+              v-model="mapView"
+              class="px-3 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="users">
+                Show Users
+              </option>
+              <option value="projects">
+                Show Projects
+              </option>
+              <option value="all">
+                Show All
+              </option>
             </select>
           </div>
         </div>
         
         <!-- Map Placeholder -->
-        <div class="map-container bg-gray-100 rounded-lg overflow-hidden" style="height: 500px;">
+        <div
+          class="map-container bg-gray-100 rounded-lg overflow-hidden"
+          style="height: 500px;"
+        >
           <!-- Interactive map would be rendered here with a mapping library like Leaflet or Google Maps -->
           <div class="flex items-center justify-center h-full">
             <div class="text-center">
-              <div class="text-6xl text-gray-300 mb-4">🗺️</div>
-              <h3 class="text-lg font-medium text-gray-500">Interactive Map</h3>
-              <p class="text-gray-500">Users and projects would be displayed here on a real map</p>
+              <div class="text-6xl text-gray-300 mb-4">
+                🗺️
+              </div>
+              <h3 class="text-lg font-medium text-gray-500">
+                Interactive Map
+              </h3>
+              <p class="text-gray-500">
+                Users and projects would be displayed here on a real map
+              </p>
             </div>
           </div>
         </div>
@@ -36,19 +60,19 @@
         <!-- Map Legend -->
         <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2">
           <div class="flex items-center">
-            <div class="h-3 w-3 rounded-full bg-blue-500 mr-2"></div>
+            <div class="h-3 w-3 rounded-full bg-blue-500 mr-2" />
             <span class="text-sm text-gray-600">Users</span>
           </div>
           <div class="flex items-center">
-            <div class="h-3 w-3 rounded-full bg-red-500 mr-2"></div>
+            <div class="h-3 w-3 rounded-full bg-red-500 mr-2" />
             <span class="text-sm text-gray-600">Your Location</span>
           </div>
           <div class="flex items-center">
-            <div class="h-3 w-3 rounded-full bg-green-500 mr-2"></div>
+            <div class="h-3 w-3 rounded-full bg-green-500 mr-2" />
             <span class="text-sm text-gray-600">Projects</span>
           </div>
           <div class="flex items-center">
-            <div class="h-3 w-3 rounded-full bg-purple-500 mr-2"></div>
+            <div class="h-3 w-3 rounded-full bg-purple-500 mr-2" />
             <span class="text-sm text-gray-600">Events</span>
           </div>
         </div>
@@ -57,50 +81,90 @@
       <!-- Information Panel -->
       <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="font-medium mb-2">Near You</h3>
-          <p class="text-sm text-gray-600 mb-4">Users and projects in your vicinity</p>
+          <h3 class="font-medium mb-2">
+            Near You
+          </h3>
+          <p class="text-sm text-gray-600 mb-4">
+            Users and projects in your vicinity
+          </p>
           
           <div class="space-y-3">
-            <div v-for="(item, index) in nearbyItems" :key="index" class="flex items-center">
+            <div
+              v-for="(item, index) in nearbyItems"
+              :key="index"
+              class="flex items-center"
+            >
               <div 
                 :class="{
                   'bg-blue-500': item.type === 'user',
                   'bg-green-500': item.type === 'project'
                 }"
                 class="h-2 w-2 rounded-full mr-3"
-              ></div>
+              />
               <div>
-                <div class="text-sm font-medium">{{ item.name }}</div>
-                <div class="text-xs text-gray-500">{{ item.distance }} away</div>
+                <div class="text-sm font-medium">
+                  {{ item.name }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ item.distance }} away
+                </div>
               </div>
             </div>
           </div>
         </div>
         
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="font-medium mb-2">Active Projects</h3>
-          <p class="text-sm text-gray-600 mb-4">Projects in selected area</p>
+          <h3 class="font-medium mb-2">
+            Active Projects
+          </h3>
+          <p class="text-sm text-gray-600 mb-4">
+            Projects in selected area
+          </p>
           
           <div class="space-y-3">
-            <div v-for="(project, index) in areaProjects" :key="index" class="border-l-2 border-green-500 pl-3">
-              <div class="text-sm font-medium">{{ project.name }}</div>
-              <div class="text-xs text-gray-500">{{ project.owner }}</div>
-              <div class="text-xs mt-1">{{ project.description }}</div>
+            <div
+              v-for="(project, index) in areaProjects"
+              :key="index"
+              class="border-l-2 border-green-500 pl-3"
+            >
+              <div class="text-sm font-medium">
+                {{ project.name }}
+              </div>
+              <div class="text-xs text-gray-500">
+                {{ project.owner }}
+              </div>
+              <div class="text-xs mt-1">
+                {{ project.description }}
+              </div>
             </div>
           </div>
         </div>
         
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="font-medium mb-2">Your Locations</h3>
-          <p class="text-sm text-gray-600 mb-4">Places you've marked</p>
+          <h3 class="font-medium mb-2">
+            Your Locations
+          </h3>
+          <p class="text-sm text-gray-600 mb-4">
+            Places you've marked
+          </p>
           
           <div class="space-y-3">
-            <div v-for="(location, index) in userLocations" :key="index" class="flex items-center justify-between">
+            <div
+              v-for="(location, index) in userLocations"
+              :key="index"
+              class="flex items-center justify-between"
+            >
               <div>
-                <div class="text-sm font-medium">{{ location.name }}</div>
-                <div class="text-xs text-gray-500">{{ location.type }}</div>
+                <div class="text-sm font-medium">
+                  {{ location.name }}
+                </div>
+                <div class="text-xs text-gray-500">
+                  {{ location.type }}
+                </div>
               </div>
-              <button class="text-xs text-blue-600 hover:text-blue-800">Edit</button>
+              <button class="text-xs text-blue-600 hover:text-blue-800">
+                Edit
+              </button>
             </div>
             
             <div class="pt-2 mt-2 border-t border-gray-200">

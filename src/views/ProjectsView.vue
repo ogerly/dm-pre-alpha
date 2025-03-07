@@ -3,41 +3,57 @@
     <AppHeader />
     
     <main class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6">Projects</h1>
+      <h1 class="text-2xl font-bold mb-6">
+        Projects
+      </h1>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- My Projects -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-3">My Projects</h2>
-          <p class="mb-4">Projects you have created or are contributing to</p>
+          <h2 class="text-xl font-semibold mb-3">
+            My Projects
+          </h2>
+          <p class="mb-4">
+            Projects you have created or are contributing to
+          </p>
           
-          <div v-if="userProjects.length > 0" class="space-y-4">
+          <div
+            v-if="userProjects.length > 0"
+            class="space-y-4"
+          >
             <div 
               v-for="project in userProjects" 
               :key="project.name"
               class="border border-gray-200 p-4 rounded-lg hover:border-blue-300"
             >
-              <h3 class="font-medium">{{ project.name }}</h3>
-              <p class="text-sm text-gray-600 mb-2">{{ project.description }}</p>
+              <h3 class="font-medium">
+                {{ project.name }}
+              </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                {{ project.description }}
+              </p>
               
               <div class="flex justify-between items-center">
                 <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                   {{ project.year }}
                 </span>
                 <button 
-                  @click="editProject(project.name)"
                   class="text-sm text-blue-600 hover:text-blue-800"
+                  @click="editProject(project.name)"
                 >
                   Edit Project
                 </button>
               </div>
             </div>
           </div>
-          <div v-else class="text-center py-8 text-gray-500">
+          <div
+            v-else
+            class="text-center py-8 text-gray-500"
+          >
             <p>You haven't created any projects yet</p>
             <button 
-              @click="createProject"
               class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              @click="createProject"
             >
               Create New Project
             </button>
@@ -46,16 +62,20 @@
         
         <!-- Discover Projects -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-3">Discover Projects</h2>
-          <p class="mb-4">Find projects that match your skills and interests</p>
+          <h2 class="text-xl font-semibold mb-3">
+            Discover Projects
+          </h2>
+          <p class="mb-4">
+            Find projects that match your skills and interests
+          </p>
           
           <div class="mb-4">
             <input
-              type="text"
               v-model="searchTerm"
+              type="text"
               placeholder="Search projects..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
+            >
           </div>
           
           <div class="space-y-4">
@@ -64,8 +84,12 @@
               :key="index"
               class="border border-gray-200 p-4 rounded-lg hover:border-blue-300"
             >
-              <h3 class="font-medium">{{ project.name }}</h3>
-              <p class="text-sm text-gray-600 mb-2">{{ project.description }}</p>
+              <h3 class="font-medium">
+                {{ project.name }}
+              </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                {{ project.description }}
+              </p>
               
               <div class="flex justify-between items-center">
                 <div>
@@ -78,8 +102,8 @@
                 </div>
                 
                 <button 
-                  @click="viewProject(project.name)"
                   class="text-sm text-blue-600 hover:text-blue-800"
+                  @click="viewProject(project.name)"
                 >
                   View Details
                 </button>

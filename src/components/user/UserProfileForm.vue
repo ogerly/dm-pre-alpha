@@ -2,19 +2,31 @@
   <div class="profile-form-container">
     <h2>{{ editMode ? 'Profil bearbeiten' : 'Neues Profil erstellen' }}</h2>
     
-    <form @submit.prevent="saveProfile" class="profile-form">
+    <form
+      class="profile-form"
+      @submit.prevent="saveProfile"
+    >
       <!-- Basisdaten -->
       <div class="form-section">
         <h3>Basisdaten</h3>
         
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" v-model="formData.name" required>
+          <input
+            id="name"
+            v-model="formData.name"
+            type="text"
+            required
+          >
         </div>
         
         <div class="form-group">
           <label for="bio">Beschreibung / Bio</label>
-          <textarea id="bio" v-model="formData.bio" rows="3"></textarea>
+          <textarea
+            id="bio"
+            v-model="formData.bio"
+            rows="3"
+          />
         </div>
       </div>
       
@@ -24,62 +36,73 @@
         
         <!-- Home -->
         <div class="category-section">
-          <h4><i class="bi bi-house-door"></i> Wohnort</h4>
+          <h4><i class="bi bi-house-door" /> Wohnort</h4>
           <div class="form-group">
             <label>Adresse / Ort</label>
-            <input type="text" 
+            <input
+              type="text" 
               :value="getIconCategoryValue('home', 'address')" 
-              @input="setIconCategoryValue('home', 'address', $event.target.value)">
+              @input="setIconCategoryValue('home', 'address', $event.target.value)"
+            >
           </div>
           <div class="form-group">
             <label>Beschreibung</label>
-            <input type="text" 
+            <input
+              type="text" 
               :value="getIconCategoryValue('home', 'description')" 
-              @input="setIconCategoryValue('home', 'description', $event.target.value)">
+              @input="setIconCategoryValue('home', 'description', $event.target.value)"
+            >
           </div>
         </div>
         
         <!-- Firma -->
         <div class="category-section">
-          <h4><i class="bi bi-building"></i> Firma</h4>
+          <h4><i class="bi bi-building" /> Firma</h4>
           <div class="form-group">
             <label>Name der Firma</label>
-            <input type="text" 
+            <input
+              type="text" 
               :value="getIconCategoryValue('firma', 'name')" 
-              @input="setIconCategoryValue('firma', 'name', $event.target.value)">
+              @input="setIconCategoryValue('firma', 'name', $event.target.value)"
+            >
           </div>
           <div class="form-row">
             <div class="form-group">
               <label>Rolle</label>
-              <input type="text" 
+              <input
+                type="text" 
                 :value="getIconCategoryValue('firma', 'role')" 
-                @input="setIconCategoryValue('firma', 'role', $event.target.value)">
+                @input="setIconCategoryValue('firma', 'role', $event.target.value)"
+              >
             </div>
             <div class="form-group">
               <label>Jahr</label>
-              <input type="text" 
+              <input
+                type="text" 
                 :value="getIconCategoryValue('firma', 'year')" 
-                @input="setIconCategoryValue('firma', 'year', $event.target.value)">
+                @input="setIconCategoryValue('firma', 'year', $event.target.value)"
+              >
             </div>
           </div>
           <div class="form-group">
             <label>Beschreibung</label>
             <textarea 
               :value="getIconCategoryValue('firma', 'description')" 
-              @input="setIconCategoryValue('firma', 'description', $event.target.value)" 
-              rows="2"></textarea>
+              rows="2" 
+              @input="setIconCategoryValue('firma', 'description', $event.target.value)"
+            />
           </div>
         </div>
         
         <!-- Wirkungsbereich -->
         <div class="category-section">
-          <h4><i class="bi bi-compass"></i> Wirkungsbereich</h4>
+          <h4><i class="bi bi-compass" /> Wirkungsbereich</h4>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newLocation" 
-              @keyup.enter="addLocation"
+              type="text" 
               placeholder="Ort eingeben und Enter drücken"
+              @keyup.enter="addLocation"
             >
             <div class="tags-container">
               <span 
@@ -88,7 +111,11 @@
                 class="tag location-tag"
               >
                 {{ location }}
-                <button type="button" @click="removeLocation(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeLocation(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -96,83 +123,166 @@
         
         <!-- Unternehmen -->
         <div class="category-section">
-          <h4><i class="bi bi-briefcase"></i> Unternehmen</h4>
-          <div v-for="(company, index) in getIconCategoryArray('unternehmen')" :key="index" class="repeater-item">
+          <h4><i class="bi bi-briefcase" /> Unternehmen</h4>
+          <div
+            v-for="(company, index) in getIconCategoryArray('unternehmen')"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Name</label>
-              <input type="text" v-model="company.name">
+              <input
+                v-model="company.name"
+                type="text"
+              >
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>Rolle</label>
-                <input type="text" v-model="company.role">
+                <input
+                  v-model="company.role"
+                  type="text"
+                >
               </div>
               <div class="form-group">
                 <label>Jahr/Zeitraum</label>
-                <input type="text" 
+                <input
+                  type="text" 
                   :value="getCompanyPeriod(company)" 
-                  @input="updateCompanyPeriod(company, $event.target.value)">
+                  @input="updateCompanyPeriod(company, $event.target.value)"
+                >
               </div>
             </div>
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="company.description" rows="2"></textarea>
+              <textarea
+                v-model="company.description"
+                rows="2"
+              />
             </div>
-            <button type="button" @click="removeUnternehmen(index)" class="remove-btn">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeUnternehmen(index)"
+            >
+              Entfernen
+            </button>
           </div>
-          <button type="button" @click="addUnternehmen" class="add-btn">Unternehmen hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addUnternehmen"
+          >
+            Unternehmen hinzufügen
+          </button>
         </div>
         
         <!-- Projekt -->
         <div class="category-section">
-          <h4><i class="bi bi-folder"></i> Projekte</h4>
-          <div v-for="(project, index) in getIconCategoryArray('projekt')" :key="index" class="repeater-item">
+          <h4><i class="bi bi-folder" /> Projekte</h4>
+          <div
+            v-for="(project, index) in getIconCategoryArray('projekt')"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Projektname</label>
-              <input type="text" v-model="project.name">
+              <input
+                v-model="project.name"
+                type="text"
+              >
             </div>
             <div class="form-group">
               <label>Rolle (optional)</label>
-              <input type="text" v-model="project.role">
+              <input
+                v-model="project.role"
+                type="text"
+              >
             </div>
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="project.description" rows="2"></textarea>
+              <textarea
+                v-model="project.description"
+                rows="2"
+              />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>Jahr</label>
-                <input type="text" v-model="project.year">
+                <input
+                  v-model="project.year"
+                  type="text"
+                >
               </div>
               <div class="form-group">
                 <label>Anmerkung</label>
-                <input type="text" v-model="project.note">
+                <input
+                  v-model="project.note"
+                  type="text"
+                >
               </div>
             </div>
-            <button type="button" @click="removeProjekt(index)" class="remove-btn">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeProjekt(index)"
+            >
+              Entfernen
+            </button>
           </div>
-          <button type="button" @click="addProjekt" class="add-btn">Projekt hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addProjekt"
+          >
+            Projekt hinzufügen
+          </button>
         </div>
         
         <!-- Tisch -->
         <div class="category-section">
-          <h4><i class="bi bi-table"></i> Meetups & Veranstaltungen</h4>
-          <div v-for="(table, index) in getIconCategoryArray('tisch')" :key="index" class="repeater-item">
+          <h4><i class="bi bi-table" /> Meetups & Veranstaltungen</h4>
+          <div
+            v-for="(table, index) in getIconCategoryArray('tisch')"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Name</label>
-              <input type="text" v-model="table.name">
+              <input
+                v-model="table.name"
+                type="text"
+              >
             </div>
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="table.description" rows="2"></textarea>
+              <textarea
+                v-model="table.description"
+                rows="2"
+              />
             </div>
             <div class="form-group">
               <label>Ort</label>
-              <input type="text" v-model="table.location">
+              <input
+                v-model="table.location"
+                type="text"
+              >
             </div>
-            <button type="button" @click="removeTisch(index)" class="remove-btn">Entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeTisch(index)"
+            >
+              Entfernen
+            </button>
           </div>
-          <button type="button" @click="addTisch" class="add-btn">Meetup/Veranstaltung hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addTisch"
+          >
+            Meetup/Veranstaltung hinzufügen
+          </button>
         </div>
       </div>
       
@@ -184,15 +294,23 @@
           <label>Interessen</label>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newInterest" 
-              @keyup.enter="addInterest"
+              type="text" 
               placeholder="Interesse eingeben und Enter drücken"
+              @keyup.enter="addInterest"
             >
             <div class="tags-container">
-              <span v-for="(interest, index) in formData.interests" :key="index" class="tag interest-tag">
+              <span
+                v-for="(interest, index) in formData.interests"
+                :key="index"
+                class="tag interest-tag"
+              >
                 {{ interest }}
-                <button type="button" @click="removeInterest(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeInterest(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -202,15 +320,23 @@
           <label>Fähigkeiten</label>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newSkill" 
-              @keyup.enter="addSkill"
+              type="text" 
               placeholder="Fähigkeit eingeben und Enter drücken"
+              @keyup.enter="addSkill"
             >
             <div class="tags-container">
-              <span v-for="(skill, index) in formData.skills" :key="index" class="tag skill-tag">
+              <span
+                v-for="(skill, index) in formData.skills"
+                :key="index"
+                class="tag skill-tag"
+              >
                 {{ skill }}
-                <button type="button" @click="removeSkill(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeSkill(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -223,52 +349,102 @@
         
         <div class="repeater-section">
           <h4>Ausbildung</h4>
-          <div v-for="(education, index) in formData.education" :key="index" class="repeater-item">
+          <div
+            v-for="(education, index) in formData.education"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-row">
               <div class="form-group">
                 <label>Zeitraum</label>
-                <input type="text" v-model="education.period">
+                <input
+                  v-model="education.period"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Titel/Abschluss</label>
-                <input type="text" v-model="education.title">
+                <input
+                  v-model="education.title"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Institution</label>
-                <input type="text" v-model="education.institution">
+                <input
+                  v-model="education.institution"
+                  type="text"
+                >
               </div>
               
-              <button type="button" @click="removeEducation(index)" class="remove-btn">Entfernen</button>
+              <button
+                type="button"
+                class="remove-btn"
+                @click="removeEducation(index)"
+              >
+                Entfernen
+              </button>
             </div>
           </div>
-          <button type="button" @click="addEducation" class="add-btn">Ausbildung hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addEducation"
+          >
+            Ausbildung hinzufügen
+          </button>
         </div>
         
         <div class="repeater-section">
           <h4>Berufserfahrung</h4>
-          <div v-for="(experience, index) in formData.experience" :key="index" class="repeater-item">
+          <div
+            v-for="(experience, index) in formData.experience"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-row">
               <div class="form-group">
                 <label>Zeitraum</label>
-                <input type="text" v-model="experience.period">
+                <input
+                  v-model="experience.period"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Position</label>
-                <input type="text" v-model="experience.role">
+                <input
+                  v-model="experience.role"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Unternehmen</label>
-                <input type="text" v-model="experience.company">
+                <input
+                  v-model="experience.company"
+                  type="text"
+                >
               </div>
               
-              <button type="button" @click="removeExperience(index)" class="remove-btn">Entfernen</button>
+              <button
+                type="button"
+                class="remove-btn"
+                @click="removeExperience(index)"
+              >
+                Entfernen
+              </button>
             </div>
           </div>
-          <button type="button" @click="addExperience" class="add-btn">Erfahrung hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addExperience"
+          >
+            Erfahrung hinzufügen
+          </button>
         </div>
       </div>
       
@@ -278,60 +454,116 @@
         
         <div class="repeater-section">
           <h4>Eigene Projekte</h4>
-          <div v-for="(project, index) in formData.ownProjects" :key="index" class="repeater-item">
+          <div
+            v-for="(project, index) in formData.ownProjects"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Projektname</label>
-              <input type="text" v-model="project.name">
+              <input
+                v-model="project.name"
+                type="text"
+              >
             </div>
             
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="project.description" rows="2"></textarea>
+              <textarea
+                v-model="project.description"
+                rows="2"
+              />
             </div>
             
             <div class="form-row">
               <div class="form-group">
                 <label>Jahr</label>
-                <input type="text" v-model="project.year">
+                <input
+                  v-model="project.year"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Anmerkung</label>
-                <input type="text" v-model="project.note">
+                <input
+                  v-model="project.note"
+                  type="text"
+                >
               </div>
             </div>
             
-            <button type="button" @click="removeOwnProject(index)" class="remove-btn">Projekt entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeOwnProject(index)"
+            >
+              Projekt entfernen
+            </button>
           </div>
-          <button type="button" @click="addOwnProject" class="add-btn">Eigenes Projekt hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addOwnProject"
+          >
+            Eigenes Projekt hinzufügen
+          </button>
         </div>
         
         <div class="repeater-section">
           <h4>Projektbeteiligungen</h4>
-          <div v-for="(project, index) in formData.contributedProjects" :key="index" class="repeater-item">
+          <div
+            v-for="(project, index) in formData.contributedProjects"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Projektname</label>
-              <input type="text" v-model="project.name">
+              <input
+                v-model="project.name"
+                type="text"
+              >
             </div>
             
             <div class="form-group">
               <label>Rolle</label>
-              <input type="text" v-model="project.role">
+              <input
+                v-model="project.role"
+                type="text"
+              >
             </div>
             
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="project.description" rows="2"></textarea>
+              <textarea
+                v-model="project.description"
+                rows="2"
+              />
             </div>
             
             <div class="form-group">
               <label>Jahr</label>
-              <input type="text" v-model="project.year">
+              <input
+                v-model="project.year"
+                type="text"
+              >
             </div>
             
-            <button type="button" @click="removeContributedProject(index)" class="remove-btn">Projekt entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeContributedProject(index)"
+            >
+              Projekt entfernen
+            </button>
           </div>
-          <button type="button" @click="addContributedProject" class="add-btn">Projektbeteiligung hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addContributedProject"
+          >
+            Projektbeteiligung hinzufügen
+          </button>
         </div>
       </div>
       
@@ -341,47 +573,83 @@
         
         <div class="repeater-section">
           <h4>Unternehmen</h4>
-          <div v-for="(company, index) in formData.companies" :key="index" class="repeater-item">
+          <div
+            v-for="(company, index) in formData.companies"
+            :key="index"
+            class="repeater-item"
+          >
             <div class="form-group">
               <label>Unternehmensname</label>
-              <input type="text" v-model="company.name">
+              <input
+                v-model="company.name"
+                type="text"
+              >
             </div>
             
             <div class="form-row">
               <div class="form-group">
                 <label>Rolle</label>
-                <input type="text" v-model="company.role">
+                <input
+                  v-model="company.role"
+                  type="text"
+                >
               </div>
               
               <div class="form-group">
                 <label>Jahr</label>
-                <input type="text" v-model="company.year">
+                <input
+                  v-model="company.year"
+                  type="text"
+                >
               </div>
             </div>
             
             <div class="form-group">
               <label>Beschreibung</label>
-              <textarea v-model="company.description" rows="2"></textarea>
+              <textarea
+                v-model="company.description"
+                rows="2"
+              />
             </div>
             
-            <button type="button" @click="removeCompany(index)" class="remove-btn">Unternehmen entfernen</button>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeCompany(index)"
+            >
+              Unternehmen entfernen
+            </button>
           </div>
-          <button type="button" @click="addCompany" class="add-btn">Unternehmen hinzufügen</button>
+          <button
+            type="button"
+            class="add-btn"
+            @click="addCompany"
+          >
+            Unternehmen hinzufügen
+          </button>
         </div>
         
         <div class="repeater-section">
           <h4>Dienstleistungen</h4>
           <div class="tag-input">
             <input 
-              type="text" 
               v-model="newService" 
-              @keyup.enter="addService"
+              type="text" 
               placeholder="Dienstleistung eingeben und Enter drücken"
+              @keyup.enter="addService"
             >
             <div class="tags-container">
-              <span v-for="(service, index) in formData.services" :key="index" class="tag service-tag">
+              <span
+                v-for="(service, index) in formData.services"
+                :key="index"
+                class="tag service-tag"
+              >
                 {{ service }}
-                <button type="button" @click="removeService(index)" class="remove-tag">&times;</button>
+                <button
+                  type="button"
+                  class="remove-tag"
+                  @click="removeService(index)"
+                >&times;</button>
               </span>
             </div>
           </div>
@@ -394,55 +662,97 @@
         
         <div class="form-group">
           <label for="goals">Allgemeine Ziele</label>
-          <textarea id="goals" v-model="formData.goals" rows="2"></textarea>
+          <textarea
+            id="goals"
+            v-model="formData.goals"
+            rows="2"
+          />
         </div>
         
         <div class="form-group">
           <label for="dreamGoals">Was möchtest du bei DreamMall erreichen?</label>
-          <textarea id="dreamGoals" v-model="formData.dreammallGoals" rows="2"></textarea>
+          <textarea
+            id="dreamGoals"
+            v-model="formData.dreammallGoals"
+            rows="2"
+          />
         </div>
         
         <div class="form-group">
           <label for="collab">Wie möchtest du mit anderen zusammenarbeiten?</label>
-          <textarea id="collab" v-model="formData.collaborationPreferences" rows="2"></textarea>
+          <textarea
+            id="collab"
+            v-model="formData.collaborationPreferences"
+            rows="2"
+          />
         </div>
         
         <div class="form-group">
           <label for="leadership">Was würdest du als Chef anders machen?</label>
-          <textarea id="leadership" v-model="formData.leadershipPhilosophy" rows="2"></textarea>
+          <textarea
+            id="leadership"
+            v-model="formData.leadershipPhilosophy"
+            rows="2"
+          />
         </div>
         
         <div class="form-group">
           <label for="education">Wie stehst du zum aktuellen Schulsystem?</label>
-          <textarea id="education" v-model="formData.educationOpinion" rows="2"></textarea>
+          <textarea
+            id="education"
+            v-model="formData.educationOpinion"
+            rows="2"
+          />
         </div>
         
         <div class="form-group">
           <label for="values">Was ist für dich wichtiger (Zeugnisse oder Prototypen)?</label>
-          <textarea id="values" v-model="formData.valueOrientation" rows="2"></textarea>
+          <textarea
+            id="values"
+            v-model="formData.valueOrientation"
+            rows="2"
+          />
         </div>
       </div>
       
       <div class="form-actions">
-        <button type="button" @click="$emit('cancel')" class="cancel-btn">Abbrechen</button>
-        <button type="submit" class="save-btn">{{ editMode ? 'Speichern' : 'Profil erstellen' }}</button>
+        <button
+          type="button"
+          class="cancel-btn"
+          @click="$emit('cancel')"
+        >
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          class="save-btn"
+        >
+          {{ editMode ? 'Speichern' : 'Profil erstellen' }}
+        </button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'UserProfileForm',
+  
   props: {
     user: {
       type: Object,
-      default: null
+      default: () => ({})
     },
     editMode: {
       type: Boolean,
       default: false
     }
   },
+  
+  // Add missing emits declarations
+  emits: ['save', 'cancel'],
   data() {
     return {
       formData: {
@@ -707,7 +1017,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style scoped>

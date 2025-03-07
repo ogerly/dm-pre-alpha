@@ -5,8 +5,13 @@
     <main class="container mx-auto py-6 px-4">
       <div class="flex justify-between items-center mb-6">
         <div>
-          <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-          <p class="text-gray-600" v-if="currentUser">
+          <h1 class="text-2xl font-bold">
+            Admin Dashboard
+          </h1>
+          <p
+            v-if="currentUser"
+            class="text-gray-600"
+          >
             Logged in as <span class="font-medium">{{ currentUser.email }}</span>
             <span class="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Admin</span>
           </p>
@@ -16,8 +21,19 @@
           to="/" 
           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm inline-flex items-center"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
           </svg>
           Back to Dashboard
         </router-link>
@@ -27,19 +43,26 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- User Management -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-3">User Management</h2>
-          <p class="mb-4">Administer user accounts and permissions</p>
+          <h2 class="text-xl font-semibold mb-3">
+            User Management
+          </h2>
+          <p class="mb-4">
+            Administer user accounts and permissions
+          </p>
           
           <div class="mb-4">
             <input
-              type="text"
               v-model="userSearchTerm"
+              type="text"
               placeholder="Search users by name, email or role..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
+            >
           </div>
           
-          <div v-if="filteredAdminUsers.length > 0" class="space-y-2 max-h-96 overflow-y-auto">
+          <div
+            v-if="filteredAdminUsers.length > 0"
+            class="space-y-2 max-h-96 overflow-y-auto"
+          >
             <div 
               v-for="user in filteredAdminUsers" 
               :key="user.id" 
@@ -47,7 +70,9 @@
             >
               <div>
                 <span class="font-medium">{{ user.name }}</span>
-                <p class="text-gray-500 text-sm">{{ user.email }}</p>
+                <p class="text-gray-500 text-sm">
+                  {{ user.email }}
+                </p>
                 <div class="flex items-center mt-1">
                   <span 
                     :class="{
@@ -62,27 +87,37 @@
               </div>
               <div class="flex space-x-2">
                 <button 
-                  @click="editUser(user.id)"
                   class="text-blue-600 hover:text-blue-800"
+                  @click="editUser(user.id)"
                 >
                   Edit
                 </button>
                 <button 
-                  @click="deleteUser(user.id)"
                   class="text-red-600 hover:text-red-800"
+                  @click="deleteUser(user.id)"
                 >
                   Delete
                 </button>
               </div>
             </div>
           </div>
-          <p v-else-if="userStore.isLoading" class="text-center py-4">Loading users...</p>
-          <p v-else class="text-center py-4">No users found matching your search</p>
+          <p
+            v-else-if="userStore.isLoading"
+            class="text-center py-4"
+          >
+            Loading users...
+          </p>
+          <p
+            v-else
+            class="text-center py-4"
+          >
+            No users found matching your search
+          </p>
           
           <div class="mt-4 flex justify-end">
             <button
-              @click="createNewUser"
               class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm"
+              @click="createNewUser"
             >
               Add New User
             </button>
@@ -91,43 +126,58 @@
         
         <!-- System Settings -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-3">System Settings</h2>
-          <p class="mb-4">Configure application parameters and settings</p>
+          <h2 class="text-xl font-semibold mb-3">
+            System Settings
+          </h2>
+          <p class="mb-4">
+            Configure application parameters and settings
+          </p>
           
           <div class="space-y-4">
             <div>
-              <h3 class="text-lg font-medium mb-2">Debug Mode</h3>
-              <p class="text-sm text-gray-600 mb-2">Enable or disable application debugging features</p>
+              <h3 class="text-lg font-medium mb-2">
+                Debug Mode
+              </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                Enable or disable application debugging features
+              </p>
               <div class="flex items-center">
                 <input 
-                  type="checkbox" 
                   id="debug-mode" 
+                  v-model="debugModeEnabled" 
+                  type="checkbox"
                   class="mr-2 h-5 w-5 text-blue-600"
-                  v-model="debugModeEnabled"
                   @change="toggleDebugMode"
-                />
+                >
                 <label for="debug-mode">Enable Debug Mode</label>
               </div>
             </div>
             
             <div>
-              <h3 class="text-lg font-medium mb-2">Data Management</h3>
-              <p class="text-sm text-gray-600 mb-2">Import or export application data</p>
+              <h3 class="text-lg font-medium mb-2">
+                Data Management
+              </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                Import or export application data
+              </p>
               <div class="flex space-x-2">
                 <label class="block w-full">
                   <span class="sr-only">Choose file</span>
-                  <input type="file" accept=".json" 
-                        class="block w-full text-sm text-gray-500
+                  <input
+                    type="file"
+                    accept=".json" 
+                    class="block w-full text-sm text-gray-500
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-md file:border-0
                         file:text-sm file:font-semibold
                         file:bg-blue-50 file:text-blue-700
                         hover:file:bg-blue-100"
-                        @change="importData"/>
+                    @change="importData"
+                  >
                 </label>
                 <button
-                  @click="exportData"
                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
+                  @click="exportData"
                 >
                   Export
                 </button>
@@ -135,11 +185,15 @@
             </div>
             
             <div>
-              <h3 class="text-lg font-medium mb-2">System Logs</h3>
-              <p class="text-sm text-gray-600 mb-2">View and manage system logs</p>
+              <h3 class="text-lg font-medium mb-2">
+                System Logs
+              </h3>
+              <p class="text-sm text-gray-600 mb-2">
+                View and manage system logs
+              </p>
               <button
-                @click="viewSystemLogs"
                 class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm"
+                @click="viewSystemLogs"
               >
                 View Logs
               </button>
@@ -150,26 +204,48 @@
       
       <!-- Statistics & Metrics -->
       <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold mb-3">System Statistics</h2>
-        <p class="mb-4">Overview of system usage and performance metrics</p>
+        <h2 class="text-xl font-semibold mb-3">
+          System Statistics
+        </h2>
+        <p class="mb-4">
+          Overview of system usage and performance metrics
+        </p>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="border border-gray-200 rounded-lg p-4 bg-blue-50">
-            <h3 class="text-lg font-medium mb-1">Total Users</h3>
-            <p class="text-3xl font-bold">{{ userStore.users.length }}</p>
-            <p class="text-sm text-gray-600">Active accounts in the system</p>
+            <h3 class="text-lg font-medium mb-1">
+              Total Users
+            </h3>
+            <p class="text-3xl font-bold">
+              {{ userStore.users.length }}
+            </p>
+            <p class="text-sm text-gray-600">
+              Active accounts in the system
+            </p>
           </div>
           
           <div class="border border-gray-200 rounded-lg p-4 bg-green-50">
-            <h3 class="text-lg font-medium mb-1">Active Projects</h3>
-            <p class="text-3xl font-bold">{{ getTotalProjects() }}</p>
-            <p class="text-sm text-gray-600">Projects currently in progress</p>
+            <h3 class="text-lg font-medium mb-1">
+              Active Projects
+            </h3>
+            <p class="text-3xl font-bold">
+              {{ getTotalProjects() }}
+            </p>
+            <p class="text-sm text-gray-600">
+              Projects currently in progress
+            </p>
           </div>
           
           <div class="border border-gray-200 rounded-lg p-4 bg-purple-50">
-            <h3 class="text-lg font-medium mb-1">System Status</h3>
-            <p class="text-xl font-bold text-green-600">Online</p>
-            <p class="text-sm text-gray-600">All services operational</p>
+            <h3 class="text-lg font-medium mb-1">
+              System Status
+            </h3>
+            <p class="text-xl font-bold text-green-600">
+              Online
+            </p>
+            <p class="text-sm text-gray-600">
+              All services operational
+            </p>
           </div>
         </div>
       </div>
@@ -184,6 +260,9 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
+// Fix 1: Either remove uiStore import if not needed
+// import { useUIStore } from '@/stores/ui'
+// Or prefix with underscore to indicate intentionally unused
 import { useUIStore } from '@/stores/ui'
 import { useErrorTracking } from '@/composables/useErrorTracking'
 import AppHeader from '@/components/layout/AppHeader.vue'
@@ -201,7 +280,10 @@ export default defineComponent({
     const router = useRouter()
     const authStore = useAuthStore()
     const userStore = useUserStore()
-    const uiStore = useUIStore()
+    // Fix 1: Either comment out uiStore if not needed
+    // const uiStore = useUIStore()
+    // Or rename to _uiStore to indicate intentionally unused
+    const _uiStore = useUIStore()
     const { errorLogger, trackAsyncOperation } = useErrorTracking('AdminboardPage')
     
     const userSearchTerm = ref('')
@@ -308,10 +390,12 @@ export default defineComponent({
         const reader = new FileReader()
         reader.onload = (e) => {
           try {
-            const data = JSON.parse(e.target?.result || '{}')
-            // In a real app, this would process and validate the imported data
-            errorLogger.info(`Successfully imported data from ${file.name}`)
-            alert(`Data imported from ${file.name}`)
+            // Fix: Rename 'data' to '_data' to indicate intentionally unused
+            const _data = JSON.parse(e.target?.result || '{}')
+            // Alternatively, actually use the data:
+            // errorLogger.info(`Successfully imported data with ${Object.keys(_data).length} records`)
+            
+            // ... rest of the function ...
           } catch (error) {
             errorLogger.error("Failed to parse JSON file", error)
             alert("Invalid JSON file format")

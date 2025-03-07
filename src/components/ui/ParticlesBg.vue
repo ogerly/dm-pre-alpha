@@ -1,8 +1,14 @@
 <template>
-  <div class="fixed inset-0 -z-10 opacity-50" aria-hidden="true">
-    <div class="absolute inset-0 bg-gradient-to-b from-blue-900 to-blue-950"></div>
+  <div
+    class="fixed inset-0 -z-10 opacity-50"
+    aria-hidden="true"
+  >
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-900 to-blue-950" />
     <div class="absolute inset-0">
-      <canvas ref="canvas" class="h-full w-full"></canvas>
+      <canvas
+        ref="canvas"
+        class="h-full w-full"
+      />
     </div>
   </div>
 </template>

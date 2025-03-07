@@ -3,26 +3,41 @@
     <AppHeader />
     
     <main class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6">Data Tables</h1>
+      <h1 class="text-2xl font-bold mb-6">
+        Data Tables
+      </h1>
       
       <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="flex justify-between items-center mb-4">
           <div>
-            <h2 class="text-xl font-semibold">Users Table</h2>
-            <p class="text-gray-600">View and manage all system users</p>
+            <h2 class="text-xl font-semibold">
+              Users Table
+            </h2>
+            <p class="text-gray-600">
+              View and manage all system users
+            </p>
           </div>
           
           <div class="flex space-x-2">
             <input
-              type="text"
               v-model="searchTerm"
+              type="text"
               placeholder="Search users..."
               class="px-3 py-2 border border-gray-300 rounded-md"
-            />
-            <select v-model="sortBy" class="px-3 py-2 border border-gray-300 rounded-md">
-              <option value="name">Sort by Name</option>
-              <option value="email">Sort by Email</option>
-              <option value="role">Sort by Role</option>
+            >
+            <select
+              v-model="sortBy"
+              class="px-3 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="name">
+                Sort by Name
+              </option>
+              <option value="email">
+                Sort by Email
+              </option>
+              <option value="role">
+                Sort by Role
+              </option>
             </select>
           </div>
         </div>
@@ -50,12 +65,19 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="user in filteredUsers" :key="user.id">
+              <tr
+                v-for="user in filteredUsers"
+                :key="user.id"
+              >
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="font-medium text-gray-900">{{ user.name }}</div>
+                  <div class="font-medium text-gray-900">
+                    {{ user.name }}
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  <div class="text-sm text-gray-500">
+                    {{ user.email }}
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span 
@@ -69,7 +91,10 @@
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  <div v-if="user.skills && user.skills.length" class="flex flex-wrap gap-1">
+                  <div
+                    v-if="user.skills && user.skills.length"
+                    class="flex flex-wrap gap-1"
+                  >
                     <span 
                       v-for="skill in user.skills.slice(0, 2)" 
                       :key="skill"
@@ -77,23 +102,31 @@
                     >
                       {{ skill }}
                     </span>
-                    <span v-if="user.skills.length > 2" class="inline-block text-xs text-gray-500">
+                    <span
+                      v-if="user.skills.length > 2"
+                      class="inline-block text-xs text-gray-500"
+                    >
                       +{{ user.skills.length - 2 }}
                     </span>
                   </div>
-                  <div v-else class="text-xs text-gray-500">No skills listed</div>
+                  <div
+                    v-else
+                    class="text-xs text-gray-500"
+                  >
+                    No skills listed
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                   <button 
-                    @click="viewUser(user.id)" 
-                    class="text-blue-600 hover:text-blue-900 mr-3"
+                    class="text-blue-600 hover:text-blue-900 mr-3" 
+                    @click="viewUser(user.id)"
                   >
                     View
                   </button>
                   <button 
                     v-if="isAdmin"
-                    @click="editUser(user.id)" 
-                    class="text-indigo-600 hover:text-indigo-900"
+                    class="text-indigo-600 hover:text-indigo-900" 
+                    @click="editUser(user.id)"
                   >
                     Edit
                   </button>
@@ -103,7 +136,10 @@
           </table>
         </div>
         
-        <div v-if="filteredUsers.length === 0" class="text-center py-4 text-gray-500">
+        <div
+          v-if="filteredUsers.length === 0"
+          class="text-center py-4 text-gray-500"
+        >
           No users match your search criteria
         </div>
         
@@ -112,8 +148,12 @@
             Showing {{ filteredUsers.length }} of {{ userStore.users.length }} users
           </div>
           <div class="flex space-x-2">
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm">Previous</button>
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm">Next</button>
+            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+              Previous
+            </button>
+            <button class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+              Next
+            </button>
           </div>
         </div>
       </div>

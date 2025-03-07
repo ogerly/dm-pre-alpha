@@ -1,185 +1,179 @@
 <template>
-  <div class="relative min-h-screen w-full overflow-hidden bg-black">
-   
-    <LampEffect class="absolute inset-0 z-0">
-     
-        <span class="font-heading text-6xl text-white opacity-20">DreamMall</span>
-         <div>
-          <h2 class="text-center text-3xl font-bold text-gray-900">Sign in</h2>
-        </div>
-        <div v-if="errors && errors.length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <p v-for="(error, index) in errors" :key="index" class="error-message">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+    <!-- Add the background particles for a more engaging login page -->
+    <ParticlesBg class="absolute inset-0 z-0" />
+    
+    <div class="max-w-md w-full space-y-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg z-10 relative">
+      <!-- Logo and sparkle effect on top of the form -->
+      <div class="text-center relative">
+        <Sparkles>
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+            DreamMall
+          </h2>
+        </Sparkles>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          Sign in to your account
+        </p>
+      </div>
+      
+      <form
+        class="mt-8 space-y-6"
+        @submit.prevent="handleLogin"
+      >
+        <!-- Alert for errors -->
+        <div
+          v-if="error"
+          class="bg-red-50 dark:bg-red-900/30 p-4 rounded-md"
+        >
+          <p class="text-sm text-red-800 dark:text-red-300">
             {{ error }}
           </p>
         </div>
-        <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
-          <div>
-            <label for="email" class="sr-only">Email address</label>
-            <input id="email" v-model="email" name="email" type="email" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Email address">
+        
+        <!-- Email Field -->
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Email address
+          </label>
+          <div class="mt-1">
+            <input
+              id="email"
+              v-model="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="you@example.com"
+            >
           </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input id="password" v-model="password" name="password" type="password" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Password">
+        </div>
+        
+        <!-- Password Field -->
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            Password
+          </label>
+          <div class="mt-1">
+            <input
+              id="password"
+              v-model="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="••••••••"
+            >
           </div>
-          <div class="flex items-center justify-between">
-            <div class="text-sm">
-              <div>
-                <p class="text-sm font-medium text-gray-700">Available test accounts:</p>
-                <div v-if="loginData && loginData.length > 0" class="mt-1">
-                  <div v-for="account in loginData" :key="account.email" class="text-xs text-gray-500">
-                    <strong>{{ account.email }}</strong> / password: <strong>{{ account.password }}</strong>
-                  </div>
-                </div>
-                <p v-else class="text-xs text-gray-500">Loading available accounts...</p>
-              </div>
-            </div>
+        </div>
+        
+        <!-- Remember me & Forgot password -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <input
+              id="remember-me"
+              v-model="rememberMe"
+              name="remember-me"
+              type="checkbox"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700"
+            >
+            <label
+              for="remember-me"
+              class="ml-2 block text-sm text-gray-900 dark:text-gray-300"
+            >
+              Remember me
+            </label>
           </div>
-          <div>
-            <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/25" :disabled="isLoading">
-              <span v-if="isLoading">Logging in...</span>
-              <span v-else>Treten sie ein</span>
-            </button>
+          
+          <div class="text-sm">
+            <a
+              href="#"
+              class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+            >
+              Forgot your password?
+            </a>
           </div>
-        </form>
-
-    </LampEffect> 
-    
+        </div>
+        
+        <!-- Submit Button -->
+        <div>
+          <button
+            type="submit"
+            :disabled="isLoading"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span v-if="isLoading">Signing in...</span>
+            <span v-else>Sign in</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
- 
 
 <script>
-import { ref, onMounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useUserStore } from '@/stores/user'
-import { useErrorTracking } from '@/composables/useErrorTracking'
-import loginDataJson from '@/assets/store-test-login-data.json'
-import LampEffect from '@/components/ui/LampEffect.vue'
-import ParticlesBg from '@/components/ui/ParticlesBg.vue'
-import Sparkles from '@/components/ui/Sparkles.vue'
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import ParticlesBg from '@/components/ui/ParticlesBg.vue';
+import Sparkles from '@/components/ui/Sparkles.vue';
+import { useErrorTracking } from '@/composables/useErrorTracking';
 
-export default {
+export default defineComponent({
+  name: 'LoginPage',
+  
   components: {
-    LampEffect,
     ParticlesBg,
     Sparkles
   },
+  
   setup() {
-    // Create a local dark mode state
-    const isDarkMode = ref(true) // Default to dark mode since your background is black
-
-    const email = ref('')
-    const password = ref('')
-    const errors = ref([])
-    const users = ref([])
-    const loginData = ref([])
-    const isLoading = ref(false)
-    const router = useRouter()
-    const authStore = useAuthStore()
-    const userStore = useUserStore()
-    const { errorLogger, trackAsyncOperation } = useErrorTracking('LoginPage')
+    const router = useRouter();
+    const authStore = useAuthStore();
+    const { errorLogger } = useErrorTracking('LoginPage');
     
-    // Compute particle color based on dark mode state
-    const particlesColor =  "#FFFFFF"  //isDarkMode.value ? '#FFFFFF' : '#000000'
-
-    // Load users and login data when component mounts
-    onMounted(async () => {
-      
-      try {
-        await trackAsyncOperation('load users', async () => {
-          await userStore.loadUsers()
-          users.value = userStore.users || []
-          
-          // Load login data from the json file
-          if (loginDataJson && Array.isArray(loginDataJson)) {
-            loginData.value = loginDataJson
-            errorLogger.debug(`Loaded ${loginData.value.length} test accounts`)
-            
-            // Log account details for debugging
-            loginData.value.forEach((account, index) => {
-              errorLogger.debug(`Account ${index+1}: ${account.email}, Password: ${account.password}`)
-            })
-          } else {
-            errorLogger.error('Login data is not valid', { 
-              dataType: typeof loginDataJson,
-              isArray: Array.isArray(loginDataJson),
-              value: loginDataJson
-            })
-            loginData.value = []
-          }
-        })
-      } catch (error) {
-        errorLogger.error('Failed to load data for login page', error)
-        users.value = []
-        loginData.value = []
-      }
-    })
-
+    // Form state
+    const email = ref('');
+    const password = ref('');
+    const rememberMe = ref(false);
+    const error = ref('');
+    const isLoading = ref(false);
+    
+    // Handle login form submission
     const handleLogin = async () => {
-      // Clear previous errors
-      errors.value = []
-      isLoading.value = true
+      if (isLoading.value) return;
       
-      // Simple validation
-      if (!email.value || !password.value) {
-        errors.value.push('Please enter both email and password')
-        isLoading.value = false
-        return
-      }
+      error.value = '';
+      isLoading.value = true;
       
       try {
-        errorLogger.debug(`Attempting login with: ${email.value}`)
-        const success = await authStore.login({ 
-          email: email.value, 
-          password: password.value 
-        })
-        
-        if (success) {
-          errorLogger.info('Login successful, navigating to dashboard...')
-          
-          // Use router.replace instead of push to avoid history issues
-          // Add a slight delay to ensure store updates are complete
-          setTimeout(() => {
-            router.replace({ path: '/' })
-              .then(() => {
-                errorLogger.info('Navigation to dashboard complete')
-              })
-              .catch(err => {
-                errorLogger.error('Navigation failed after login', err)
-              })
-          }, 100)
-        } else {
-          // If login returned false but didn't throw an error
-          errors.value.push('Invalid email or password')
-          isLoading.value = false
-        }
-      } catch (error) {
-        errorLogger.error('Login attempt failed', error)
-        errors.value.push(error.message || 'Login failed. Please try again.')
-        isLoading.value = false
+        errorLogger.debug('Attempting login', { email: email.value });
+        await authStore.login(email.value, password.value, rememberMe.value);
+        errorLogger.info('Login successful');
+        router.push('/');
+      } catch (err) {
+        errorLogger.error('Login failed', err);
+        error.value = err.message || 'Failed to sign in. Please check your credentials.';
+      } finally {
+        isLoading.value = false;
       }
-    }
-
+    };
+    
     return {
       email,
       password,
-      errors,
-      users,
-      loginData,
+      rememberMe,
+      error,
       isLoading,
-      handleLogin,
-      particlesColor,
-      isDarkMode
-    }
+      handleLogin
+    };
   }
-}
+});
 </script>
-
-<style scoped>
-/* Set custom lamp effect variables */
-:deep(.lamp-effect) {
-  --lamp-custom-color: hsl(var(--primary));
-  --lamp-custom-size: 800px;
-}
-</style>

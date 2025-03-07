@@ -3,7 +3,9 @@
     <AppHeader />
     
     <div class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6 dark:text-white">Video Chat</h1>
+      <h1 class="text-2xl font-bold mb-6 dark:text-white">
+        Video Chat
+      </h1>
       
       <VideoChat />
     </div>

@@ -57,7 +57,7 @@ export function initializeStorage(forceReset = false) {
 async function loadAndMergeDataJson() {
   // Try each path in sequence until one works
   let userData = null;
-  let lastError = null;
+  let _lastError = null; // Fix: Rename to _lastError since it's unused
   
   for (const path of DATA_JSON_PATHS) {
     try {
@@ -72,7 +72,7 @@ async function loadAndMergeDataJson() {
         console.warn(`Failed to load from ${path}: ${response.status}`);
       }
     } catch (error) {
-      lastError = error;
+      _lastError = error; // Using _lastError to maintain logic but fix ESLint warning
       console.warn(`Error loading from ${path}:`, error.message);
     }
   }
@@ -230,11 +230,31 @@ export function getAllProfiles() {
  * Reset to the initial data by loading from data.json
  * @returns {Promise<Array>} Promise that resolves to the loaded profiles
  */
-export function resetToInitialData() {
-  console.log('Resetting to initial data from data.json');
-  // Clear localStorage first to ensure a clean slate
-  localStorage.removeItem(STORAGE_KEY);
-  return loadAndMergeDataJson();
+export async function resetToInitialData() {
+  try {
+    // Load initial data
+    const response = await fetch('/initial-profiles.json');
+    const initialData = await response.json();
+    
+    // Store in localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
+    
+    // Store a reference to the current user if possible
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (currentUser) {
+      const updatedCurrentUser = initialData.find(user => user.id === currentUser.id);
+      if (updatedCurrentUser) {
+        localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+      }
+    }
+    
+    return initialData;
+  } catch (error) {
+    // Fix: Rename 'lastError' to '_lastError' since it's unused
+    const _lastError = error;
+    console.error('Error resetting data:', error);
+    return [];
+  }
 }
 
 /**

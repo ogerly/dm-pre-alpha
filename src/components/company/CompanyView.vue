@@ -18,35 +18,55 @@
         <div class="info-section">
           <h3>Produkte & Dienstleistungen</h3>
           <div class="tag-container">
-            <span v-for="(service, index) in company.services" :key="index" class="tag service-tag">
+            <span
+              v-for="(service, index) in company.services"
+              :key="index"
+              class="tag service-tag"
+            >
               {{ service }}
             </span>
           </div>
         </div>
         
-        <div class="info-section" v-if="company.industry">
+        <div
+          v-if="company.industry"
+          class="info-section"
+        >
           <h3>Branche</h3>
           <p>{{ company.industry }}</p>
         </div>
         
-        <div class="info-section" v-if="company.contactInfo">
+        <div
+          v-if="company.contactInfo"
+          class="info-section"
+        >
           <h3>Kontakt</h3>
           <p v-if="company.contactInfo.email">
-            <i class="bi bi-envelope"></i> {{ company.contactInfo.email }}
+            <i class="bi bi-envelope" /> {{ company.contactInfo.email }}
           </p>
           <p v-if="company.contactInfo.phone">
-            <i class="bi bi-telephone"></i> {{ company.contactInfo.phone }}
+            <i class="bi bi-telephone" /> {{ company.contactInfo.phone }}
           </p>
           <p v-if="company.contactInfo.website">
-            <i class="bi bi-globe"></i> 
-            <a :href="company.contactInfo.website" target="_blank">{{ company.contactInfo.website }}</a>
+            <i class="bi bi-globe" /> 
+            <a
+              :href="company.contactInfo.website"
+              target="_blank"
+            >{{ company.contactInfo.website }}</a>
           </p>
         </div>
         
-        <div class="info-section" v-if="company.team && company.team.length">
+        <div
+          v-if="company.team && company.team.length"
+          class="info-section"
+        >
           <h3>Team</h3>
           <div class="team-members">
-            <div v-for="(member, index) in company.team" :key="index" class="team-member">
+            <div
+              v-for="(member, index) in company.team"
+              :key="index"
+              class="team-member"
+            >
               <h4>{{ member.name }}</h4>
               <p>{{ member.role }}</p>
             </div>
@@ -56,15 +76,23 @@
       
       <div class="company-map-section">
         <div class="map-header">
-          <h3 v-if="company.location">Standort</h3>
-          <div class="location-info" v-if="company.location">
-            <i class="bi bi-geo-alt"></i>
+          <h3 v-if="company.location">
+            Standort
+          </h3>
+          <div
+            v-if="company.location"
+            class="location-info"
+          >
+            <i class="bi bi-geo-alt" />
             {{ company.location.address }}
           </div>
         </div>
         
         <!-- Placeholder for Map - Would be replaced with actual map component -->
-        <div class="map-container" v-if="company.location || (company.radius && company.radius.center)">
+        <div
+          v-if="company.location || (company.radius && company.radius.center)"
+          class="map-container"
+        >
           <div class="map-overlay">
             <div class="map-info">
               <p v-if="company.location">
@@ -76,12 +104,15 @@
             </div>
           </div>
           <div class="map-placeholder">
-            <i class="bi bi-map"></i>
+            <i class="bi bi-map" />
             <p>Karte wird geladen...</p>
           </div>
         </div>
         
-        <div class="radius-info" v-if="company.radius">
+        <div
+          v-if="company.radius"
+          class="radius-info"
+        >
           <h4>Wirkungsbereich</h4>
           <p>Der Wirkungsbereich erstreckt sich über {{ company.radius.distance }}km um den Standort.</p>
         </div>
@@ -89,25 +120,37 @@
     </div>
     
     <div class="action-buttons">
-      <button class="edit-btn" @click="$emit('edit')">
-        <i class="bi bi-pencil"></i> Bearbeiten
+      <button
+        class="edit-btn"
+        @click="$emit('edit', company)"
+      >
+        <i class="bi bi-pencil" /> Bearbeiten
       </button>
-      <button class="back-btn" @click="$emit('back')">
-        <i class="bi bi-arrow-left"></i> Zurück
+      <button
+        class="back-btn"
+        @click="$emit('back')"
+      >
+        <i class="bi bi-arrow-left" /> Zurück
       </button>
     </div>
   </div>
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'CompanyView',
+  
   props: {
     company: {
       type: Object,
       required: true
     }
-  }
-}
+  },
+  
+  emits: ['edit', 'back']
+})
 </script>
 
 <style scoped>

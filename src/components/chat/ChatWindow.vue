@@ -1,40 +1,75 @@
 <template>
-  <div class="chat-window" :class="{ 'expanded': expanded }">
-    <div class="chat-header" @click="expanded = !expanded">
+  <div
+    class="chat-window"
+    :class="{ 'expanded': expanded }"
+  >
+    <div
+      class="chat-header"
+      @click="expanded = !expanded"
+    >
       <div class="chat-title">
         <span v-if="otherUser">Chat mit {{ otherUser.name }}</span>
         <span v-else>Chat</span>
       </div>
       <div class="chat-controls">
-        <button class="control-btn minimize-btn" @click.stop="expanded = !expanded">
+        <button
+          class="control-btn minimize-btn"
+          @click.stop="expanded = !expanded"
+        >
           {{ expanded ? '−' : '+' }}
         </button>
-        <button class="control-btn close-btn" @click.stop="$emit('close')">×</button>
+        <button
+          class="control-btn close-btn"
+          @click.stop="$emit('close')"
+        >
+          ×
+        </button>
       </div>
     </div>
     
-    <div class="chat-body" v-show="expanded">
-      <div class="messages-container" ref="messagesContainer">
-        <div v-for="message in messages" :key="message.id" 
-             class="message" 
-             :class="{ 'outgoing': message.senderId === currentUserId }">
-          <div class="message-content">{{ message.text }}</div>
-          <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+    <div
+      v-show="expanded"
+      class="chat-body"
+    >
+      <div
+        ref="messagesContainer"
+        class="messages-container"
+      >
+        <div
+          v-for="message in messages"
+          :key="message.id" 
+          class="message" 
+          :class="{ 'outgoing': message.senderId === currentUserId }"
+        >
+          <div class="message-content">
+            {{ message.text }}
+          </div>
+          <div class="message-time">
+            {{ formatTime(message.timestamp) }}
+          </div>
         </div>
-        <div v-if="messages.length === 0" class="no-messages">
+        <div
+          v-if="messages.length === 0"
+          class="no-messages"
+        >
           Beginne deine Unterhaltung...
         </div>
       </div>
       
       <div class="message-input">
         <input 
-          type="text" 
           v-model="newMessage" 
+          type="text" 
+          placeholder="Nachricht eingeben..."
+          :disabled="!otherUser" 
           @keyup.enter="sendMessage"
-          placeholder="Nachricht eingeben..." 
-          :disabled="!otherUser"
-        />
-        <button @click="sendMessage" :disabled="!newMessage.trim() || !otherUser">Senden</button>
+        >
+        <button
+          :disabled="!newMessage.trim() || !otherUser"
+          @click="sendMessage"
+        >
+          Senden
+        </button>
       </div>
     </div>
   </div>
@@ -42,8 +77,11 @@
 
 <script>
 import { sendMessage, getMessages, markAsRead, createWelcomeMessageIfNeeded } from '../../services/ChatService.js';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
+  name: 'ChatWindow',
+  
   props: {
     currentUserId: {
       type: Number,
@@ -58,6 +96,8 @@ export default {
       default: null
     }
   },
+  
+  emits: ['close'],
   data() {
     return {
       messages: [],
@@ -122,7 +162,7 @@ export default {
       }
     }
   }
-};
+});
 </script>
 
 <style scoped>

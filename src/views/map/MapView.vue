@@ -1,6 +1,5 @@
 <template>
   <div class="map-view">
-    
     <!-- Map Page Component -->
     <MapPage 
       :users="userStore.users" 
