@@ -12,6 +12,7 @@ import ProjectsView from '@/views/ProjectsView.vue'
 import TableView from '@/views/TableView.vue'
 import MapView from '@/views/MapView.vue'
 import VideoChatView from '@/views/VideoChatView.vue'
+import ChatPage from '@/views/ChatPage.vue'
 
 // Get base URL from the Vite configuration
 const baseUrl = import.meta.env.BASE_URL || '/'
@@ -57,6 +58,12 @@ const routes = [
     path: '/videochat',
     name: 'VideoChat',
     component: VideoChatView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: ChatPage,
     meta: { requiresAuth: true }
   },
   {
