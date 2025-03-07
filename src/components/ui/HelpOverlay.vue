@@ -1,66 +1,84 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-      <!-- Header -->
-      <div class="px-6 py-4 border-b dark:border-gray-700 flex justify-between items-center">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-          Help
-        </h3>
-        <button 
-          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          @click="closeHelp"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">
+            Help & Documentation
+          </h2>
+          <button
+            class="text-gray-500 hover:text-gray-700"
+            @click="uiStore.toggleHelp"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Content -->
-      <div class="p-6 overflow-y-auto flex-1">
-        <div class="prose dark:prose-invert max-w-none">
-          <h2>Getting Started</h2>
-          <p>Welcome to DreamMall! Here's how to get started with our platform.</p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="prose prose-sm max-w-none">
+          <h3>Getting Started</h3>
+          <p>
+            Welcome to the DreamMall application! This tool helps you connect with people
+            based on shared interests and complementary skills.
+          </p>
           
-          <h3>Navigation</h3>
-          <p>Use the navigation menu at the top to access different sections:</p>
+          <h3>Features</h3>
           <ul>
-            <li><strong>Dashboard</strong> - Overview of your account</li>
-            <li><strong>Matching</strong> - Find potential collaborators</li>
-            <li><strong>Projects</strong> - View and manage projects</li>
-            <li><strong>Map</strong> - Explore locations and resources</li>
-            <li><strong>Chat</strong> - Communicate with connections</li>
+            <li><strong>Profile Management:</strong> Create and edit your profile</li>
+            <li><strong>Matching:</strong> Find people with complementary skills</li>
+            <li><strong>Chat:</strong> Communicate with your matches</li>
           </ul>
           
-          <h3>Chat Features</h3>
-          <p>You can start a chat with any connection in the system by:</p>
-          <ol>
-            <li>Clicking on their profile</li>
-            <li>Using the chat button in the top navigation</li>
-            <li>Using the floating chat button on any page</li>
-          </ol>
+          <h3>Keyboard Shortcuts</h3>
+          <table class="min-w-full">
+            <tbody>
+              <tr>
+                <td class="py-1 pr-4">
+                  <kbd class="px-2 py-1 bg-gray-100 rounded">Ctrl+Shift+D</kbd>
+                </td>
+                <td>Toggle debug console (development only)</td>
+              </tr>
+              <tr>
+                <td class="py-1 pr-4">
+                  <kbd class="px-2 py-1 bg-gray-100 rounded">Escape</kbd>
+                </td>
+                <td>Close overlays</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <h3>Need more help?</h3>
+          <p>
+            Contact us at <a href="mailto:support@dreammall.example">support@dreammall.example</a>
+            for assistance.
+          </p>
         </div>
       </div>
       
-      <!-- Footer -->
-      <div class="px-6 py-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <button 
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-          @click="closeHelp"
-        >
-          Close
-        </button>
+      <div class="bg-gray-50 px-6 py-4 rounded-b-lg">
+        <div class="flex justify-between items-center">
+          <div class="text-sm text-gray-500">
+            App version: {{ version }}
+          </div>
+          <button 
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" 
+            @click="uiStore.toggleHelp"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -75,13 +93,21 @@ export default defineComponent({
   
   setup() {
     const uiStore = useUIStore();
+    const version = import.meta.env.APP_VERSION || '0.0.0';
     
-    const closeHelp = () => {
-      uiStore.toggleHelp();
+    // Close on escape key
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        uiStore.closeHelp();
+      }
     };
     
+    // Add keyboard listener when component is mounted
+    window.addEventListener('keydown', handleKeyDown);
+    
     return {
-      closeHelp
+      uiStore,
+      version
     };
   }
 });

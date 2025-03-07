@@ -1,705 +1,426 @@
 <template>
-  <div class="matching-page">
-    <AppHeader />
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">
+      Skill Matching
+    </h1>
     
-    <main class="container mx-auto py-6 px-4">
-      <h1 class="text-2xl font-bold mb-6">
-        Matching System
-      </h1>
-      
-      <!-- Matching Type Tabs -->
-      <div class="mb-6 flex border-b">
-        <button 
-          :class="[
-            'py-2 px-4 font-medium text-sm focus:outline-none',
-            matchingType === 'users' 
-              ? 'border-b-2 border-blue-500 text-blue-600' 
-              : 'text-gray-500 hover:text-gray-700'
-          ]" 
-          @click="matchingType = 'users'"
-        >
-          User Matching
-        </button>
-        <button 
-          :class="[
-            'py-2 px-4 font-medium text-sm focus:outline-none',
-            matchingType === 'projects' 
-              ? 'border-b-2 border-blue-500 text-blue-600' 
-              : 'text-gray-500 hover:text-gray-700'
-          ]"
-          @click="matchingType = 'projects'"
-        >
-          Project Matching
-        </button>
-      </div>
-      
-      <!-- User Matching Section -->
-      <div v-if="matchingType === 'users'">
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-          <div class="mb-4">
-            <h2 class="text-xl font-semibold mb-3">
-              Find Your Match
-            </h2>
-            <p class="text-gray-600 mb-4">
-              Discover potential partners and collaborators based on shared interests and complementary skills.
-            </p>
-            
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Search Criteria</label>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <button 
-                  v-for="(filter, index) in filterOptions" 
-                  :key="index"
-                  :class="[
-                    'px-3 py-1 rounded-full text-sm',
-                    activeFilters.includes(filter.value)
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  ]"
-                  @click="toggleFilter(filter.value)"
-                >
-                  {{ filter.label }}
-                </button>
-              </div>
-            </div>
-            
-            <!-- User to match against selector -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Select User to Match Against</label>
-              <div class="flex items-center mb-2">
-                <select 
-                  v-model="selectedUserId"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  @change="generateMatches"
-                >
-                  <option value="">
-                    Select a user
-                  </option>
-                  <option value="current">
-                    Use My Profile
-                  </option>
-                  <option 
-                    v-for="user in userStore.users" 
-                    :key="user.id" 
-                    :value="user.id"
-                  >
-                    {{ user.name || user.email }}
-                  </option>
-                </select>
-                <button 
-                  class="ml-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm"
-                  @click="generateMatches"
-                >
-                  Find Matches
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <h2 class="text-lg font-semibold text-blue-800 mb-2">
+        How Matching Works
+      </h2>
+      <p class="text-blue-700">
+        Our matching algorithm finds people with complementary skills. Select your skills and interests below,
+        and we'll show you potential matches that might be a good fit for collaboration.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left column: Your skills -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">
+          Your Skills
+        </h2>
         
-        <!-- User Matching Results Component -->
-        <MatchingResults 
-          :matches="matches" 
-          @view-profile="viewProfile"
-        />
-        
-        <!-- User Grid Display -->
         <div
-          v-if="!matches.length"
-          class="mt-6"
+          v-if="!authStore.isAuthenticated"
+          class="text-center p-4 bg-gray-100 rounded-lg"
         >
-          <h2 class="text-xl font-semibold mb-3">
-            All Users
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div
-              v-for="user in matchedUsers"
-              :key="user.id"
-              class="border border-gray-200 rounded-lg p-4 hover:border-blue-300"
+          <p class="text-gray-600 mb-3">
+            Please login to set your skills and see matches
+          </p>
+          <router-link 
+            to="/login" 
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 inline-block"
+          >
+            Login
+          </router-link>
+        </div>
+        
+        <div v-else>
+          <div class="mb-4">
+            <input
+              v-model="newSkill"
+              type="text"
+              placeholder="Add a skill..."
+              class="px-3 py-2 border border-gray-300 rounded-md w-full"
+              @keyup.enter="addSkill"
             >
-              <div class="font-medium">
-                {{ user.name }}
-              </div>
-              <p class="text-sm text-gray-500">
-                {{ user.email }}
-              </p>
-              
-              <div
-                v-if="user.skills && user.skills.length"
-                class="mt-2"
+          </div>
+          
+          <div class="flex flex-wrap gap-2 mb-4">
+            <div 
+              v-for="(skill, index) in userSkills" 
+              :key="index" 
+              class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center"
+            >
+              <span>{{ skill }}</span>
+              <button 
+                class="ml-2 text-blue-600 hover:text-blue-800" 
+                @click="removeSkill(index)"
               >
-                <div class="text-xs font-medium text-gray-500 mb-1">
-                  Skills
-                </div>
-                <div class="flex flex-wrap gap-1">
-                  <span 
-                    v-for="skill in user.skills.slice(0, 3)" 
-                    :key="skill"
-                    class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
-                  >
-                    {{ skill }}
-                  </span>
-                  <span
-                    v-if="user.skills.length > 3"
-                    class="inline-block text-xs text-gray-500"
-                  >+{{ user.skills.length - 3 }}</span>
-                </div>
-              </div>
-              
-              <div class="mt-3">
-                <button 
-                  class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md mr-2" 
-                  @click="generateMatchesFor(user.id)"
-                >
-                  Match Me
-                </button>
-                <button 
-                  class="text-sm text-blue-600 hover:text-blue-800" 
-                  @click="viewProfile(user)"
-                >
-                  View Profile
-                </button>
-              </div>
+                &times;
+              </button>
             </div>
+            
+            <p
+              v-if="userSkills.length === 0"
+              class="text-gray-500 text-sm pt-2"
+            >
+              No skills added yet. Add some skills to see matches.
+            </p>
+          </div>
+          
+          <div>
+            <button 
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-full" 
+              :disabled="isSaving"
+              @click="saveSkills"
+            >
+              {{ isSaving ? 'Saving...' : 'Save Skills' }}
+            </button>
           </div>
         </div>
       </div>
       
-      <!-- Project Matching Section -->
-      <div v-else>
-        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-          <div class="mb-4">
-            <h2 class="text-xl font-semibold mb-3">
-              Find Matching Projects
-            </h2>
-            <p class="text-gray-600 mb-4">
-              Discover projects that match your skills and interests or find projects for specific users.
-            </p>
-            
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Project Matching Criteria</label>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <button 
-                  v-for="(filter, index) in projectFilterOptions" 
-                  :key="index"
-                  :class="[
-                    'px-3 py-1 rounded-full text-sm',
-                    activeProjectFilters.includes(filter.value)
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  ]"
-                  @click="toggleProjectFilter(filter.value)"
-                >
-                  {{ filter.label }}
-                </button>
-              </div>
-            </div>
-            
-            <!-- User selection for project matching -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Find Projects For:</label>
-              <div class="flex items-center mb-2">
-                <select 
-                  v-model="selectedUserForProjects"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-                >
-                  <option value="current">
-                    My Profile
-                  </option>
-                  <option 
-                    v-for="user in userStore.users" 
-                    :key="user.id" 
-                    :value="user.id"
-                  >
-                    {{ user.name || user.email }}
-                  </option>
-                </select>
-                <button 
-                  class="ml-3 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm"
-                  @click="findMatchingProjects"
-                >
-                  Find Projects
-                </button>
-              </div>
-            </div>
-          </div>
+      <!-- Middle column: Looking for -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">
+          Skills You're Looking For
+        </h2>
+        
+        <div
+          v-if="!authStore.isAuthenticated"
+          class="text-center p-4 bg-gray-100 rounded-lg"
+        >
+          <p class="text-gray-600">
+            Please login to set preferences
+          </p>
         </div>
         
-        <!-- Project Matching Results -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-3">
-            {{ matchingProjects.length ? 'Matching Projects' : 'Available Projects' }}
-          </h2>
-          
-          <div
-            v-if="matchingProjects.length > 0"
-            class="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            <div 
-              v-for="project in matchingProjects" 
-              :key="project.id || project.name"
-              class="border border-gray-200 rounded-lg p-4 hover:border-green-300"
+        <div v-else>
+          <div class="mb-4">
+            <input
+              v-model="newDesiredSkill"
+              type="text"
+              placeholder="Add a desired skill..."
+              class="px-3 py-2 border border-gray-300 rounded-md w-full"
+              @keyup.enter="addDesiredSkill"
             >
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="text-lg font-medium">
-                  {{ project.name }}
-                </h3>
-                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {{ project.matchScore }}% Match
-                </span>
-              </div>
-              
-              <p class="text-gray-600 text-sm mb-3">
-                {{ project.description }}
-              </p>
-              
-              <div class="mb-3">
-                <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                  Required Skills
-                </div>
-                <div class="flex flex-wrap gap-1">
-                  <span 
-                    v-for="(skill, i) in project.requiredSkills" 
-                    :key="i"
-                    :class="[
-                      'inline-block text-xs px-2 py-1 rounded',
-                      userHasSkill(skill) ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                    ]"
-                  >
-                    {{ skill }}
-                  </span>
-                </div>
-              </div>
-              
-              <div class="flex justify-between items-center mt-3">
-                <span class="text-sm text-gray-500">
-                  {{ project.owner || 'Community Project' }} · {{ project.year || 'Ongoing' }}
-                </span>
-                <button 
-                  class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md"
-                  @click="viewProject(project)"
-                >
-                  View Details
-                </button>
-              </div>
-            </div>
           </div>
           
-          <div
-            v-else
-            class="text-center py-8 text-gray-500"
-          >
-            <p>No matching projects found. Try adjusting your filter criteria or expanding your skills profile.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <div 
+              v-for="(skill, index) in desiredSkills" 
+              :key="index" 
+              class="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center"
+            >
+              <span>{{ skill }}</span>
+              <button 
+                class="ml-2 text-green-600 hover:text-green-800" 
+                @click="removeDesiredSkill(index)"
+              >
+                &times;
+              </button>
+            </div>
+            
+            <p
+              v-if="desiredSkills.length === 0"
+              class="text-gray-500 text-sm pt-2"
+            >
+              Add skills that you're looking for in others.
+            </p>
+          </div>
+          
+          <div>
+            <button 
+              class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 w-full" 
+              :disabled="isLoading || desiredSkills.length === 0"
+              @click="findMatches"
+            >
+              {{ isLoading ? 'Finding Matches...' : 'Find Matches' }}
+            </button>
           </div>
         </div>
       </div>
-    </main>
-    
-    <AppActions />
+      
+      <!-- Right column: Matches -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">
+          Potential Matches
+        </h2>
+        
+        <div
+          v-if="isLoading"
+          class="text-center p-4"
+        >
+          <div class="inline-block animate-spin h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full" />
+          <p class="mt-2 text-gray-600">
+            Finding matches...
+          </p>
+        </div>
+        
+        <div
+          v-else-if="!authStore.isAuthenticated"
+          class="text-center p-4 bg-gray-100 rounded-lg"
+        >
+          <p class="text-gray-600">
+            Login to see your matches
+          </p>
+        </div>
+        
+        <div
+          v-else-if="matches.length === 0"
+          class="text-center p-4 bg-gray-100 rounded-lg"
+        >
+          <p class="text-gray-600">
+            No matches found yet. Try adding more desired skills or click "Find Matches".
+          </p>
+        </div>
+        
+        <div
+          v-else
+          class="space-y-4"
+        >
+          <div 
+            v-for="match in matches" 
+            :key="match.id" 
+            class="border border-gray-200 p-4 rounded-lg hover:bg-gray-50"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-medium">
+                  {{ match.name }}
+                </h3>
+                <p class="text-gray-500 text-sm">
+                  {{ match.email }}
+                </p>
+              </div>
+              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                {{ Math.round(match.matchScore * 100) }}% match
+              </span>
+            </div>
+            
+            <div class="mt-2">
+              <p class="text-sm text-gray-600 font-medium mb-1">
+                Matching skills:
+              </p>
+              <div class="flex flex-wrap gap-1">
+                <span 
+                  v-for="skill in match.matchingSkills" 
+                  :key="skill"
+                  class="bg-green-50 text-green-700 text-xs px-2 py-1 rounded"
+                >
+                  {{ skill }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="mt-3 flex justify-end">
+              <button 
+                class="text-blue-600 hover:text-blue-800 text-sm font-medium" 
+                @click="contactMatch(match)"
+              >
+                Contact
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { defineComponent, ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useAuthStore } from '@/stores/auth'
-import { useErrorTracking } from '@/composables/useErrorTracking'
-import AppHeader from '@/components/layout/AppHeader.vue'
-import AppActions from '@/components/layout/AppActions.vue'
-import MatchingResults from '@/components/matching/MatchingResults.vue'
+import { useUIStore } from '@/stores/ui'
+import errorLogger from '@/services/errorLogger'
 
 export default defineComponent({
   name: 'MatchingView',
   
-  components: {
-    AppHeader,
-    AppActions,
-    MatchingResults
-  },
-  
   setup() {
-    const router = useRouter()
     const userStore = useUserStore()
     const authStore = useAuthStore()
-    const { errorLogger, trackAsyncOperation } = useErrorTracking('MatchingView')
+    const uiStore = useUIStore()
     
-    // User matching state
-    const activeFilters = ref([])
-    const selectedUserId = ref('')
+    const userSkills = ref([])
+    const newSkill = ref('')
+    const desiredSkills = ref([])
+    const newDesiredSkill = ref('')
     const matches = ref([])
-    const matchingType = ref('users') // 'users' or 'projects'
+    const isLoading = ref(false)
+    const isSaving = ref(false)
     
-    // Project matching state
-    const activeProjectFilters = ref(['skills', 'interests'])
-    const selectedUserForProjects = ref('current')
-    const matchingProjects = ref([])
-    
-    // All available filter options
-    const filterOptions = [
-      { label: 'Skills Match', value: 'skills' },
-      { label: 'Interests Match', value: 'interests' },
-      { label: 'Location', value: 'location' },
-      { label: 'Projects', value: 'projects' },
-      { label: 'Available for Collaboration', value: 'available' }
-    ]
-    
-    // Project filter options
-    const projectFilterOptions = [
-      { label: 'Skills Match', value: 'skills' },
-      { label: 'Interests Match', value: 'interests' },
-      { label: 'Location Based', value: 'location' },
-      { label: 'Recently Added', value: 'recent' }
-    ]
-    
-    // Sample projects data (in a real app, this would come from an API or store)
-    const allProjects = [
-      {
-        id: 'p1',
-        name: 'Sustainability Initiative',
-        description: 'Working on sustainable solutions for urban environments',
-        owner: 'Max Mustermann',
-        year: '2023',
-        requiredSkills: ['JavaScript', 'React', 'Sustainability', 'UI/UX Design'],
-        relatedInterests: ['Sustainability', 'Urban Planning', 'Technology', 'Environment']
-      },
-      {
-        id: 'p2',
-        name: 'Tech Mentoring Program',
-        description: 'Connecting experienced professionals with newcomers',
-        owner: 'Julia Meier',
-        year: '2023',
-        requiredSkills: ['Communication', 'Leadership', 'JavaScript', 'Python'],
-        relatedInterests: ['Education', 'Mentoring', 'Technology', 'Community Building']
-      },
-      {
-        id: 'p3',
-        name: 'Smart City Platform',
-        description: 'IoT-based platform for improving city services',
-        owner: 'Markus Weber',
-        year: '2022',
-        requiredSkills: ['IoT', 'Python', 'Data Analysis', 'Cloud Computing'],
-        relatedInterests: ['Smart Cities', 'IoT', 'Urban Planning', 'Data Science']
-      },
-      {
-        id: 'p4',
-        name: 'Community Garden App',
-        description: 'Mobile application to manage and connect urban gardeners',
-        owner: 'Emma Schmidt',
-        year: '2023',
-        requiredSkills: ['Mobile Development', 'React Native', 'UI Design', 'Backend Development'],
-        relatedInterests: ['Urban Gardening', 'Sustainability', 'Community Building', 'Food Production']
-      },
-      {
-        id: 'p5',
-        name: 'Digital Learning Platform',
-        description: 'Platform for sharing educational resources and courses',
-        owner: 'Thomas Müller',
-        year: '2022',
-        requiredSkills: ['Vue.js', 'Node.js', 'MongoDB', 'Education Technology'],
-        relatedInterests: ['Education', 'Online Learning', 'Knowledge Sharing', 'Technology']
-      }
-    ]
-    
+    // Load current user's skills
     onMounted(async () => {
-      await trackAsyncOperation('initialize matching view', async () => {
-        try {
-          // Check if user is authenticated
-          if (!authStore.isAuthenticated) {
-            router.replace('/login')
-            return
-          }
-          
-          // Load users if needed
-          if (userStore.users.length === 0) {
+      if (authStore.isAuthenticated && authStore.user) {
+        // Load user's current skills from profile if available
+        userSkills.value = authStore.user.skills || []
+        
+        // Make sure we have user data
+        if (!userStore.users.length) {
+          try {
             await userStore.loadUsers()
+          } catch (error) {
+            errorLogger.error('Failed to load users for matching', error)
           }
-          
-          errorLogger.info(`Matching view loaded for user: ${authStore.currentUser?.email}`)
-        } catch (error) {
-          errorLogger.error('Error initializing matching view', error)
         }
-      })
+      }
     })
     
-    // User filtering and matching functions
-    const toggleFilter = (filter) => {
-      if (activeFilters.value.includes(filter)) {
-        activeFilters.value = activeFilters.value.filter(f => f !== filter)
-      } else {
-        activeFilters.value.push(filter)
+    // Add a skill to user's skills
+    const addSkill = () => {
+      if (!newSkill.value.trim()) return
+      
+      // Skip duplicates
+      if (!userSkills.value.includes(newSkill.value.trim())) {
+        userSkills.value.push(newSkill.value.trim())
       }
       
-      errorLogger.debug(`Filters updated: ${activeFilters.value.join(', ')}`)
+      newSkill.value = ''
     }
     
-    const matchedUsers = computed(() => {
-      // Exclude current user and apply filters
-      return userStore.users.filter(user => 
-        user.id !== authStore.currentUser?.id
-      )
-    })
-    
-    // Calculate match score between two users
-    const calculateMatchScore = (user1, user2) => {
-      // Default match details structure
-      const matchDetails = {
-        sharedInterests: [],
-        complementarySkills: [],
-        matchingAttributes: []
-      }
-      
-      let totalScore = 0
-      
-      // Calculate shared interests
-      if (user1.interests && user2.interests) {
-        const sharedInterests = user1.interests.filter(interest => 
-          user2.interests.includes(interest)
-        )
-        
-        matchDetails.sharedInterests = sharedInterests
-        totalScore += sharedInterests.length * 10
-      }
-      
-      // Calculate complementary skills
-      if (user1.skills && user2.skills) {
-        const complementarySkills = user2.skills.filter(skill => 
-          !user1.skills.includes(skill)
-        )
-        
-        matchDetails.complementarySkills = complementarySkills
-        totalScore += complementarySkills.length * 5
-      }
-      
-      // Add matching attribute for location if available
-      if (user1.iconCategories?.home?.coordinates && user2.iconCategories?.home?.coordinates) {
-        matchDetails.matchingAttributes.push({
-          category: 'Location',
-          similarity: 'Similar region'
-        })
-        totalScore += 10
-      }
-      
-      // Calculate percentage (max score is somewhat arbitrary)
-      const _maxScore = 100
-      const percentage = Math.min(Math.round((totalScore / _maxScore) * 100), 100)
-      
-      return {
-        percentage,
-        matchDetails
-      }
+    // Remove a skill
+    const removeSkill = (index) => {
+      userSkills.value.splice(index, 1)
     }
     
-    // Generate matches for a specific user
-    const generateMatchesFor = (userId) => {
-      selectedUserId.value = userId
-      generateMatches()
-    }
-    
-    // Generate matches based on selected user
-    const generateMatches = () => {
-      errorLogger.debug(`Generating matches for user ID: ${selectedUserId.value}`)
-      
-      // Clear current matches
-      matches.value = []
+    // Save user's skills
+    const saveSkills = async () => {
+      if (!authStore.isAuthenticated) return
       
       try {
-        // Get source user (either current user or selected)
-        let sourceUser
+        isSaving.value = true
         
-        if (!selectedUserId.value || selectedUserId.value === 'current') {
-          sourceUser = authStore.currentUser
-        } else {
-          sourceUser = userStore.users.find(u => u.id == selectedUserId.value)
+        // In a real app, this would save to the backend
+        // For demo, we'll just update the local store
+        if (authStore.user) {
+          // Update the user in userStore
+          userStore.updateUser(authStore.user.id, {
+            skills: [...userSkills.value]
+          })
+          
+          // Update the auth store's user object
+          authStore.user.skills = [...userSkills.value]
+          
+          errorLogger.info('User skills saved', { 
+            userId: authStore.user.id,
+            skillCount: userSkills.value.length
+          })
+        }
+      } catch (error) {
+        errorLogger.error('Failed to save skills', error)
+      } finally {
+        isSaving.value = false
+      }
+    }
+    
+    // Add a desired skill
+    const addDesiredSkill = () => {
+      if (!newDesiredSkill.value.trim()) return
+      
+      // Skip duplicates
+      if (!desiredSkills.value.includes(newDesiredSkill.value.trim())) {
+        desiredSkills.value.push(newDesiredSkill.value.trim())
+      }
+      
+      newDesiredSkill.value = ''
+    }
+    
+    // Remove a desired skill
+    const removeDesiredSkill = (index) => {
+      desiredSkills.value.splice(index, 1)
+    }
+    
+    // Find matching users
+    const findMatches = async () => {
+      if (!authStore.isAuthenticated || desiredSkills.value.length === 0) return
+      
+      try {
+        isLoading.value = true
+        
+        // In a real app, this would be an API call
+        // For demo, we'll do it locally
+        
+        // Make sure we have users
+        if (userStore.users.length === 0) {
+          await userStore.loadUsers()
         }
         
-        if (!sourceUser) {
-          errorLogger.warn('No source user selected for matching')
-          return
-        }
-        
-        // Generate matches against all other users
+        // Calculate matches
         const matchResults = userStore.users
-          .filter(user => user.id !== sourceUser.id)
+          // Don't match with self
+          .filter(user => user.id !== authStore.user?.id)
+          // Calculate match score and matching skills
           .map(user => {
-            const matchResult = calculateMatchScore(sourceUser, user)
+            // Calculate how many desired skills the user has
+            const matchingSkills = (user.skills || []).filter(skill => 
+              desiredSkills.value.includes(skill)
+            )
+            
+            // Calculate match score (0-1)
+            let matchScore = 0
+            if (desiredSkills.value.length > 0) {
+              matchScore = matchingSkills.length / desiredSkills.value.length
+            }
+            
             return {
               ...user,
-              matchResult
+              matchScore,
+              matchingSkills
             }
           })
-          .filter(user => user.matchResult.percentage > 0)
-          .sort((a, b) => b.matchResult.percentage - a.matchResult.percentage)
-        
-        matches.value = matchResults
-        errorLogger.info(`Generated ${matches.value.length} matches`)
-      } catch (error) {
-        errorLogger.error('Error generating matches', error)
-      }
-    }
-    
-    // Project matching functions
-    const toggleProjectFilter = (filter) => {
-      if (activeProjectFilters.value.includes(filter)) {
-        activeProjectFilters.value = activeProjectFilters.value.filter(f => f !== filter)
-      } else {
-        activeProjectFilters.value.push(filter)
-      }
-      
-      errorLogger.debug(`Project filters updated: ${activeProjectFilters.value.join(', ')}`)
-    }
-    
-    // Calculate match score between user and project
-    const calculateProjectMatchScore = (user, project) => {
-      if (!user || !project) return { percentage: 0, matchingSkills: [] }
-      
-      let score = 0
-      const _maxScore = 100
-      const matchingDetails = {}
-      
-      // Calculate matching skills
-      const userSkills = user.skills || []
-      const requiredSkills = project.requiredSkills || []
-      const matchingSkills = userSkills.filter(skill => 
-        requiredSkills.some(reqSkill => reqSkill.toLowerCase().includes(skill.toLowerCase()))
-      )
-      matchingDetails.matchingSkills = matchingSkills
-      
-      // Calculate score based on matching skills
-      if (requiredSkills.length > 0) {
-        const skillsScore = (matchingSkills.length / requiredSkills.length) * 50
-        score += skillsScore
-      }
-      
-      // Calculate matching interests
-      const userInterests = user.interests || []
-      const projectInterests = project.relatedInterests || []
-      const matchingInterests = userInterests.filter(interest => 
-        projectInterests.some(projInterest => projInterest.toLowerCase().includes(interest.toLowerCase()))
-      )
-      matchingDetails.matchingInterests = matchingInterests
-      
-      // Calculate score based on matching interests
-      if (projectInterests.length > 0) {
-        const interestsScore = (matchingInterests.length / projectInterests.length) * 30
-        score += interestsScore
-      }
-      
-      // Additional score for recent projects
-      if (project.year === '2023') {
-        score += 10
-        matchingDetails.isRecent = true
-      }
-      
-      // Calculate percentage
-      const percentage = Math.min(Math.round(score), 100)
-      
-      return {
-        percentage,
-        matchingDetails
-      }
-    }
-    
-    const findMatchingProjects = () => {
-      errorLogger.debug(`Finding matching projects for user: ${selectedUserForProjects.value}`)
-      
-      try {
-        // Get user to match projects for
-        let targetUser
-        
-        if (selectedUserForProjects.value === 'current') {
-          targetUser = authStore.currentUser
-        } else {
-          targetUser = userStore.users.find(u => u.id == selectedUserForProjects.value)
-        }
-        
-        if (!targetUser) {
-          errorLogger.warn('No user selected for project matching')
-          return
-        }
-        
-        // Calculate match scores for all projects
-        const projectMatches = allProjects.map(project => {
-          const matchScore = calculateProjectMatchScore(targetUser, project)
-          return {
-            ...project,
-            matchScore: matchScore.percentage,
-            matchDetails: matchScore.matchingDetails
-          }
-        })
-        
-        // Filter and sort projects
-        matchingProjects.value = projectMatches
-          .filter(project => {
-            // Filter based on active filters
-            if (activeProjectFilters.value.includes('skills') && 
-                (!project.matchDetails.matchingSkills || project.matchDetails.matchingSkills.length === 0)) {
-              return false
-            }
-            if (activeProjectFilters.value.includes('interests') && 
-                (!project.matchDetails.matchingInterests || project.matchDetails.matchingInterests.length === 0)) {
-              return false
-            }
-            if (activeProjectFilters.value.includes('recent') && !project.matchDetails.isRecent) {
-              return false
-            }
-            return project.matchScore > 0
-          })
+          // Filter to only users with at least one matching skill
+          .filter(user => user.matchingSkills.length > 0)
+          // Sort by match score (highest first)
           .sort((a, b) => b.matchScore - a.matchScore)
         
-        errorLogger.info(`Found ${matchingProjects.value.length} matching projects`)
+        // Set matches
+        matches.value = matchResults
+        
+        errorLogger.info('Matching completed', { 
+          searchedFor: desiredSkills.value.length,
+          matchesFound: matches.value.length
+        })
       } catch (error) {
-        errorLogger.error('Error finding matching projects', error)
+        errorLogger.error('Error finding matches', error)
+      } finally {
+        isLoading.value = false
       }
     }
     
-    // Utility function to check if current user has a skill
-    const userHasSkill = (skill) => {
-      const currentUser = authStore.currentUser
-      if (!currentUser || !currentUser.skills) return false
+    // Contact a match
+    const contactMatch = (match) => {
+      // In a real app, this would open a chat or contact form
+      // For demo, we'll just open the chat overlay
+      uiStore.toggleChat()
       
-      return currentUser.skills.some(userSkill => 
-        userSkill.toLowerCase() === skill.toLowerCase()
-      )
-    }
-    
-    // View user profile
-    const viewProfile = (user) => {
-      errorLogger.debug(`Viewing profile for user: ${user.name || user.email}`)
-      alert(`Profile details for ${user.name || user.email} would open here`)
-    }
-    
-    // View project details
-    const viewProject = (project) => {
-      errorLogger.debug(`Viewing project: ${project.name}`)
-      alert(`Details for project "${project.name}" would open here`)
+      errorLogger.info('User initiated contact', { 
+        targetUserId: match.id,
+        targetUserName: match.name
+      })
     }
     
     return {
-      // User matching props
-      filterOptions,
-      activeFilters,
-      selectedUserId,
-      matchedUsers,
+      userStore,
+      authStore,
+      uiStore,
+      userSkills,
+      newSkill,
+      desiredSkills,
+      newDesiredSkill,
       matches,
-      toggleFilter,
-      generateMatches,
-      generateMatchesFor,
-      viewProfile,
-      
-      // Project matching props
-      matchingType,
-      projectFilterOptions,
-      activeProjectFilters,
-      selectedUserForProjects,
-      matchingProjects,
-      toggleProjectFilter,
-      findMatchingProjects,
-      userHasSkill,
-      viewProject,
-      
-      // Stores
-      userStore
+      isLoading,
+      isSaving,
+      addSkill,
+      removeSkill,
+      saveSkills,
+      addDesiredSkill,
+      removeDesiredSkill,
+      findMatches,
+      contactMatch
     }
   }
 })
