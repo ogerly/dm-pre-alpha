@@ -1,60 +1,65 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the main branch
   push:
-    branches: ["main"]
-
-  # Allows manual trigger from Actions tab
+    branches: [ main ]
+  
+  # Allows manual triggering from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN
+# Sets permissions for the GITHUB_TOKEN
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  # Build job
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v3
-      
-      - name: Setup Node
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
           cache: 'npm'
-      
-      - name: Install dependencies
+
+      - name: Install Dependencies
         run: npm ci
-      
+        
+      - name: Lint
+        run: npm run lint --if-present
+        
+      - name: Type Check
+        run: npm run typecheck --if-present
+        
       - name: Build
         run: npm run build
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: './dist'
+        env:
+          NODE_ENV: production
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+      - name: Create .nojekyll File
+        run: touch dist/.nojekyll
+
+      - name: Copy 404.html for SPA Routing
+        run: cp public/404.html dist/404.html
+
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
+          clean-exclude: |
+            .gitignore
+            .nojekyll
+          commit-message: "Deploy: ${{ github.event.head_commit.message || 'Manual deployment' }}"

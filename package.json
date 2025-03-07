@@ -16,12 +16,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx --fix --ignore-path .gitignore",
     "typecheck": "vue-tsc --noEmit",
     "deploy:local": "node scripts/deploy.js",
-    "deploy:gh": "npm run build && gh-pages -d dist -r https://github.com/ogerly/dm-pre-alpha.git",
+    "deploy": "npm run build && gh-pages -d dist",
     "docs:install": "cd docs && npm install",
     "docs:dev": "cd docs && npm run dev",
     "docs:build": "cd docs && npm run build",
-    "docs:preview": "cd docs && npm run preview",
-    "deployToGitHub": "npm run build && cp -r dist/* . && touch .nojekyll && git add . && git commit -m \"Deploy to GitHub Pages\" && git push"
+    "docs:preview": "cd docs && npm run preview"
   },
   "dependencies": {
     "@tailwindcss/typography": "0.5.16",

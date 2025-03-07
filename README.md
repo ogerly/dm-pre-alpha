@@ -610,5 +610,57 @@ Unten eine Übersicht des aktuellen Projektbaums, einschließlich Build-Ordner u
 
 ---
 
-**Ende der strukturierten Projektbeschreibung**
+# DreamMall Prototype
+
+## Deployment
+
+This project is automatically deployed to GitHub Pages whenever changes are pushed to the `main` branch.
+
+### Automatic Deployment
+
+The deployment process is handled by GitHub Actions:
+
+1. When you push to the `main` branch, the GitHub Actions workflow is triggered
+2. The workflow builds the application
+3. The built files are then deployed to the `gh-pages` branch
+4. GitHub Pages serves the content from the `gh-pages` branch
+
+You can see the deployment status in the "Actions" tab of the repository.
+
+### Manual Deployment
+
+If you need to deploy manually, you can:
+
+1. Run locally: `npm run deploy`
+2. Or trigger the workflow manually from the "Actions" tab in the GitHub repository
+
+### Environment
+
+The production site is available at: https://ogerly.github.io/dm-pre-alpha/
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build locally
+npm run preview
+```
+
+## Socket.IO Server
+
+To run the Socket.IO server locally:
+
+```bash
+npm run start
+```
+
+This starts the Express server that handles socket connections for the chat functionality.
 

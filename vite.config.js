@@ -13,7 +13,7 @@ const inspiraVersion = pkg.dependencies?.["inspira-ui"]?.replace(/[\^~]/g, '') |
 const framework = 'Vue.js';
 const frameworkVersion = pkg.dependencies?.vue?.replace(/[\^~]/g, '') || '3.x';
 
-// Make sure this matches your GitHub Pages path - critical for resolving 404 errors
+// GitHub Pages path - using proper relative URLs for production
 const baseUrl = process.env.NODE_ENV === 'production' ? './' : '/';
 
 export default defineConfig({
@@ -42,7 +42,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV !== 'production',
     assetsInlineLimit: 0,
     copyPublicDir: true,
     chunkSizeWarningLimit: 2000,
@@ -50,7 +50,13 @@ export default defineConfig({
       output: {
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        // Ensure that generated file names are consistent
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
       }
     }
   },
@@ -60,8 +66,15 @@ export default defineConfig({
     'import.meta.env.FRAMEWORK': JSON.stringify(framework),
     'import.meta.env.FRAMEWORK_VERSION': JSON.stringify(frameworkVersion),
     'import.meta.env.INSPIRA_UI_VERSION': JSON.stringify(inspiraVersion),
-    'import.meta.env.VITE_SOCKET_URL': JSON.stringify(baseUrl === '/' ? 'http://localhost:3000' : 'https://ogerly.github.io'),
+    // Use a different socket URL based on environment
+    'import.meta.env.VITE_SOCKET_URL': JSON.stringify(
+      process.env.NODE_ENV === 'production' 
+        ? 'https://your-production-socket-server.com' // Replace with your production socket server
+        : 'http://localhost:3000'
+    ),
     'import.meta.env.BASE_URL': JSON.stringify(baseUrl),
+    'import.meta.env.PROD': process.env.NODE_ENV === 'production',
+    'import.meta.env.DEV': process.env.NODE_ENV !== 'production',
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
 });
