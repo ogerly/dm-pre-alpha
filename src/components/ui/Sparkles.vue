@@ -12,12 +12,7 @@
 </template>
 
 <script setup lang="ts">
-// Fix: Remove the imports that are causing issues
-// import { ref, onMounted, onBeforeUnmount, defineProps, withDefaults } from "vue";
-// import { useRafFn, templateRef } from "@vueuse/core";
-
-// Alternative approach that works with both bundler and node moduleResolution
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRafFn } from "@vueuse/core";
 
 interface Props {
@@ -29,6 +24,20 @@ interface Props {
   particleDensity?: number;
 }
 
+const props = withDefaults(defineProps<Props>(), {
+  background: "#0d47a1",
+  particleColor: "#ffffff",
+  minSize: 1,
+  maxSize: 3,
+  speed: 4,
+  particleDensity: 120,
+});
+
+const containerRef = ref<HTMLElement | null>(null);
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const particles = ref<Particle[]>([]);
+const ctx = ref<CanvasRenderingContext2D | null>(null);
+
 interface Particle {
   x: number;
   y: number;
@@ -39,21 +48,6 @@ interface Particle {
   phase: number;
   phaseSpeed: number;
 }
-
-const props = withDefaults(defineProps<Props>(), {
-  background: "#0d47a1",
-  particleColor: "#ffffff",
-  minSize: 1,
-  maxSize: 3,
-  speed: 4,
-  particleDensity: 120,
-});
-
-// Fix: Use ref instead of templateRef
-const containerRef = ref<HTMLElement | null>(null);
-const canvasRef = ref<HTMLCanvasElement | null>(null);
-const particles = ref<Particle[]>([]);
-const ctx = ref<CanvasRenderingContext2D | null>(null);
 
 // Adjust canvas size on mount and resize
 function resizeCanvas() {
@@ -163,8 +157,3 @@ onBeforeUnmount(() => {
   }
 });
 </script>
-
-<style>
-/* No imports needed for now */
-/* You can add actual CSS rules here if needed */
-</style>

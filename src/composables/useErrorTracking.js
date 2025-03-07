@@ -17,7 +17,8 @@ export function useErrorTracking(componentName) {
     debug: (message, data) => errorLogger.debug(message, { component: componentName, ...data }),
     info: (message, data) => errorLogger.info(message, { component: componentName, ...data }),
     warn: (message, data) => errorLogger.warn(message, { component: componentName, ...data }),
-    error: (message, error, data) => errorLogger.error(message, error, { component: componentName, ...data })
+    error: (message, error, data) => errorLogger.error(message, error, { component: componentName, ...data }),
+    track: (action, data) => errorLogger.track(action, { component: componentName, ...data })
   }
 
   onMounted(() => {

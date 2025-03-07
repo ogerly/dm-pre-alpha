@@ -1,174 +1,144 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import errorLogger from '@/services/errorLogger'
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import errorLogger from '@/services/errorLogger';
 
+// Simulate API call delay
+const simulateApiCall = (success = true, delay = 800) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (success) {
+        resolve();
+      } else {
+        reject(new Error('API call failed'));
+      }
+    }, delay);
+  });
+};
+
+// Define auth store
 export const useAuthStore = defineStore('auth', () => {
   // State
-  const user = ref(null)
-  const token = ref(localStorage.getItem('authToken') || null)
-  const loading = ref(false)
-  const error = ref(null)
+  const user = ref(null);
+  const token = ref('');
+  const isLoading = ref(false);
   
-  // Computed properties
-  const isAuthenticated = computed(() => !!token.value)
-  const isAdmin = computed(() => user.value?.role === 'admin')
-  
-  // Check if the user is already authenticated
-  async function checkAuth() {
-    if (!token.value) return false
-    
+  // Get initial state from localStorage if available
+  const storedAuth = localStorage.getItem('auth');
+  if (storedAuth) {
     try {
-      loading.value = true
-      error.value = null
-      
-      // In a real app, validate the token with a server
-      // For this demo, we'll just use a mock user
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Mock user data
-      user.value = {
-        id: '1',
-        name: 'Demo User',
-        email: 'demo@example.com',
-        role: 'user'
-      }
-      
-      errorLogger.info('Auth check successful', { userId: user.value.id })
-      return true
+      const parsedAuth = JSON.parse(storedAuth);
+      user.value = parsedAuth.user;
+      token.value = parsedAuth.token;
     } catch (err) {
-      errorLogger.error('Auth check failed', err)
-      error.value = 'Authentication failed'
-      token.value = null
-      user.value = null
-      localStorage.removeItem('authToken')
-      return false
-    } finally {
-      loading.value = false
+      errorLogger.error('Failed to parse stored auth data', err);
+      localStorage.removeItem('auth');
     }
   }
   
-  // Login a user
-  async function login(credentials) {
+  // Computed
+  const isAuthenticated = computed(() => Boolean(user.value && token.value));
+  const isAdmin = computed(() => user.value?.role === 'admin');
+  
+  // Actions
+  const login = async (email, password, remember = false) => {
+    isLoading.value = true;
+    
     try {
-      loading.value = true
-      error.value = null
+      // In a real app, you would make an actual API call
+      await simulateApiCall(true);
       
-      // Validate credentials
-      if (!credentials?.email || !credentials?.password) {
-        throw new Error('Email and password are required')
-      }
-      
-      // In a real app, this would call an API
-      // For this demo, we use a mock login
-      
-      // Check credentials (demo only)
-      if (credentials.email === 'test@example.com' && credentials.password === 'test123') {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 800))
-        
-        // Set auth token
-        const mockToken = 'mock-jwt-token-' + Math.random().toString(36).slice(2)
-        token.value = mockToken
-        localStorage.setItem('authToken', mockToken)
-        
-        // Set user data
+      // Check test user credentials
+      if (email === 'test@example.com' && password === 'test123') {
+        // Success - set user data
         user.value = {
           id: '1',
+          email: 'test@example.com',
           name: 'Test User',
-          email: credentials.email,
           role: 'user'
+        };
+        
+        // Generate a mock token
+        token.value = `mock-jwt-token-${Date.now()}`;
+        
+        // Store in localStorage if remember is true
+        if (remember) {
+          const authData = { user: user.value, token: token.value };
+          localStorage.setItem('auth', JSON.stringify(authData));
         }
         
-        errorLogger.info('Login successful', { userId: user.value.id })
-        return true
-      } else {
-        throw new Error('Invalid credentials')
+        return;
       }
-    } catch (err) {
-      errorLogger.error('Login failed', err)
-      error.value = err.message
-      return false
+      
+      // For admin login
+      if (email === 'admin@example.com' && password === 'admin123') {
+        user.value = {
+          id: '2',
+          email: 'admin@example.com',
+          name: 'Admin User',
+          role: 'admin'
+        };
+        
+        token.value = `mock-admin-jwt-token-${Date.now()}`;
+        
+        if (remember) {
+          const authData = { user: user.value, token: token.value };
+          localStorage.setItem('auth', JSON.stringify(authData));
+        }
+        
+        return;
+      }
+      
+      // Invalid credentials
+      throw new Error('Invalid email or password');
+    } catch (error) {
+      errorLogger.error('Login error', error);
+      throw new Error(error.message || 'Authentication failed');
     } finally {
-      loading.value = false
+      isLoading.value = false;
     }
-  }
+  };
   
-  // Register a new user
-  async function register(userData) {
+  const logout = async () => {
     try {
-      loading.value = true
-      error.value = null
+      // In a real app, call logout API endpoint
+      await simulateApiCall(true, 300);
       
-      // Validate input
-      if (!userData.email || !userData.password) {
-        throw new Error('Email and password are required')
-      }
+      // Clear user data
+      user.value = null;
+      token.value = '';
       
-      // In a real app, this would call an API
-      // For this demo, we use a mock registration
+      // Remove from localStorage
+      localStorage.removeItem('auth');
+      sessionStorage.removeItem('auth');
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Set auth token
-      const mockToken = 'mock-jwt-token-' + Math.random().toString(36).slice(2)
-      token.value = mockToken
-      localStorage.setItem('authToken', mockToken)
-      
-      // Set user data
-      user.value = {
-        id: Math.random().toString(36).slice(2),
-        name: userData.name || 'New User',
-        email: userData.email,
-        role: 'user'
-      }
-      
-      errorLogger.info('Registration successful', { userId: user.value.id })
-      return true
-    } catch (err) {
-      errorLogger.error('Registration failed', err)
-      error.value = err.message
-      return false
-    } finally {
-      loading.value = false
+    } catch (error) {
+      errorLogger.error('Logout error', error);
+      throw new Error('Logout failed');
     }
-  }
+  };
   
-  // Logout the user
-  async function logout() {
+  const checkAuth = async () => {
+    // In a real app, validate the token with the server
+    if (!token.value) return false;
+    
     try {
-      // In a real app, notify the server
-      
-      // Clear auth data
-      token.value = null
-      user.value = null
-      localStorage.removeItem('authToken')
-      
-      errorLogger.info('Logout successful')
-      return true
-    } catch (err) {
-      errorLogger.error('Logout failed', err)
-      return false
+      await simulateApiCall(true, 300);
+      return isAuthenticated.value;
+    } catch {
+      // Token invalid, logout
+      await logout();
+      return false;
     }
-  }
+  };
   
   return {
-    // State
     user,
     token,
-    loading,
-    error,
-    
-    // Computed
+    isLoading,
     isAuthenticated,
     isAdmin,
-    
-    // Actions
-    checkAuth,
     login,
-    register,
-    logout
-  }
-})
+    logout,
+    checkAuth
+  };
+});

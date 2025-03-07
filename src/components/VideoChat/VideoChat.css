@@ -1,0 +1,107 @@
+.video-chat-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.video-streams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.local-stream, .remote-stream {
+  position: relative;
+  width: calc(50% - 10px);
+  min-height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #2d2d2d;
+}
+
+.video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stream-label {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.no-remote-stream {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: white;
+  font-size: 1.2em;
+}
+
+.video-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.control-btn, .end-call-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.control-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.control-btn:hover {
+  background-color: #0069d9;
+}
+
+.end-call-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.end-call-btn:hover {
+  background-color: #c82333;
+}
+
+.status-indicator {
+  background-color: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 0.9em;
+}
+
+.error-message {
+  color: #dc3545;
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+  .local-stream, .remote-stream {
+    width: 100%;
+  }
+  
+  .video-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+}

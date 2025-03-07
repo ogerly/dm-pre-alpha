@@ -48,7 +48,7 @@ export default defineConfig({
   },
   server: {
     open: true,
-    port: 4000,
+    port: 3000,
     proxy: {
       '/socket.io': {
         target: 'http://localhost:3000',
