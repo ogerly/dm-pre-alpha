@@ -90,7 +90,15 @@ const routes = [
 const router = createRouter({
   // Use the same base path as in Vite config
   history: createWebHistory(baseUrl),
-  routes
+  routes,
+  // Add scroll behavior for better UX
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
 })
 
 // Navigation guard

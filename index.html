@@ -3,13 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
   <title>DreamMall</title>
   <meta name="description" content="DreamMall - Connecting dreams and skills">
+  <script type="text/javascript">
+    // This script checks to see if a redirect is present in the query string,
+    // converts it back into the correct URL and adds it to the
+    // browser's history using window.history.replaceState(...),
+    // which won't cause the browser to attempt to load the new URL.
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
 </head>
 <body>
   <div id="app"></div>
-  <!-- Vue app is mounted to #app -->
-  <script type="module" src="/src/main.js"></script>
+  <!-- Use a relative path for GitHub Pages compatibility -->
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>

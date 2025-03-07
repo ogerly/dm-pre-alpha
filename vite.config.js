@@ -13,12 +13,12 @@ const inspiraVersion = pkg.dependencies?.["inspira-ui"]?.replace(/[\^~]/g, '') |
 const framework = 'Vue.js';
 const frameworkVersion = pkg.dependencies?.vue?.replace(/[\^~]/g, '') || '3.x';
 
-// Determine the base URL - this needs to be empty for development with our Express server
-const baseUrl = process.env.NODE_ENV === 'production' ? '/dm-pre-alpha/' : '/';
+// Make sure this matches your GitHub Pages path - critical for resolving 404 errors
+const baseUrl = process.env.NODE_ENV === 'production' ? './' : '/';
 
 export default defineConfig({
   plugins: [vue()],
-  base: baseUrl, // This sets the base path for assets
+  base: baseUrl, 
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
@@ -26,7 +26,7 @@ export default defineConfig({
   },
   server: {
     open: true,
-    port: 4000, // Keep using a different port for the dev server
+    port: 4000,
     proxy: {
       '/socket.io': {
         target: 'http://localhost:3000',
@@ -43,8 +43,16 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: true,
-    // Ensure assets use proper MIME types
-    assetsInlineLimit: 0
+    assetsInlineLimit: 0,
+    copyPublicDir: true,
+    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    }
   },
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(appVersion),
@@ -52,7 +60,8 @@ export default defineConfig({
     'import.meta.env.FRAMEWORK': JSON.stringify(framework),
     'import.meta.env.FRAMEWORK_VERSION': JSON.stringify(frameworkVersion),
     'import.meta.env.INSPIRA_UI_VERSION': JSON.stringify(inspiraVersion),
-    'import.meta.env.VITE_SOCKET_URL': JSON.stringify('http://localhost:3000'),
+    'import.meta.env.VITE_SOCKET_URL': JSON.stringify(baseUrl === '/' ? 'http://localhost:3000' : 'https://ogerly.github.io'),
     'import.meta.env.BASE_URL': JSON.stringify(baseUrl),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
 });
